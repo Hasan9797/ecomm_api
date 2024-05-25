@@ -7,17 +7,18 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-    - name: Connect to server and deploy changes
-      uses: appleboy/ssh-action@master
+      - name: Connect to server and deploy changes
+        uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.KEY}}
+          key: ${{ secrets.KEY }}
           password: ${{ secrets.PASSWORD }}
           port: 22
-          script:
-              cd ~/ecomm_api/
-              git pull
-              npm install
-              pm2 restart 0
+          script: |
+            cd ~/ecomm_api/
+            git pull
+            npm install
+            pm2 restart 0
