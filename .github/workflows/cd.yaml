@@ -13,8 +13,8 @@ jobs:
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
-          password: ${{ secrets.PASSWORD }}
           key: ${{ secrets.KEY}}
+          password: ${{ secrets.PASSWORD }}
           port: 22
           script:
               cd ~/ecomm_api/
