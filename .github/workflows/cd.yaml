@@ -44,5 +44,4 @@ jobs:
             cd ~/ecomm_api/
             git pull
             npm install
-            pm2 stop all
-            pm2 start src/server.js --name ecomm_api -- PORT=8000
+            pm2 restart ecommAPI
