@@ -6,7 +6,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.get('/', (req, res) => {
-	res.send('Hello MyAPI :) !');
+	res.send('Hello Anvar tog`ooo :) !');
 });
 
 const PORT = process.env.PORT || 8000;
