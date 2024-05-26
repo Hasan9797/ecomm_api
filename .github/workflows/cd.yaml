@@ -1,22 +1,48 @@
-name: Test CD
+# name: Test CD
+
+# on:
+#   push:
+#     branches: [main]
+
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: Connect to server and deploy changes
+#         uses: appleboy/ssh-action@master
+#         with:
+#           host: ${{ secrets.HOST }}
+#           username: ${{ secrets.USERNAME }}
+#           key: ${{ secrets.KEY }}
+#           port: 22
+#           script: |
+#             cd /ecomm_api/
+#             git pull
+#             npm install
+#             pm2 restart 0
+
+name: CD
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Connect to server and deploy changes
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup SSH
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.KEY }}
-          password: ${{ secrets.PASSWORD }}
-          port: 22
+          port: 22 # Agar default port (22) bo'lmasa, portni ko'rsating
           script: |
             cd ~/ecomm_api/
             git pull
