@@ -1,37 +1,32 @@
-import { SequalizeORM } from './connections/connect.js';
-const { sequelize } = SequalizeORM.sequelizeQuery();
+import { Sequelize } from "sequelize";
+// import { db } from "./connections/connection.db.js";
+import Category from "../models/model.category.js";
 
 export const getAll = async (req, res) => {
-	const page = req.query.page;
-	const pageSize = req.query.pageSize;
+  const categories = await Category.findAll();
+  res.status(200).json(categories);
+};
 
-	const limit = pageSize; // Har bir sahifadagi yozuvlar soni
-	const offset = (page - 1) * pageSize; // Qaysi yozuvdan boshlab olish
+export const getById = async (req, res) => {
+  const category = await Category.findByPk(req.params.id);
+  res.status(200).json(category);
+};
 
-	// Umumiy yozuvlar sonini olish
-	const [countResult] = await sequelize.query(
-		'SELECT COUNT(*) as count FROM category'
-	);
+export const create = async (req, res) => {
+  const category = await Category.create(req.body);
+  res.status(201).json(category);
+};
 
-	if (countResult) {
-		const count = countResult[0].count;
+export const update = async (req, res) => {
+  const category = await Category.update(req.body, {
+    where: { id: req.params.id },
+  });
+  res.status(200).json(category);
+};
 
-		// Sahifalangan yozuvlarni olish
-		const [rows] = await sequelize.query(
-			`SELECT * FROM category LIMIT :limit OFFSET :offset`,
-			{
-				replacements: { limit: limit, offset: offset },
-				type: SequalizeORM.Sequelize.QueryTypes.SELECT,
-			}
-		);
-
-		const totalPages = Math.ceil(count / limit);
-
-		res.status(200).json({
-			totalItems: count,
-			totalPages: totalPages,
-			currentPage: page,
-			users: rows,
-		});
-	}
+export const destroy = async (req, res) => {
+  const category = await Category.destroy({
+    where: { id: req.params.id },
+  });
+  res.status(200).json(category);
 };
