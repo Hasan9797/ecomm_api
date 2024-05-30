@@ -1,14 +1,25 @@
-import { SequalizeORM } from './connections/connect.js';
+import { DataTypes, Model } from "sequelize";
+import { db } from "./connections/connection.db.js";
+import Product from "./model.product.js";
 
-const sequelize = SequalizeORM.sequelizeQuery();
+class Category extends Model {}
 
-export const Category = sequelize.define('User', {
-	name: {
-		type: DataTypes.STRING,
-		allowNull: false,
-	},
-	age: {
-		type: DataTypes.INTEGER,
-		allowNull: false,
-	},
+Category.init(
+  {
+    title: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    description: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+  },
+  { db, modelName: "Category" }
+);
+
+Category.hasMany(Product, {
+  foreignKey: "categoryId",
 });
+
+export default Category;
