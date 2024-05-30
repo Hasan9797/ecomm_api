@@ -1,6 +1,6 @@
-import express from "express";
-import env from "dotenv";
-import { connectDB } from "./connections/connect.js";
+import express from 'express';
+import env from 'dotenv';
+import { SequalizeORM } from './connections/connect.js';
 
 const app = express();
 env.config();
@@ -16,6 +16,6 @@ app.use(express.urlencoded({ extended: false }));
 const PORT = process.env.PORT || 8000;
 
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}:...`);
-  connectDB();
+	console.log(`Server running on port ${PORT}:...`);
+	SequalizeORM.connectDB();
 });
