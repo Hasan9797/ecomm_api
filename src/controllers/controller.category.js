@@ -1,6 +1,5 @@
-import { Sequelize } from "sequelize";
-// import { db } from "./connections/connection.db.js";
-import Category from "../models/model.category.js";
+import dataBase from "../models/model.index.js";
+const { Category } = dataBase;
 
 export const getAll = async (req, res) => {
   const categories = await Category.findAll();

@@ -1,10 +1,8 @@
-import { DataTypes, Model } from "sequelize";
-import { db } from "./connections/connection.db.js";
-import Product from "./model.product.js";
+import { DataTypes } from "sequelize";
+import db from "../connections/connection.db.js";
 
-class Category extends Model {}
-
-Category.init(
+const Category = db.define(
+  "category",
   {
     title: {
       type: DataTypes.STRING,
@@ -15,11 +13,9 @@ Category.init(
       allowNull: false,
     },
   },
-  { db, modelName: "Category" }
+  {
+    timestamps: true,
+  }
 );
-
-Category.hasMany(Product, {
-  foreignKey: "categoryId",
-});
 
 export default Category;

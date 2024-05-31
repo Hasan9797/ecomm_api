@@ -1,33 +1,29 @@
-import { DataTypes, Model } from "sequelize";
-import { db } from "./connections/connection.db.js";
-import Category from "./model.category.js";
+import { DataTypes } from "sequelize";
+import db from "../connections/connection.db.js";
 
-class Product extends Model {}
-
-Product.init(
+const Product = db.define(
+  "product",
   {
     title: {
       type: DataTypes.STRING,
       allowNull: false,
     },
+    img: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
     price: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.BIGINT,
       allowNull: false,
     },
     description: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    // categoryId: {
-    //   type: DataTypes.INTEGER,
-    //   allowNull: false,
-    // },
   },
-  { db, modelName: "Product" }
+  {
+    timestamps: true,
+  }
 );
-
-Product.belongsTo(Category, {
-  foreignKey: "categoryId",
-});
 
 export default Product;
