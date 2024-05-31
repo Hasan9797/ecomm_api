@@ -1,5 +1,6 @@
-import { Sequelize } from "sequelize";
-import { db } from "./connections/connection.db.js";
+import { Sequelize, Op } from "sequelize";
+import dataBase from "../models/model.index.js";
+const { Product, Query } = dataBase;
 
 export const getAll = async (req, res) => {
   const page = req.query.page;
@@ -8,15 +9,19 @@ export const getAll = async (req, res) => {
   const limit = pageSize; // Har bir sahifadagi yozuvlar soni
   const offset = (page - 1) * pageSize; // Qaysi yozuvdan boshlab olish
 
-  // Umumiy yozuvlar sonini olish
-  const [countResult] = await db.query("SELECT COUNT(*) as count FROM product");
+  try {
+    // Umumiy yozuvlar sonini olish
+    const [countResult] = await Query.query(
+      "SELECT COUNT(*) as count FROM products"
+    );
 
-  if (countResult) {
+    if (!countResult) {
+    }
     const count = countResult[0].count;
 
     // Sahifalangan yozuvlarni olish
-    const [rows] = await db.query(
-      `SELECT * FROM product LIMIT :limit OFFSET :offset`,
+    const [rows] = await Query.query(
+      `SELECT * FROM products LIMIT :limit OFFSET :offset`,
       {
         replacements: { limit: limit, offset: offset },
         type: Sequelize.QueryTypes.SELECT,
@@ -29,7 +34,85 @@ export const getAll = async (req, res) => {
       totalItems: count,
       totalPages: totalPages,
       currentPage: page,
-      users: rows,
+      products: rows,
+    });
+  } catch (error) {
+    return res.status(400).json({
+      error: true,
+      errorMessage: error,
     });
   }
+};
+
+export const getById = async (req, res) => {
+  const product = await Product.findByPk(req.params.id);
+  res.status(200).json(product);
+};
+
+export const getByIds = async (req, res) => {
+  const { productIds } = req.body;
+
+  const uniqueProductIds = [...new Set(productIds)];
+
+  const query = `SELECT * FROM products p WHERE p.id IN (:uniqueProductIds)`;
+
+  const productsWithCategories = await Query.query(query, {
+    replacements: { uniqueProductIds },
+    type: Sequelize.QueryTypes.SELECT,
+  });
+
+  // // 3. Har bir ID uchun olingan ma'lumotlarni takrorlanishlarga mos ravishda qayta yig'amiz
+  // const productsMap = {};
+  // productsWithCategories.forEach((product) => {
+  //   productsMap[product.id] = product;
+  // });
+
+  // const result = productIds.map((id) => productsMap[id]);
+
+  res.status(200).json(productsWithCategories);
+};
+
+export const create = async (req, res) => {
+  const newProduct = {
+    title: req.body.title,
+    img: "/" + req.file.filename,
+    price: req.body.price,
+    description: req.body.description,
+  };
+
+  try {
+    const product = await Product.create(newProduct);
+    res.status(201).json(product);
+  } catch (error) {
+    return res.status(400).json({
+      error: true,
+      errorMessage: error,
+    });
+  }
+};
+
+export const update = async (req, res) => {
+  const newProduct = {
+    title: req.body.title,
+    price: req.body.price,
+    description: req.body.description,
+    category_id: req.body.category_id,
+    img: req.body.img,
+  };
+
+  if (req.file) {
+    newProduct.img = "/" + req.file.filename;
+  }
+
+  const product = await Product.update(newProduct, {
+    where: { id: req.body.id },
+  });
+  res.status(200).json(product);
+};
+
+export const destroy = async (req, res) => {
+  const product = await Product.destroy({
+    where: { id: req.params.id },
+  });
+  res.status(200).json(product);
 };
