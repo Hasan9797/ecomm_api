@@ -29,7 +29,7 @@ function checkfile(file, cb) {
 
 export const upload = multer({
   storage: storage,
-  limites: { fileSize: 1000000 },
+  // limites: { fileSize: 1000000 },
   filFilter: function (req, file, cb) {
     checkfile(file, cb);
   },
