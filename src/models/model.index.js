@@ -1,11 +1,16 @@
 import Category from "./model.category.js";
 import Product from "./model.product.js";
+import Order from "./model.order.js";
+import User from "./model.user.js";
 import db from "../connections/connection.db.js";
 
-const dataBase = { Query: db };
+const dataBase = { Query: db }; //DB connection sequalize
 
+// Models
 dataBase.Category = Category;
 dataBase.Product = Product;
+dataBase.Order = Order;
+dataBase.User = User;
 
 dataBase.Category.hasMany(dataBase.Product, {
   as: "products",
