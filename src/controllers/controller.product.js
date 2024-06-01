@@ -1,6 +1,7 @@
 import { Sequelize, Op } from "sequelize";
 import dataBase from "../models/model.index.js";
 const { Product, Query } = dataBase;
+import { unlinkFile } from "../helpers/fileHelper.js";
 
 export const getAll = async (req, res) => {
   const page = req.query.page;
@@ -102,6 +103,9 @@ export const update = async (req, res) => {
 
   if (req.file) {
     newProduct.img = "/" + req.file.filename;
+    const currentFile = await Product.findByPk(req.body.id);
+    const result = unlinkFile([currentFile.img.toString().slice(1)]);
+    console.log(result);
   }
 
   const product = await Product.update(newProduct, {
@@ -114,5 +118,8 @@ export const destroy = async (req, res) => {
   const product = await Product.destroy({
     where: { id: req.params.id },
   });
+  const currentFile = await Product.findByPk(req.params.id);
+  const result = unlinkFile([currentFile.img.toString().slice(1)]);
+  console.log(result);
   res.status(200).json(product);
 };

@@ -16,6 +16,10 @@ const Product = db.define(
       type: DataTypes.BIGINT,
       allowNull: false,
     },
+    status: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
     description: {
       type: DataTypes.STRING,
       allowNull: false,
