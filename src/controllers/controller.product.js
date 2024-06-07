@@ -2,6 +2,7 @@ import { Sequelize, Op } from "sequelize";
 import dataBase from "../models/model.index.js";
 const { Product, Query } = dataBase;
 import { unlinkFile } from "../helpers/fileHelper.js";
+import productEnums from "../enums/product_enum.js";
 
 export const getAll = async (req, res) => {
   const page = req.query.page;
@@ -62,15 +63,17 @@ export const getByIds = async (req, res) => {
     type: Sequelize.QueryTypes.SELECT,
   });
 
-  // // 3. Har bir ID uchun olingan ma'lumotlarni takrorlanishlarga mos ravishda qayta yig'amiz
-  // const productsMap = {};
-  // productsWithCategories.forEach((product) => {
-  //   productsMap[product.id] = product;
-  // });
+  // 3. Har bir ID uchun olingan ma'lumotlarni takrorlanishlarga mos ravishda qayta yig'amiz
+  const productsMap = {};
+  productsWithCategories.forEach((product) => {
+    productsMap[product.id] = { ...product, count: 0 };
+  });
 
-  // const result = productIds.map((id) => productsMap[id]);
+  productIds.forEach((id) => {
+    productsMap[id].count += 1;
+  });
 
-  res.status(200).json(productsWithCategories);
+  res.status(200).json([productsMap]);
 };
 
 export const create = async (req, res) => {
@@ -79,6 +82,7 @@ export const create = async (req, res) => {
     img: "/" + req.file.filename,
     price: req.body.price,
     description: req.body.description,
+    status: productEnums.STATUS_CREATE,
   };
 
   try {
