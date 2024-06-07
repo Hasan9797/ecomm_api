@@ -1,5 +1,5 @@
-const STATUS_ACTIVE = 1;
-const STATUS_CREATE = 0;
+const STATUS_CREATE = 1;
+const STATUS_ACTIVE = 2;
 const STATUS_INACTIVE = -1;
 
 const PRODUCT_STATUS_ENUM = {
