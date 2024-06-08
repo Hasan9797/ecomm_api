@@ -3,7 +3,7 @@ import db from '../connections/connection.db.js';
 import productEnum from '../enums/product_enum.js';
 
 const Product = db.define(
-	'product',
+'product',
 	{
 		title: {
 			type: DataTypes.STRING,
@@ -30,6 +30,7 @@ const Product = db.define(
 	{
 		timestamps: true,
 	}
+
 );
 
 export default Product;

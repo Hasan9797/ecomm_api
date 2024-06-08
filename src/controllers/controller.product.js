@@ -1,3 +1,4 @@
+
 import { Sequelize, Op } from 'sequelize';
 import dataBase from '../models/model.index.js';
 const { Product, SQL } = dataBase;
@@ -102,6 +103,7 @@ export const create = async (req, res) => {
 			errorMessage: error,
 		});
 	}
+
 };
 
 export const update = async (req, res) => {
