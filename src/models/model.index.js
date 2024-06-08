@@ -4,7 +4,7 @@ import Order from "./model.order.js";
 import User from "./model.user.js";
 import db from "../connections/connection.db.js";
 
-const dataBase = { Query: db }; //DB connection sequalize
+const dataBase = { SQL: db }; //DB connection sequalize
 
 // Models
 dataBase.Category = Category;

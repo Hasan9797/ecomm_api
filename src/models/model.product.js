@@ -1,6 +1,7 @@
 import { DataTypes } from 'sequelize';
 import db from '../connections/connection.db.js';
 import productEnum from '../enums/product_enum.js';
+
 const Product = db.define(
 	'product',
 	{
