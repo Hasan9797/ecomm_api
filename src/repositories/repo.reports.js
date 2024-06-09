@@ -19,3 +19,5 @@ class ReportRepository {
 }
 
 export default new ReportRepository();
+
+// 5902160586 tg bot chat_id
