@@ -45,3 +45,8 @@ jobs:
             git pull
             npm install
             pm2 restart 0
+
+      - name: Notify Telegram on success
+        if: success()
+        run: |
+          curl -s -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} -d text="Anvar tog'o Loyihasi backend qismi uchuun CD jarayoni muvaffaqiyatli yakunlandi"
