@@ -30,4 +30,4 @@ jobs:
       - name: Notify Telegram on success
         if: success()
         run: |
-          curl -s -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} -d text="CI jarayoni muvaffaqiyatli yakunlandi"
+          curl -s -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} -d text="Anvar tog'o Loyihasi backend qismi uchuun CI jarayoni muvaffaqiyatli yakunlandi"
