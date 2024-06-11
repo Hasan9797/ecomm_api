@@ -29,7 +29,6 @@ jobs:
       - name: Notify Telegram on success
         if: success()
         run: |
-          COMMIT_AUTHOR=$(git log -1 --pretty=format:"%an")
           curl -s -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage \
           -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
           -d text="CD Successfully. Server PROD"
@@ -37,7 +36,6 @@ jobs:
       - name: Notify Telegram on failure
         if: failure()
         run: |
-          COMMIT_AUTHOR=$(git log -1 --pretty=format:"%an")
           curl -s -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage \
           -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
           -d text="CD Failed. Server PROD"
