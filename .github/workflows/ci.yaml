@@ -22,18 +22,25 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-          cache: "npm"
+          cache: 'npm'
 
       - name: Install dependencies
         run: npm i
 
       - name: Notify Telegram on success
-        if: success()
+        if: github.event_name == 'push' && success()
         run: |
           COMMIT_MESSAGE=$(git log -1 --pretty=format:"%s")
           COMMIT_AUTHOR=$(git log -1 --pretty=format:"%an")
           curl -s -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage \
           -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
-          -d text="CI Successfully.\
-          -d nCommit: $COMMIT_MESSAGE\ 
-          -d nAuthor: $COMMIT_AUTHOR"
+          -d text="CI Successfully.\\nCommit: $COMMIT_MESSAGE\\nAuthor: $COMMIT_AUTHOR"
+
+      - name: Notify Telegram on pull request success
+        if: github.event_name == 'pull_request' && success()
+        run: |
+          COMMIT_MESSAGE=$(git log -1 --pretty=format:"%s")
+          COMMIT_AUTHOR=$(git log -1 --pretty=format:"%an")
+          curl -s -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage \
+          -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
+          -d text="Pull request successful.\\nCommit: $COMMIT_MESSAGE\\nAuthor: $COMMIT_AUTHOR"
