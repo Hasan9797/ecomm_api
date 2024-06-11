@@ -3,6 +3,8 @@ name: Node.js CI
 on:
   push:
     branches: [main]
+   pull_request:
+    branches: [main]
 
 jobs:
   build:
@@ -32,4 +34,6 @@ jobs:
           COMMIT_AUTHOR=$(git log -1 --pretty=format:"%an")
           curl -s -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage \
           -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
-          -d text="CI Successfully.\\nCommit: $COMMIT_MESSAGE\\nAuthor: $COMMIT_AUTHOR"
+          -d text="CI Successfully.\
+          -d nCommit: $COMMIT_MESSAGE\ 
+          -d nAuthor: $COMMIT_AUTHOR"
