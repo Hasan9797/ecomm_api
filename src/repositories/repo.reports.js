@@ -1,21 +1,31 @@
-import { Sequelize, Op } from "sequelize";
-import dataBase from "../models/model.index.js";
+import { Sequelize, Op } from 'sequelize';
+import dataBase from '../models/model.index.js';
 const { Order, SQL } = dataBase;
 
 class ReportRepository {
-  async findAllReports(from, to, limit, offset) {
-    const allReports = await SQL.query(
-      `SELECT * FROM orders WHERE created_at >= ${from} AND created_at <= ${to}`,
-      {
-        type: Sequelize.QueryTypes.SELECT,
-      }
-    );
-    return allReports;
-  }
+	// constructor(from, to) {}
 
-  async findReportByUserId(categoryId) {
-    return await Order.findByPk(categoryId);
-  }
+	async findAllReports(from, to) {
+		const allReports = await SQL.query(
+			`SELECT * WHERE created_at >= ${from} AND created_at <= ${to}`,
+			{
+				type: Sequelize.QueryTypes.SELECT,
+			}
+		);
+		const groupByStatus = SQL.query(
+			`SELECT * FROM orders
+    		 WHERE created_at >= ${from} AND created_at <= ${to}
+    		 GROUP BY status`,
+			{
+				type: Sequelize.QueryTypes.SELECT,
+			}
+		);
+		return allReports;
+	}
+
+	async findReportByUserId(categoryId) {
+		return await Order.findByPk(categoryId);
+	}
 }
 
 export default new ReportRepository();
