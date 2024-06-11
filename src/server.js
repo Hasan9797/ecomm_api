@@ -11,9 +11,11 @@ env.config();
 import categoryRouter from './routers/router.category.js';
 import productRouter from './routers/router.product.js';
 import orderRouter from './routers/router.order.js';
+import reportsRouter from './routers/router.reports.js';
 
 // import Middlewares
 import errorHandler from './middlewares/errorHandler.js';
+import GeneralError from './helpers/generalError.js';
 
 //base url
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -25,6 +27,7 @@ app.use(express.static(path.join(__dirname, '..', 'Uploads')));
 app.use('/api/category', categoryRouter);
 app.use('/api/product', productRouter);
 app.use('/api/order', orderRouter);
+app.use('/api/report', reportsRouter);
 // app.use("/api/user");
 
 // Catch all route for 404 errors
@@ -48,7 +51,7 @@ const start = async () => {
 		console.log('Connection has been established successfully.');
 
 		// await db.sync({ force: true });
-		// console.log("Database synchronized");
+		// console.log('Database synchronized');
 	} catch (error) {
 		console.error('Unable to connect to the database:', error);
 	}
