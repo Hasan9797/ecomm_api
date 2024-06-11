@@ -25,12 +25,9 @@ jobs:
             git pull
             npm install
             pm2 restart 0
-            COMMIT_MESSAGE=$(git log -1 --pretty=format:"%s")
             COMMIT_AUTHOR=$(git log -1 --pretty=format:"%an")
-            echo "COMMIT_MESSAGE=$COMMIT_MESSAGE" >> $GITHUB_ENV
-            echo "COMMIT_AUTHOR=$COMMIT_AUTHOR" >> $GITHUB_ENV
 
-      - name: Notify Telegram on success
+       - name: Notify Telegram on success
         if: success()
         run: |
           curl -s -X POST https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage \
