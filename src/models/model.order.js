@@ -25,16 +25,12 @@ const Order = db.define(
 		createdAt: {
 			type: DataTypes.INTEGER,
 			allowNull: false,
-			get() {
-				return this.getDataValue('createdAt');
-			},
+			defaultValue: () => Math.floor(Date.now() / 1000),
 		},
 		updatedAt: {
 			type: DataTypes.INTEGER,
 			allowNull: false,
-			get() {
-				return this.getDataValue('updatedAt');
-			},
+			defaultValue: () => Math.floor(Date.now() / 1000),
 		},
 	},
 	{
