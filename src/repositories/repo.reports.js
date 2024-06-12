@@ -2,32 +2,27 @@ import { Sequelize, Op } from 'sequelize';
 import dataBase from '../models/model.index.js';
 const { Order, SQL } = dataBase;
 
-class ReportRepository {
-	// constructor(from, to) {}
+const getOrderStatsGroupedByStatus = async (startDate, endDate) => {
+	try {
+		const result = await Order.findAll({
+			attributes: [
+				'status',
+				[Sequelize.fn('COUNT', Sequelize.col('id')), 'status_count'],
+				[Sequelize.fn('ARRAY_AGG', Sequelize.col('*')), 'orders'],
+			],
+			where: {
+				createdAt: {
+					[Op.between]: [startDate, endDate],
+				},
+			},
+			group: ['status'],
+		});
 
-	async findAllReports(from, to) {
-		const allReports = await SQL.query(
-			`SELECT * WHERE created_at >= ${from} AND created_at <= ${to}`,
-			{
-				type: Sequelize.QueryTypes.SELECT,
-			}
-		);
-		const groupByStatus = SQL.query(
-			`SELECT * FROM orders
-    		 WHERE created_at >= ${from} AND created_at <= ${to}
-    		 GROUP BY status`,
-			{
-				type: Sequelize.QueryTypes.SELECT,
-			}
-		);
-		return allReports;
+		return result;
+	} catch (error) {
+		console.error('Error fetching order stats:', error);
+		throw error;
 	}
+};
 
-	async findReportByUserId(categoryId) {
-		return await Order.findByPk(categoryId);
-	}
-}
-
-export default new ReportRepository();
-
-// 5902160586 tg bot chat_id
+export default getOrderStatsGroupedByStatus();
