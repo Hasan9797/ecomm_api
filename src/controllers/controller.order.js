@@ -77,7 +77,10 @@ const create = async (req, res) => {
 		return res.status(404).json({ message: 'Invaled user number' });
 	}
 
-	const order = await Order.create(req.body);
+	const order = await Order.create({
+		products: JSON.stringify(req.body.products),
+		...req.body,
+	});
 	res.status(201).json(order);
 };
 
