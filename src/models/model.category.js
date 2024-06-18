@@ -8,6 +8,10 @@ const Category = db.define(
 			type: DataTypes.STRING,
 			allowNull: false,
 		},
+		img: {
+			type: DataTypes.STRING,
+			allowNull: false,
+		},
 		description: {
 			type: DataTypes.STRING,
 			allowNull: false,
