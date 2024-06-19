@@ -1,5 +1,6 @@
 import dataBase from '../models/model.index.js';
-const { Category, Product } = dataBase;
+import { unlinkFile } from '../helpers/fileHelper.js';
+const { Category } = dataBase;
 
 const getAll = async (req, res) => {
 	const categories = await Category.findAll({
@@ -20,17 +21,8 @@ const getById = async (req, res) => {
 				{
 					model: Category,
 					as: 'subcategories',
-					include: [
-						{
-							model: Category,
-							as: 'subcategories',
-						},
-					],
 				},
-				{
-					model: Product,
-					as: 'products',
-				},
+				,
 			],
 		});
 
@@ -62,7 +54,7 @@ const update = async (req, res) => {
 	if (req.file) {
 		newCategory.img = '/' + req.file.filename;
 		const currentFile = await Category.findByPk(req.body.id);
-		const result = unlinkFile([currentFile.img.toString().slice(1)]);
+		unlinkFile([currentFile.img.toString().slice(1)]);
 	}
 
 	const category = await Category.update(newCategory, {

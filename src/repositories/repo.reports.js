@@ -28,7 +28,7 @@ const getAllReport = async (startDate, endDate) => {
 	}
 };
 
-const getReportByUser = async (userName, startDate, endDate) => {
+const getReportByUser = async (startDate, endDate, userNumber) => {
 	try {
 		const result = await Order.findAll({
 			attributes: [
@@ -43,17 +43,16 @@ const getReportByUser = async (userName, startDate, endDate) => {
 				createdAt: {
 					[Op.between]: [startDate, endDate],
 				},
-				user_name: userName,
+				user_number: userNumber,
 			},
 			group: ['status'],
 		});
 
-		return {
-			result,
-		};
+		return result;
 	} catch (error) {
 		console.error('Error fetching order stats:', error);
 		throw error;
 	}
 };
+
 export default { getAllReport, getReportByUser };

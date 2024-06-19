@@ -21,12 +21,13 @@ const getAll = async (req, res) => {
 			}
 		);
 
-		if (!countResult) {
+		if (!countResult || countResult.count == 0) {
+			return res.status(404).json({ message: 'Products not found' });
 		}
-		const count = countResult[0].count;
+		const count = countResult.count;
 
 		// Sahifalangan yozuvlarni olish
-		const [rows] = await SQL.query(
+		const rows = await SQL.query(
 			`SELECT * FROM products LIMIT :limit OFFSET :offset`,
 			{
 				replacements: { limit: limit, offset: offset },
@@ -45,7 +46,7 @@ const getAll = async (req, res) => {
 	} catch (error) {
 		return res.status(400).json({
 			error: true,
-			errorMessage: error,
+			errorMessage: error.message,
 		});
 	}
 };
@@ -85,12 +86,62 @@ const getProductsInOrder = async (req, res) => {
 	res.status(200).json(array);
 };
 
+const getProductsByCtegoryId = async (req, res) => {
+	const page = req.query.page;
+	const pageSize = req.query.pageSize;
+
+	const limit = pageSize; // Har bir sahifadagi yozuvlar soni
+	const offset = (page - 1) * pageSize; // Qaysi yozuvdan boshlab olish
+
+	try {
+		// Umumiy yozuvlar sonini olish
+		const [countResult] = await SQL.query(
+			'SELECT COUNT(*) as count FROM products',
+			{
+				type: Sequelize.QueryTypes.SELECT,
+			}
+		);
+		if (!countResult || countResult.count == 0) {
+			return res.status(404).json({ message: 'Products not found' });
+		}
+		const count = countResult.count;
+
+		// Sahifalangan yozuvlarni olish
+		const rows = await SQL.query(
+			`SELECT * FROM products WHERE category_id = :categoryId LIMIT :limit OFFSET :offset`,
+			{
+				replacements: {
+					categoryId: req.params.id,
+					limit: limit,
+					offset: offset,
+				},
+				type: Sequelize.QueryTypes.SELECT,
+			}
+		);
+
+		const totalPages = Math.ceil(count / limit);
+
+		res.status(200).json({
+			totalItems: count,
+			totalPages: totalPages,
+			currentPage: page,
+			products: rows,
+		});
+	} catch (error) {
+		return res.status(400).json({
+			error: true,
+			errorMessage: error,
+		});
+	}
+};
+
 const create = async (req, res) => {
 	const newProduct = {
 		title: req.body.title,
 		img: '/' + req.file.filename,
 		price: req.body.price,
 		description: req.body.description,
+		category_id: req.body.category_id,
 		status: productEnums.STATUS_CREATE,
 	};
 
@@ -136,4 +187,12 @@ const destroy = async (req, res) => {
 	res.status(200).json(product);
 };
 
-export default { getAll, getById, getProductsInOrder, create, update, destroy };
+export default {
+	getAll,
+	getById,
+	getProductsInOrder,
+	getProductsByCtegoryId,
+	create,
+	update,
+	destroy,
+};
