@@ -85,6 +85,51 @@ const getProductsInOrder = async (req, res) => {
 	res.status(200).json(array);
 };
 
+const getProductsByCtegoryId = async (req, res) => {
+	const page = req.query.page;
+	const pageSize = req.query.pageSize;
+
+	const limit = pageSize; // Har bir sahifadagi yozuvlar soni
+	const offset = (page - 1) * pageSize; // Qaysi yozuvdan boshlab olish
+
+	try {
+		// Umumiy yozuvlar sonini olish
+		const [countResult] = await SQL.query(
+			'SELECT COUNT(*) as count FROM products',
+			{
+				type: Sequelize.QueryTypes.SELECT,
+			}
+		);
+
+		if (!countResult) {
+		}
+		const count = countResult[0].count;
+
+		// Sahifalangan yozuvlarni olish
+		const [rows] = await SQL.query(
+			`SELECT * FROM products LIMIT :limit OFFSET :offset`,
+			{
+				replacements: { limit: limit, offset: offset },
+				type: Sequelize.QueryTypes.SELECT,
+			}
+		);
+
+		const totalPages = Math.ceil(count / limit);
+
+		res.status(200).json({
+			totalItems: count,
+			totalPages: totalPages,
+			currentPage: page,
+			products: rows,
+		});
+	} catch (error) {
+		return res.status(400).json({
+			error: true,
+			errorMessage: error,
+		});
+	}
+};
+
 const create = async (req, res) => {
 	const newProduct = {
 		title: req.body.title,
@@ -136,4 +181,12 @@ const destroy = async (req, res) => {
 	res.status(200).json(product);
 };
 
-export default { getAll, getById, getProductsInOrder, create, update, destroy };
+export default {
+	getAll,
+	getById,
+	getProductsInOrder,
+	getProductsByCtegoryId,
+	create,
+	update,
+	destroy,
+};
