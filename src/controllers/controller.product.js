@@ -21,12 +21,13 @@ const getAll = async (req, res) => {
 			}
 		);
 
-		if (!countResult) {
+		if (!countResult || countResult.count == 0) {
+			return res.status(404).json({ message: 'Products not found' });
 		}
-		const count = countResult[0].count;
+		const count = countResult.count;
 
 		// Sahifalangan yozuvlarni olish
-		const [rows] = await SQL.query(
+		const rows = await SQL.query(
 			`SELECT * FROM products LIMIT :limit OFFSET :offset`,
 			{
 				replacements: { limit: limit, offset: offset },
@@ -45,7 +46,7 @@ const getAll = async (req, res) => {
 	} catch (error) {
 		return res.status(400).json({
 			error: true,
-			errorMessage: error,
+			errorMessage: error.message,
 		});
 	}
 };
@@ -100,16 +101,20 @@ const getProductsByCtegoryId = async (req, res) => {
 				type: Sequelize.QueryTypes.SELECT,
 			}
 		);
-
-		if (!countResult) {
+		if (!countResult || countResult.count == 0) {
+			return res.status(404).json({ message: 'Products not found' });
 		}
-		const count = countResult[0].count;
+		const count = countResult.count;
 
 		// Sahifalangan yozuvlarni olish
-		const [rows] = await SQL.query(
-			`SELECT * FROM products LIMIT :limit OFFSET :offset`,
+		const rows = await SQL.query(
+			`SELECT * FROM products WHERE category_id = :categoryId LIMIT :limit OFFSET :offset`,
 			{
-				replacements: { limit: limit, offset: offset },
+				replacements: {
+					categoryId: req.params.id,
+					limit: limit,
+					offset: offset,
+				},
 				type: Sequelize.QueryTypes.SELECT,
 			}
 		);
@@ -136,6 +141,7 @@ const create = async (req, res) => {
 		img: '/' + req.file.filename,
 		price: req.body.price,
 		description: req.body.description,
+		category_id: req.body.category_id,
 		status: productEnums.STATUS_CREATE,
 	};
 
