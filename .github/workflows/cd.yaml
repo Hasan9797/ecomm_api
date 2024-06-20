@@ -10,6 +10,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14' # Node versiyasi
+
+      - name: Install dependencies
+        run: npm install
+
       - name: Setup SSH
         uses: appleboy/ssh-action@master
         id: ssh
@@ -21,11 +32,12 @@ jobs:
           script: |
             set -x
             cd ~/ecomm_api/ || { echo "Failed to change directory"; exit 1; }
-            git config pull.rebase true || { echo "git config failed"; exit 1; }
+            git config pull.rebase false || { echo "git config failed"; exit 1; }
             git stash || { echo "git stash failed"; exit 1; }
-            git pull || { echo "git pull failed"; exit 1; }
+            git pull -X theirs || { echo "git pull failed"; exit 1; }
             git stash pop || { echo "git stash pop failed"; exit 1; }
             npm install || { echo "npm install failed"; exit 1; }
+            # npx sequelize-cli db:migrate || { echo "sequelize migrate failed"; exit 1; }
             pm2 restart 0 || { echo "pm2 restart failed"; exit 1; }
             set +x
 
