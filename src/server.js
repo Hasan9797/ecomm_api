@@ -14,7 +14,7 @@ app.use(cors());
 // import Routers
 import categoryRouter from './routers/router.category.js';
 import productRouter from './routers/router.product.js';
-import orderRouter from './routers/router.order.js';
+import orderRouter from './routers/order.js';
 import reportsRouter from './routers/router.reports.js';
 
 // import Middlewares
