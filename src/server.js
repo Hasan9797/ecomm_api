@@ -8,16 +8,8 @@ import db from "./connections/connection.db.js";
 const app = express();
 env.config();
 
-const corsOptions = {
-  origin: "*", // Barcha domenlar uchun ochiq
-  methods: ["GET", "POST", "PUT", "DELETE"], // Ruxsat etilgan metodlar
-  allowedHeaders: ["Content-Type", "Authorization"], // Ruxsat etilgan sarlavhalar
-  credentials: true, // Credetials qo'llab-quvvatlash
-  optionsSuccessStatus: 200,
-};
-
+app.use(cors());
 // CORS middleware ni ishlating
-app.use(cors(corsOptions));
 
 // import Routers
 import categoryRouter from "./routers/router.category.js";
