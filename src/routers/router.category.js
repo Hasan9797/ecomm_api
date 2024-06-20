@@ -7,6 +7,6 @@ category.get("/", categoryControllers.getAll);
 category.get("/byId/:id", categoryControllers.getById);
 category.post("/add", upload.single("img"), categoryControllers.create);
 category.post("/update", upload.single("img"), categoryControllers.update);
-product.delete("/delete/:id", categoryControllers.destroy);
+category.delete("/delete/:id", categoryControllers.destroy);
 
 export default category;

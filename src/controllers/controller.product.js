@@ -136,13 +136,13 @@ const getProductsByCtegoryId = async (req, res) => {
 };
 
 const create = async (req, res) => {
-  const title_ru = req.body.title_ru;
-  const title_uz = req.body.title_uz;
-  const title = title_uz.concat(" ", title_ru);
   const newProduct = {
-    title: title,
+    title_uz: req.body.title_uz,
+    title_ru: req.body.title_ru,
     img: "/" + req.file.filename,
+    gallery: req.body.gallery,
     price: req.body.price,
+    characteristic: JSON.stringify(req.body.characteristic),
     description: req.body.description,
     category_id: req.body.category_id,
     status: productEnums.STATUS_CREATE,
@@ -161,11 +161,8 @@ const create = async (req, res) => {
 
 const update = async (req, res) => {
   const newProduct = {
-    title: req.body.title,
-    price: req.body.price,
-    description: req.body.description,
-    category_id: req.body.category_id,
     img: req.body.img,
+    ...req.body,
   };
 
   if (req.file) {
