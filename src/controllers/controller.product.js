@@ -59,30 +59,31 @@ const getById = async (req, res) => {
 const getProductsInOrder = async (req, res) => {
   const { productIds } = req.body;
 
-  const uniqueProductIds = [...new Set(productIds)];
+  const uniqueProductIds = productIds.map((item) => item.id);
 
   const query = `SELECT * FROM products p WHERE p.id IN (:uniqueProductIds)`;
 
-  const productsWithCategories = await Query.query(query, {
+  const productsWithCategories = await SQL.query(query, {
     replacements: { uniqueProductIds },
     type: Sequelize.QueryTypes.SELECT,
   });
 
   // 3. Har bir ID uchun olingan ma'lumotlarni takrorlanishlarga mos ravishda qayta yig'amiz
   const productsMap = {};
-  productsWithCategories.forEach((product) => {
-    productsMap[product.id] = { ...product, count: 0 };
-  });
+  const array = productsWithCategories.map(
+    (product) => (product = { ...product, count: 0 })
+  );
 
-  productIds.forEach((id) => {
-    productsMap[id].count += 1;
-  });
+  // productIds.forEach((item) => {
+  //   productsMap[item.id].count = item.count;
+  //   productsMap[item.id].price = item.price * item.count;
+  // });
 
-  const array = [];
-  for (const value of Object.values(productsMap)) {
-    value.price = value.price * value.count;
-    array.push(value);
-  }
+  // const array = [];
+  // for (const value of Object.values(productsMap)) {
+  //   value.price = value.price * value.count;
+  //   array.push(value);
+  // }
   res.status(200).json(array);
 };
 
