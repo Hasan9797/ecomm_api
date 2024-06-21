@@ -1,8 +1,8 @@
-import Category from './model.category.js';
-import Product from './model.product.js';
-import Order from './model.order.js';
-import User from './model.user.js';
-import db from '../connections/connection.db.js';
+import Category from "./model.category.js";
+import Product from "./model.product.js";
+import Order from "./model.order.js";
+import User from "./model.user.js";
+import db from "../connections/connection.db.js";
 
 const dataBase = { SQL: db }; //DB connection sequalize
 
@@ -13,24 +13,24 @@ dataBase.Order = Order;
 dataBase.User = User;
 
 dataBase.Category.hasMany(dataBase.Product, {
-	as: 'products',
-	onDelete: 'CASCADE',
-	constraints: true,
+  as: "products",
+  onDelete: "CASCADE",
+  constraints: true,
 });
 
 dataBase.Product.belongsTo(dataBase.Category, {
-	foreignKey: 'category_id',
-	as: 'category',
+  foreignKey: "category_id",
+  as: "category",
 });
 
 dataBase.Category.hasMany(dataBase.Category, {
-	as: 'subcategories',
-	foreignKey: 'parentId',
+  as: "subcategories",
+  foreignKey: "parentId",
 });
 
 dataBase.Category.belongsTo(dataBase.Category, {
-	as: 'parent',
-	foreignKey: 'parentId',
+  as: "parent",
+  foreignKey: "parentId",
 });
 
 export default dataBase;
