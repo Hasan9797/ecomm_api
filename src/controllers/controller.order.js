@@ -78,7 +78,7 @@ const create = async (req, res) => {
 	}
 
 	const order = await Order.create({
-		products: JSON.stringify(req.body.products),
+		products: req.body.products,
 		...req.body,
 	});
 	res.status(201).json(order);

@@ -19,8 +19,6 @@ class GeneralError extends Error {
 	static internal(message = 'Internal Server Error') {
 		return new GeneralError(message, 500);
 	}
-
-	// ...
 }
 
 export default GeneralError;
