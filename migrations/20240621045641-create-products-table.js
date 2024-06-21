@@ -1,5 +1,4 @@
-
-export async function up(queryInterface, Sequelize) {
+export const up = async (queryInterface, Sequelize) => {
 	await queryInterface.createTable(
 		'Products',
 		{
@@ -75,8 +74,8 @@ export async function up(queryInterface, Sequelize) {
 			},
 		}
 	);
-}
+};
 
-export async function down(queryInterface, Sequelize) {
+export const down = async (queryInterface, Sequelize) => {
 	await queryInterface.dropTable('Products');
-}
+};
