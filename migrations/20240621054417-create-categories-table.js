@@ -6,6 +6,12 @@ module.exports = {
     await queryInterface.createTable(
       "categories",
       {
+        id: {
+          allowNull: false,
+          autoIncrement: true,
+          primaryKey: true,
+          type: Sequelize.INTEGER,
+        },
         title_uz: {
           type: DataTypes.STRING,
           allowNull: false,
