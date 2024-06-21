@@ -58,7 +58,7 @@ const update = async (req, res) => {
   }
 
   const category = await Category.update(newCategory, {
-    where: { id: req.body.id },
+    where: { id: req.query.id },
   });
   res.status(200).json(category);
 };
