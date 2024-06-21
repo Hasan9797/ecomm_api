@@ -1,4 +1,3 @@
-'use strict';
 
 export async function up(queryInterface, Sequelize) {
 	await queryInterface.createTable(
