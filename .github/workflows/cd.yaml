@@ -35,6 +35,12 @@ jobs:
             git config pull.rebase false || { echo "git config failed"; exit 1; }
             git stash || { echo "git stash failed"; exit 1; }
             git pull -X theirs || { echo "git pull failed"; exit 1; }
+
+            # Konfliktlarni hal qilish
+            git merge --strategy-option theirs || { echo "git merge failed"; exit 1; }
+            git add . || { echo "git add failed"; exit 1; }
+            git commit -m "Resolved merge conflicts" || { echo "git commit failed"; exit 1; }
+
             git stash pop || { echo "git stash pop failed"; exit 1; }
             npm install || { echo "npm install failed"; exit 1; }
             npx sequelize-cli db:migrate || { echo "sequelize migrate failed"; exit 1; }
