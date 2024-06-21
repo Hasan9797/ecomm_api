@@ -19,10 +19,10 @@ const Product = db.define(
     },
     gallery: {
       type: DataTypes.JSON,
-      allowNull: false,
+      allowNull: true,
     },
     price: {
-      type: DataTypes.BIGINT,
+      type: DataTypes.FLOAT,
       allowNull: false,
     },
     status: {
@@ -32,14 +32,14 @@ const Product = db.define(
     },
     characteristic: {
       type: DataTypes.JSON,
-      allowNull: false,
+      allowNull: true,
     },
     description_uz: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
       allowNull: false,
     },
     description_ru: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
       allowNull: false,
     },
     createdAt: {

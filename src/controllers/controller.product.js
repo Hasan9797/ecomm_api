@@ -143,7 +143,8 @@ const create = async (req, res) => {
     gallery: req.body.gallery,
     price: req.body.price,
     characteristic: JSON.stringify(req.body.characteristic),
-    description: req.body.description,
+    description_uz: req.body.description_uz,
+    description_ru: req.body.description_ru,
     category_id: req.body.category_id,
     status: productEnums.STATUS_CREATE,
   };
