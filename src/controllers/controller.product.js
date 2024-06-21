@@ -1,200 +1,220 @@
-import { Sequelize, Op } from "sequelize";
-import dataBase from "../models/model.index.js";
+import { Sequelize, Op } from 'sequelize';
+import dataBase from '../models/model.index.js';
 const { Product, SQL } = dataBase;
 
-import { unlinkFile } from "../helpers/fileHelper.js";
-import productEnums from "../enums/product_enum.js";
+import { unlinkFile } from '../helpers/fileHelper.js';
 
 const getAll = async (req, res) => {
-  const page = req.query.page;
-  const pageSize = req.query.pageSize;
+	const page = req.query.page;
+	const pageSize = req.query.pageSize;
 
-  const limit = pageSize; // Har bir sahifadagi yozuvlar soni
-  const offset = (page - 1) * pageSize; // Qaysi yozuvdan boshlab olish
+	const limit = pageSize; // Har bir sahifadagi yozuvlar soni
+	const offset = (page - 1) * pageSize; // Qaysi yozuvdan boshlab olish
 
-  try {
-    // Umumiy yozuvlar sonini olish
-    const [countResult] = await SQL.query(
-      "SELECT COUNT(*) as count FROM products",
-      {
-        type: Sequelize.QueryTypes.SELECT,
-      }
-    );
+	try {
+		// Umumiy yozuvlar sonini olish
+		const [countResult] = await SQL.query(
+			'SELECT COUNT(*) as count FROM products',
+			{
+				type: Sequelize.QueryTypes.SELECT,
+			}
+		);
 
-    if (!countResult || countResult.count == 0) {
-      return res.status(404).json({ message: "Products not found" });
-    }
-    const count = countResult.count;
+		if (!countResult || countResult.count == 0) {
+			return res.status(200).json({ message: 'Products not found', data: [] });
+		}
+		const count = countResult.count;
 
-    // Sahifalangan yozuvlarni olish
-    const rows = await SQL.query(
-      `SELECT * FROM products LIMIT :limit OFFSET :offset`,
-      {
-        replacements: { limit: limit, offset: offset },
-        type: Sequelize.QueryTypes.SELECT,
-      }
-    );
+		// Sahifalangan yozuvlarni olish
+		const rows = await SQL.query(
+			`SELECT * FROM products LIMIT :limit OFFSET :offset`,
+			{
+				replacements: { limit: limit, offset: offset },
+				type: Sequelize.QueryTypes.SELECT,
+			}
+		);
 
-    const totalPages = Math.ceil(count / limit);
+		const totalPages = Math.ceil(count / limit);
 
-    res.status(200).json({
-      totalItems: count,
-      totalPages: totalPages,
-      currentPage: page,
-      products: rows,
-    });
-  } catch (error) {
-    return res.status(400).json({
-      error: true,
-      errorMessage: error.message,
-    });
-  }
+		res.status(200).json({
+			message: 'Get products successfully',
+			totalItems: count,
+			totalPages: totalPages,
+			currentPage: page,
+			data: rows,
+		});
+	} catch (error) {
+		throw new Error(error);
+	}
 };
 
 const getById = async (req, res) => {
-  const product = await Product.findByPk(req.params.id);
-  res.status(200).json(product);
+	try {
+		const product = await Product.findByPk(req.params.id);
+
+		if (!product) {
+			return res.status(200).json({ message: 'Products not found', data: {} });
+		}
+		res
+			.status(200)
+			.json({ message: 'Get product successfully', data: product });
+	} catch (error) {
+		throw new Error(error);
+	}
 };
 
 const getProductsInOrder = async (req, res) => {
-  const { productIds } = req.body;
+	const { productIds } = req.body;
 
-  const uniqueProductIds = productIds.map((item) => item.id);
+	const uniqueProductIds = productIds.map(item => item.id);
 
-  const query = `SELECT * FROM products p WHERE p.id IN (:uniqueProductIds)`;
+	const query = `SELECT * FROM products p WHERE p.id IN (:uniqueProductIds)`;
 
-  const productsWithCategories = await SQL.query(query, {
-    replacements: { uniqueProductIds },
-    type: Sequelize.QueryTypes.SELECT,
-  });
+	try {
+		const productsWithCategories = await SQL.query(query, {
+			replacements: { uniqueProductIds },
+			type: Sequelize.QueryTypes.SELECT,
+		});
+		console.log(productsWithCategories);
 
-  // 3. Har bir ID uchun olingan ma'lumotlarni takrorlanishlarga mos ravishda qayta yig'amiz
-  const productsMap = {};
-  const array = productsWithCategories.map(
-    (product) => (product = { ...product, count: 0 })
-  );
+		if (!productsWithCategories || productsWithCategories.length === 0) {
+			return res.status(200).json({
+				message: 'Products not found',
+				data: [],
+			});
+		}
+		// 3. Har bir ID uchun olingan ma'lumotlarni takrorlanishlarga mos ravishda qayta yig'amiz
+		const productsMap = {};
+		productsWithCategories.forEach(product => {
+			productsMap[product.id] = { ...product, count: 0 };
+		});
 
-  // productIds.forEach((item) => {
-  //   productsMap[item.id].count = item.count;
-  //   productsMap[item.id].price = item.price * item.count;
-  // });
-
-  // const array = [];
-  // for (const value of Object.values(productsMap)) {
-  //   value.price = value.price * value.count;
-  //   array.push(value);
-  // }
-  res.status(200).json(array);
+		const array = productIds.map(item => {
+			productsMap[item.id].count = item.count;
+			productsMap[item.id].price *= item.count;
+			return productsMap[item.id];
+		});
+		res.status(200).json({ message: 'get products successfully', data: array });
+	} catch (error) {
+		throw new Error(error);
+	}
 };
 
 const getProductsByCtegoryId = async (req, res) => {
-  const page = req.query.page;
-  const pageSize = req.query.pageSize;
+	const page = req.query.page;
+	const pageSize = req.query.pageSize;
 
-  const limit = pageSize; // Har bir sahifadagi yozuvlar soni
-  const offset = (page - 1) * pageSize; // Qaysi yozuvdan boshlab olish
+	const limit = pageSize; // Har bir sahifadagi yozuvlar soni
+	const offset = (page - 1) * pageSize; // Qaysi yozuvdan boshlab olish
 
-  try {
-    // Umumiy yozuvlar sonini olish
-    const [countResult] = await SQL.query(
-      "SELECT COUNT(*) as count FROM products",
-      {
-        type: Sequelize.QueryTypes.SELECT,
-      }
-    );
-    if (!countResult || countResult.count == 0) {
-      return res.status(404).json({ message: "Products not found" });
-    }
-    const count = countResult.count;
+	try {
+		// Umumiy yozuvlar sonini olish
+		const [countResult] = await SQL.query(
+			'SELECT COUNT(*) as count FROM products',
+			{
+				type: Sequelize.QueryTypes.SELECT,
+			}
+		);
+		if (!countResult || countResult.count == 0) {
+			return res.status(200).json({ message: 'Products not found', data: [] });
+		}
+		const count = countResult.count;
 
-    // Sahifalangan yozuvlarni olish
-    const rows = await SQL.query(
-      `SELECT * FROM products WHERE category_id = :categoryId LIMIT :limit OFFSET :offset`,
-      {
-        replacements: {
-          categoryId: req.params.id,
-          limit: limit,
-          offset: offset,
-        },
-        type: Sequelize.QueryTypes.SELECT,
-      }
-    );
+		// Sahifalangan yozuvlarni olish
+		const rows = await SQL.query(
+			`SELECT * FROM products WHERE category_id = :categoryId LIMIT :limit OFFSET :offset`,
+			{
+				replacements: {
+					categoryId: req.params.id,
+					limit: limit,
+					offset: offset,
+				},
+				type: Sequelize.QueryTypes.SELECT,
+			}
+		);
 
-    const totalPages = Math.ceil(count / limit);
+		const totalPages = Math.ceil(count / limit);
 
-    res.status(200).json({
-      totalItems: count,
-      totalPages: totalPages,
-      currentPage: page,
-      products: rows,
-    });
-  } catch (error) {
-    return res.status(400).json({
-      error: true,
-      errorMessage: error,
-    });
-  }
+		res.status(200).json({
+			message: 'Get products successfully',
+			totalItems: count,
+			totalPages: totalPages,
+			currentPage: page,
+			data: rows,
+		});
+	} catch (error) {
+		throw new Error(error);
+	}
 };
 
 const create = async (req, res) => {
-  const newProduct = {
-    title_uz: req.body.title_uz,
-    title_ru: req.body.title_ru,
-    img: "/" + req.file.filename,
-    gallery: req.body.gallery,
-    price: req.body.price,
-    characteristic: JSON.stringify(req.body.characteristic),
-    description_uz: req.body.description_uz,
-    description_ru: req.body.description_ru,
-    category_id: req.body.category_id,
-    status: productEnums.STATUS_CREATE,
-  };
+	const imgFile = req.files['img'] ? req.files['img'][0] : null;
+	const galleryFiles = req.files['gallery'] || [];
 
-  try {
-    const product = await Product.create(newProduct);
-    res.status(201).json(product);
-  } catch (error) {
-    return res.status(400).json({
-      error: true,
-      errorMessage: error,
-    });
-  }
+	const newProduct = {
+		characteristic: req.body.characteristic,
+		...req.body,
+	};
+
+	if (imgFile) {
+		newProduct['img'] = '/' + imgFile.filename;
+	}
+
+	if (galleryFiles) {
+		const gallery = galleryFiles.map(galleryFile => '/' + galleryFile.filename);
+		newProduct['gallery'] = gallery;
+	}
+
+	try {
+		const product = await Product.create(newProduct);
+		res
+			.status(201)
+			.json({ message: 'Product created successfully', data: product });
+	} catch (error) {
+		throw new Error(error);
+	}
 };
 
 const update = async (req, res) => {
-  const newProduct = {
-    img: req.body.img,
-    ...req.body,
-  };
+	try {
+		const newProduct = {
+			...req.body,
+		};
 
-  if (req.file) {
-    newProduct.img = "/" + req.file.filename;
-    const currentFile = await Product.findByPk(req.body.id);
-    const result = unlinkFile([currentFile.img.toString().slice(1)]);
-  }
+		if (req.file) {
+			newProduct[img] = '/' + req.file.filename;
+			const currentFile = await Product.findByPk(req.body.id);
+			unlinkFile([currentFile.img.toString().slice(1)]);
+		}
 
-  const product = await Product.update(newProduct, {
-    where: { id: req.body.id },
-  });
-  res.status(200).json(product);
+		const product = await Product.update(newProduct, {
+			where: { id: req.body.id },
+		});
+		res.status(200).json({ message: 'Updated successfully', data: product });
+	} catch (error) {
+		throw new Error(error);
+	}
 };
 
 const destroy = async (req, res) => {
-  const product = await Product.destroy({
-    where: { id: req.params.id },
-  });
-  const currentFile = await Product.findByPk(req.params.id);
-  const result = unlinkFile([currentFile.img.toString().slice(1)]);
-  console.log(result);
-  res.status(200).json(product);
+	try {
+		await Product.destroy({
+			where: { id: req.params.id },
+		});
+		const currentFile = await Product.findByPk(req.params.id);
+		unlinkFile([currentFile.img.toString().slice(1)]);
+		res.status(200).json({ message: 'Deleted successfully', data: true });
+	} catch (error) {
+		throw new Error(error);
+	}
 };
 
 export default {
-  getAll,
-  getById,
-  getProductsInOrder,
-  getProductsByCtegoryId,
-  create,
-  update,
-  destroy,
+	getAll,
+	getById,
+	getProductsInOrder,
+	getProductsByCtegoryId,
+	create,
+	update,
+	destroy,
 };

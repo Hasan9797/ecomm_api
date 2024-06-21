@@ -8,7 +8,14 @@ route.get('/', productControllers.getAll);
 route.get('/by/:id', productControllers.getById);
 route.get('/bycategoryid/:id', productControllers.getProductsByCtegoryId);
 route.post('/byids', productControllers.getProductsInOrder);
-route.post('/add', upload.single('img'), productControllers.create);
+route.post(
+	'/add',
+	upload.fields([
+		{ name: 'img', maxCount: 1 }, // Bitta img fayli
+		{ name: 'gallery', maxCount: 5 }, // Bir nechta gallery fayllari
+	]),
+	productControllers.create
+);
 route.post('/update', upload.single('img'), productControllers.update);
 route.delete('/delete/:id', productControllers.destroy);
 
