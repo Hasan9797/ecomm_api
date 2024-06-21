@@ -46,9 +46,11 @@ const getById = async (req, res) => {
 const create = async (req, res) => {
 	try {
 		const newCategory = {
-			img: '/' + req.file.filename,
 			...req.body,
 		};
+		if (req.file) {
+			newCategory['img'] = '/' + req.file.filename;
+		}
 		const category = await Category.create(newCategory);
 		res.status(201).json({ message: 'Created successfully', data: category });
 	} catch (error) {
