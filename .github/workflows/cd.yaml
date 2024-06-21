@@ -30,21 +30,11 @@ jobs:
           key: ${{ secrets.KEY }}
           port: 22
           script: |
-            set -x
-            cd ~/ecomm_api/ || { echo "Failed to change directory"; exit 1; }
-            git config pull.rebase false || { echo "git config failed"; exit 1; }
-            git stash || { echo "git stash failed"; exit 1; }
-            git pull -X theirs || { echo "git pull failed"; exit 1; }
-            if git stash pop; then
-              echo "No conflicts, proceeding..."
-            else
-              echo "Conflicts detected, please resolve manually."
-              exit 1
-            fi
-            npm install || { echo "npm install failed"; exit 1; }
-            npx sequelize-cli db:migrate || { echo "sequelize migrate failed"; exit 1; }
-            pm2 restart 0 || { echo "pm2 restart failed"; exit 1; }
-            set +x
+            cd ~/ecomm_api/
+            git config pull.rebase false
+            npm install
+            npx sequelize-cli db:migrate
+            pm2 restart 0
 
       - name: Notify Telegram on success
         if: success()
