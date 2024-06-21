@@ -1,51 +1,34 @@
+"use strict";
+
 /** @type {import('sequelize-cli').Migration} */
-export default {
+module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable(
-      "Products",
+      "categories",
       {
-        id: {
-          allowNull: false,
-          autoIncrement: true,
-          primaryKey: true,
-          type: Sequelize.INTEGER,
-        },
         title_uz: {
           type: DataTypes.STRING,
           allowNull: false,
         },
         title_ru: {
           type: DataTypes.STRING,
-          allowNull: false,
+          allowNull: true,
         },
         img: {
           type: DataTypes.STRING,
           allowNull: false,
         },
-        gallery: {
-          type: DataTypes.JSON,
-          allowNull: true,
-        },
-        price: {
-          type: DataTypes.FLOAT,
-          allowNull: false,
-        },
-        status: {
+        parentId: {
           type: DataTypes.INTEGER,
-          defaultValue: productEnum.STATUS_CREATE,
+          allowNull: true, // Agar `parentId` bo'sh bo'lishi mumkin bo'lsa
+          references: {
+            model: "categories", // foreign key bo'lgan jadval nomi
+            key: "id",
+          },
+        },
+        description: {
+          type: DataTypes.TEXT,
           allowNull: false,
-        },
-        characteristic: {
-          type: DataTypes.JSON,
-          allowNull: true,
-        },
-        description_uz: {
-          type: DataTypes.TEXT,
-          allowNull: true,
-        },
-        description_ru: {
-          type: DataTypes.TEXT,
-          allowNull: true,
         },
         createdAt: {
           type: DataTypes.INTEGER,
@@ -79,6 +62,11 @@ export default {
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("Products");
+    /**
+     * Add reverting commands here.
+     *
+     * Example:
+     * await queryInterface.dropTable('users');
+     */
   },
 };

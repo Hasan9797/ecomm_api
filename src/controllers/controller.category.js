@@ -38,13 +38,8 @@ const getById = async (req, res) => {
 };
 
 const create = async (req, res) => {
-  const title_ru = req.body.title_ru;
-  const title_uz = req.body.title_uz;
-  const title = title_uz.concat(" ", title_ru);
-
   const newCategory = {
     img: "/" + req.file.filename,
-    title: title,
     ...req.body,
   };
   const category = await Category.create(newCategory);

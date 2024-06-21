@@ -10,14 +10,22 @@ const Category = db.define(
     },
     title_ru: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     img: {
       type: DataTypes.STRING,
       allowNull: false,
     },
+    parentId: {
+      type: DataTypes.INTEGER,
+      allowNull: true, // Agar `parentId` bo'sh bo'lishi mumkin bo'lsa
+      references: {
+        model: "categories", // foreign key bo'lgan jadval nomi
+        key: "id",
+      },
+    },
     description: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
       allowNull: false,
     },
     createdAt: {

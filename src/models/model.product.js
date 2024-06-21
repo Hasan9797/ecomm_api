@@ -36,11 +36,11 @@ const Product = db.define(
     },
     description_uz: {
       type: DataTypes.TEXT,
-      allowNull: false,
+      allowNull: true,
     },
     description_ru: {
       type: DataTypes.TEXT,
-      allowNull: false,
+      allowNull: true,
     },
     createdAt: {
       type: DataTypes.INTEGER,
