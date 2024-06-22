@@ -32,7 +32,7 @@ function checkfile(file, cb) {
 
 export const upload = multer({
   storage: storage,
-  limits: { fileSize: 50 * 1024 * 1024 }, //50 MB
+  //   limits: { fileSize: 50 * 1024 * 1024 }, //50 MB
   filFilter: function (req, file, cb) {
     checkfile(file, cb);
   },
