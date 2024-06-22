@@ -6,24 +6,28 @@ import { fileURLToPath } from "url";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const uploadFolderPath = path.join(__dirname, "../../", "Uploads");
 
-// File upload for Multer
+// Fayllarni vaqtinchalik saqlash uchun katalogni tekshirish va yaratish
+if (!fs.existsSync(uploadFolderPath)) {
+  fs.mkdirSync(uploadFolderPath, { recursive: true });
+}
+
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, uploadFolderPath);
   },
 
   filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + "-" + path.extname(file.originalname); //
+    const uniqueSuffix = uuidv4() + "-" + path.extname(file.originalname);
     cb(null, file.fieldname + "-" + uniqueSuffix);
   },
 });
 
 function checkfile(file, cb) {
-  const filetypes = /jpeg|jpg|png|gif|/;
-  const exnames = filetypes.test(path.extname(file.originalname).toLowerCase());
-  const mimetypes = filetypes.test(file.mimetype);
+  const filetypes = /jpeg|jpg|png|gif/;
+  const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+  const mimetype = filetypes.test(file.mimetype);
 
-  if (exnames && mimetypes) {
+  if (extname && mimetype) {
     return cb(null, true);
   } else {
     cb("Enter: You can only upload image files");
@@ -32,8 +36,8 @@ function checkfile(file, cb) {
 
 export const upload = multer({
   storage: storage,
-  //   limits: { fileSize: 50 * 1024 * 1024 }, //50 MB
-  filFilter: function (req, file, cb) {
+  // limits: { fileSize: 50 * 1024 * 1024 }, // 50 MB
+  fileFilter: function (req, file, cb) {
     checkfile(file, cb);
   },
 });
