@@ -60,5 +60,4 @@ const start = async () => {
     console.error("Unable to connect to the database:", error);
   }
 };
-
 start();
