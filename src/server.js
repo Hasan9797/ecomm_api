@@ -8,8 +8,8 @@ import db from "./connections/connection.db.js";
 const app = express();
 env.config();
 
+// CORS middleware
 app.use(cors());
-// CORS middleware ni ishlating
 
 // import Routers
 import categoryRouter from "./routers/router.category.js";
