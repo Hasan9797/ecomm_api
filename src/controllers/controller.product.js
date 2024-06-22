@@ -151,15 +151,13 @@ const create = async (req, res) => {
   const imgFile = req.files["img"] ? req.files["img"][0] : null;
   const galleryFiles = req.files["gallery"] || [];
 
-  const newProduct = {
-    ...req.body,
-  };
+  const newProduct = { ...req.body };
 
   if (imgFile) {
     newProduct["img"] = "/" + imgFile.filename;
   }
 
-  if (galleryFiles) {
+  if (galleryFiles.length) {
     const gallery = galleryFiles.map(
       (galleryFile) => "/" + galleryFile.filename
     );
@@ -167,12 +165,20 @@ const create = async (req, res) => {
   }
 
   try {
-    const product = await Product.create(newProduct);
-    res
-      .status(201)
-      .json({ message: "Product created successfully", data: product });
+    // Use transaction to ensure data integrity and better performance
+    await SQL.transaction(async (t) => {
+      const product = await Product.create(newProduct, { transaction: t });
+
+      res.status(201).json({
+        message: "Product created successfully",
+        data: product,
+      });
+    });
   } catch (error) {
-    throw new Error(error);
+    console.error(error);
+    res
+      .status(500)
+      .json({ message: "Internal server error", error: error.message });
   }
 };
 
