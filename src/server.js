@@ -19,7 +19,7 @@ import reportsRouter from "./routers/router.reports.js";
 
 // import Middlewares
 import errorHandler from "./middlewares/errorHandler.js";
-import GeneralError from "./helpers/generalError.js";
+import GeneralError from "./errors/generalError.js";
 
 //base url
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
