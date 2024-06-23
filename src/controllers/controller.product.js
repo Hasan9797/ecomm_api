@@ -210,7 +210,7 @@ const create = async (req, res) => {
 	}
 
 	try {
-		// const product = await Product.create(newProduct);
+		const product = await Product.create(newProduct);
 		res
 			.status(201)
 			.json({ message: 'Product created successfully', data: newProduct });
