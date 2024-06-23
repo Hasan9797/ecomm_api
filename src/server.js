@@ -10,13 +10,7 @@ const app = express();
 env.config();
 
 // CORS middleware
-app.use(
-	cors({
-		origin: 'https://admin.zarring.uz', // ruxsat berilgan doman
-		methods: ['GET', 'POST', 'PUT', 'DELETE'],
-		allowedHeaders: ['Content-Type', 'Authorization'],
-	})
-);
+app.use(cors());
 
 // import Routers
 import categoryRouter from './routers/router.category.js';
