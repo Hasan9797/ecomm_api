@@ -26,7 +26,6 @@ const getById = async (req, res) => {
 					model: Category,
 					as: 'subcategories',
 				},
-				,
 			],
 		});
 
