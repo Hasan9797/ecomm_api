@@ -5,6 +5,7 @@ const { Product, SQL } = dataBase;
 import { unlinkFile } from '../helpers/fileHelper.js';
 
 const getAll = async (req, res) => {
+	const lang = req.headers['accept-language'];
 	const page = req.query.page;
 	const pageSize = req.query.pageSize;
 
@@ -36,12 +37,25 @@ const getAll = async (req, res) => {
 
 		const totalPages = Math.ceil(count / limit);
 
+		const array = rows.map(row => {
+			return {
+				title: lang === 'ru' ? row.title_ru : row.title_uz,
+				price: row.price,
+				img: row.img,
+				gallery: row.gallery,
+				characteristic: row.characteristic,
+				discription: lang === 'ru' ? row.description_ru : row.description_uz,
+				created_at: row.created,
+				updated_at: row.updated,
+			};
+		});
+
 		res.status(200).json({
 			message: 'Get products successfully',
 			totalItems: count,
 			totalPages: totalPages,
 			currentPage: page,
-			data: rows,
+			data: array,
 		});
 	} catch (error) {
 		throw new Error(error);
@@ -50,14 +64,27 @@ const getAll = async (req, res) => {
 
 const getById = async (req, res) => {
 	try {
+		const lang = req.headers['accept-language'];
+
 		const product = await Product.findByPk(req.params.id);
 
 		if (!product) {
 			return res.status(200).json({ message: 'Products not found', data: {} });
 		}
+		const langProduct = {
+			title: lang === 'ru' ? product.title_ru : product.title_uz,
+			price: product.price,
+			img: product.img,
+			gallery: product.gallery,
+			characteristic: product.characteristic,
+			discription:
+				lang === 'ru' ? product.description_ru : product.description_uz,
+			created_at: product.created,
+			updated_at: product.updated,
+		};
 		res
 			.status(200)
-			.json({ message: 'Get product successfully', data: product });
+			.json({ message: 'Get product successfully', data: langProduct });
 	} catch (error) {
 		throw new Error(error);
 	}
@@ -101,6 +128,7 @@ const getProductsInOrder = async (req, res) => {
 };
 
 const getProductsByCtegoryId = async (req, res) => {
+	const lang = req.headers['accept-language'];
 	const page = req.query.page;
 	const pageSize = req.query.pageSize;
 
@@ -135,12 +163,25 @@ const getProductsByCtegoryId = async (req, res) => {
 
 		const totalPages = Math.ceil(count / limit);
 
+		const array = rows.map(row => {
+			return {
+				title: lang === 'ru' ? row.title_ru : row.title_uz,
+				price: row.price,
+				img: row.img,
+				gallery: row.gallery,
+				characteristic: row.characteristic,
+				discription: lang === 'ru' ? row.description_ru : row.description_uz,
+				created_at: row.created,
+				updated_at: row.updated,
+			};
+		});
+
 		res.status(200).json({
 			message: 'Get products successfully',
 			totalItems: count,
 			totalPages: totalPages,
 			currentPage: page,
-			data: rows,
+			data: array,
 		});
 	} catch (error) {
 		throw new Error(error);
@@ -152,7 +193,7 @@ const create = async (req, res) => {
 
 	const img = files.img ? files.img[0] : null;
 	const gallery = files.gallery ? files.gallery.map(file => file.filename) : [];
-
+	console.log(req.body);
 	const newProduct = {
 		...req.body,
 	};
@@ -169,7 +210,7 @@ const create = async (req, res) => {
 		// const product = await Product.create(newProduct);
 		res
 			.status(201)
-			.json({ message: 'Product created successfully', data: req.files });
+			.json({ message: 'Product created successfully', data: newProduct });
 	} catch (error) {
 		throw new Error(error);
 	}
