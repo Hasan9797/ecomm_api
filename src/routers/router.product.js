@@ -17,6 +17,7 @@ route.post(
 	productControllers.create
 );
 route.post('/update/:id', upload.single('img'), productControllers.update);
+route.get('/search', productControllers.searchProducts);
 route.delete('/delete/:id', productControllers.destroy);
 
 export default route;
