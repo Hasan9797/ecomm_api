@@ -14,9 +14,7 @@ const getAll = async (req, res) => {
 			],
 		});
 		if (categories) {
-			const langCategory = {
-				
-			};
+			const langCategory = {};
 		}
 		res.status(200).json({ message: 'Success', data: categories });
 	} catch (error) {

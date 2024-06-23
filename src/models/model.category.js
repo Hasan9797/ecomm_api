@@ -18,7 +18,7 @@ const Category = db.define(
 		},
 		parentId: {
 			type: DataTypes.INTEGER,
-			allowNull: true, // Agar `parentId` bo'sh bo'lishi mumkin bo'lsa
+			allowNull: true,
 			references: {
 				model: 'categories', // foreign key bo'lgan jadval nomi
 				key: 'id',
@@ -31,6 +31,7 @@ const Category = db.define(
 		createdAt: {
 			type: DataTypes.INTEGER,
 			allowNull: false,
+			defaultValue: () => Math.floor(Date.now() / 1000),
 			get() {
 				return this.getDataValue('createdAt');
 			},
@@ -38,6 +39,7 @@ const Category = db.define(
 		updatedAt: {
 			type: DataTypes.INTEGER,
 			allowNull: false,
+			defaultValue: () => Math.floor(Date.now() / 1000),
 			get() {
 				return this.getDataValue('updatedAt');
 			},
@@ -46,13 +48,13 @@ const Category = db.define(
 	{
 		timestamps: true,
 		hooks: {
-			beforeCreate(order) {
+			beforeCreate(category) {
 				const currentTimestamp = Math.floor(Date.now() / 1000);
-				order.createdAt = currentTimestamp;
-				order.updatedAt = currentTimestamp;
+				category.createdAt = currentTimestamp;
+				category.updatedAt = currentTimestamp;
 			},
-			beforeUpdate(order) {
-				order.updatedAt = Math.floor(Date.now() / 1000);
+			beforeUpdate(category) {
+				category.updatedAt = Math.floor(Date.now() / 1000);
 			},
 		},
 	}
