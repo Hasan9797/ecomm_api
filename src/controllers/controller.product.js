@@ -1,6 +1,6 @@
 import { Sequelize, Op } from 'sequelize';
 import dataBase from '../models/model.index.js';
-const { Product, SQL } = dataBase;
+const { Product, SQL, Category } = dataBase;
 
 import { unlinkFile } from '../helpers/fileHelper.js';
 
@@ -28,10 +28,14 @@ const getAll = async (req, res) => {
 
 		// Sahifalangan yozuvlarni olish
 		const rows = await SQL.query(
-			`SELECT * FROM products LIMIT :limit OFFSET :offset`,
+			`SELECT p.*, c.title_uz as category_title_uz, c.title_ru as category_title_ru
+            FROM products p
+       		JOIN categories c ON p.category_id = c.id
+       		LIMIT :limit OFFSET :offset`,
 			{
 				replacements: { limit: limit, offset: offset },
-				type: Sequelize.QueryTypes.SELECT,
+				type: SQL.QueryTypes.SELECT,
+				raw: true,
 			}
 		);
 
@@ -45,6 +49,9 @@ const getAll = async (req, res) => {
 				img: row.img,
 				gallery: row.gallery,
 				characteristic: row.characteristic,
+				categoryId: row.category_id,
+				category_name:
+					lang === 'ru' ? row.category_title_ru : row.category_title_uz,
 				discription: lang === 'ru' ? row.description_ru : row.description_uz,
 				created_at: row.created,
 				updated_at: row.updated,
@@ -67,11 +74,19 @@ const getById = async (req, res) => {
 	try {
 		const lang = req.headers['accept-language'];
 
-		const product = await Product.findByPk(req.params.id);
+		const product = await Product.findByPk(req.params.id, {
+			include: [
+				{
+					model: Category,
+					as: 'category',
+				},
+			],
+		});
 
 		if (!product) {
 			return res.status(200).json({ message: 'Products not found', data: {} });
 		}
+
 		const langProduct = {
 			id: product.id,
 			title: lang === 'ru' ? product.title_ru : product.title_uz,
@@ -79,6 +94,8 @@ const getById = async (req, res) => {
 			img: product.img,
 			gallery: product.gallery,
 			characteristic: product.characteristic,
+			categoryId: product.category_id,
+			category_name: lang === 'ru' ? product.title_ru : product.itle_uz,
 			discription:
 				lang === 'ru' ? product.description_ru : product.description_uz,
 			created_at: product.created,
