@@ -56,14 +56,12 @@ const getById = async (req, res) => {
 
 const create = async (req, res) => {
 	try {
-		const newBrand = {
-			...req.body,
-		};
-		if (req.file) {
-			newBrand['img'] = '/' + req.file.filename;
-		}
-		const brand = await Brand.create(newBrand);
-		res.status(201).json({ message: 'Created successfully', data: brand });
+		const { name_ru, name_uz, link } = req.body;
+		const img = req.file ? '/' + req.file.filename : null;
+
+		const newBrand = await Brand.create({ name_ru, name_uz, img, link });
+
+		res.status(201).json({ message: 'Created successfully', data: newBrand });
 	} catch (error) {
 		throw new Error(error);
 	}
@@ -77,14 +75,14 @@ const update = async (req, res) => {
 
 		if (req.file) {
 			newBrand.img = '/' + req.file.filename;
-			const currentFile = await Brand.findByPk(req.query.id);
+			const currentFile = await Brand.findByPk(req.params.id);
 			if (currentFile && currentFile.img) {
 				unlinkFile([currentFile.img.toString().slice(1)]);
 			}
 		}
 
 		const brand = await Brand.update(newBrand, {
-			where: { id: req.query.id },
+			where: { id: req.params.id },
 		});
 
 		if (Brand[0] === 0) {

@@ -16,7 +16,7 @@ route.post(
 	]),
 	productControllers.create
 );
-route.post('/update', upload.single('img'), productControllers.update);
+route.post('/update/:id', upload.single('img'), productControllers.update);
 route.delete('/delete/:id', productControllers.destroy);
 
 export default route;

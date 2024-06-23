@@ -86,17 +86,17 @@ const update = async (req, res) => {
 		const newCategory = {
 			...req.body,
 		};
-		console.log(req.body.file);
+
 		if (req.file) {
 			newCategory.img = '/' + req.file.filename;
-			const currentFile = await Brand.findByPk(req.query.id);
+			const currentFile = await Category.findByPk(req.params.id);
 			if (currentFile && currentFile.img) {
 				unlinkFile([currentFile.img.toString().slice(1)]);
 			}
 		}
 
 		const category = await Category.update(newCategory, {
-			where: { id: req.query.id },
+			where: { id: req.params.id },
 		});
 
 		if (category[0] === 0) {
