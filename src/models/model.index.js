@@ -6,7 +6,7 @@ import Banner from './model.banner.js';
 import Brand from './model.brand.js';
 import db from '../connections/connection.db.js';
 
-const dataBase = { SQL: db }; //DB connection sequalize
+const dataBase = {}; //DB connection sequalize
 
 // Models
 dataBase.Category = Category;
@@ -15,6 +15,7 @@ dataBase.Order = Order;
 dataBase.User = User;
 dataBase.Banner = Banner;
 dataBase.Brand = Brand;
+dataBase.SQL = db;
 
 dataBase.Category.hasMany(dataBase.Product, {
 	as: 'products',
