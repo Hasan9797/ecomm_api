@@ -46,14 +46,12 @@ const getById = async (req, res) => {
 
 const create = async (req, res) => {
 	try {
-		const newBanner = {
-			...req.body,
-		};
-		if (req.file) {
-			newBanner['img'] = '/' + req.file.filename;
-		}
-		const Banner = await Banner.create(newBanner);
-		res.status(201).json({ message: 'Created successfully', data: Banner });
+		const { name_ru, name_uz, link } = req.body;
+		const img = req.file ? '/' + req.file.filename : null;
+
+		const newBanner = await Banner.create({ name_ru, name_uz, img, link });
+
+		res.status(201).json({ message: 'Created successfully', data: newBanner });
 	} catch (error) {
 		throw new Error(error);
 	}
