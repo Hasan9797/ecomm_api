@@ -6,7 +6,18 @@ import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const uploadFolderPath = path.join(__dirname, '../../', 'Uploads');
 
-// Fayllarni saqlash konfiguratsiyasi
+const { title, price } = req.body;
+
+// Yuklangan fayllar
+const imgFile = req.files['img'] ? req.files['img'][0] : null;
+const galleryFiles = req.files['gallery'] || [];
+
+// Fayllar haqidagi ma'lumotlar
+console.log('Title:', title);
+console.log('Price:', price);
+console.log('Img file:', imgFile);
+console.log('Gallery files:', galleryFiles);
+
 const storage = multer.diskStorage({
 	destination: function (req, file, cb) {
 		cb(null, uploadFolderPath);
@@ -31,7 +42,7 @@ function checkfile(file, cb) {
 
 export const upload = multer({
 	storage: storage,
-	limits: { fileSize: 40 * 1024 * 1024 },
+	// limits: { fileSize: 50 * 1024 * 1024 }, // Fayl hajmi limiti
 	fileFilter: function (req, file, cb) {
 		checkfile(file, cb);
 	},
