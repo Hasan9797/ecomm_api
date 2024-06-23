@@ -244,7 +244,7 @@ const update = async (req, res) => {
 
 		if (req.file) {
 			newProduct[img] = '/' + req.file.filename;
-			const currentFile = await Product.findByPk(req.body.id);
+			const currentFile = await Brand.findByPk(req.query.id);
 			if (currentFile && currentFile.img) {
 				unlinkFile([currentFile.img.toString().slice(1)]);
 			}
