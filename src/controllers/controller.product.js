@@ -213,7 +213,7 @@ const create = async (req, res) => {
 		const product = await Product.create(newProduct);
 		res
 			.status(201)
-			.json({ message: 'Product created successfully', data: newProduct });
+			.json({ message: 'Product created successfully', data: product });
 	} catch (error) {
 		throw new Error(error);
 	}
