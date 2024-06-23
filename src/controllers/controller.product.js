@@ -6,8 +6,8 @@ import { unlinkFile } from '../helpers/fileHelper.js';
 
 const getAll = async (req, res) => {
 	const lang = req.headers['accept-language'];
-	const page = req.query.page;
-	const pageSize = req.query.pageSize;
+	const page = req.query.page || 1;
+	const pageSize = req.query.pageSize || 10;
 
 	const limit = pageSize; // Har bir sahifadagi yozuvlar soni
 	const offset = (page - 1) * pageSize; // Qaysi yozuvdan boshlab olish
@@ -148,8 +148,8 @@ const getProductsInOrder = async (req, res) => {
 
 const getProductsByCtegoryId = async (req, res) => {
 	const lang = req.headers['accept-language'];
-	const page = req.query.page;
-	const pageSize = req.query.pageSize;
+	const page = req.query.page || 1;
+	const pageSize = req.query.pageSize || 10;
 
 	const limit = pageSize; // Har bir sahifadagi yozuvlar soni
 	const offset = (page - 1) * pageSize; // Qaysi yozuvdan boshlab olish
