@@ -45,6 +45,7 @@ const Product = db.define(
 		createdAt: {
 			type: DataTypes.INTEGER,
 			allowNull: false,
+			defaultValue: () => Math.floor(Date.now() / 1000),
 			get() {
 				return this.getDataValue('createdAt');
 			},
@@ -52,6 +53,7 @@ const Product = db.define(
 		updatedAt: {
 			type: DataTypes.INTEGER,
 			allowNull: false,
+			defaultValue: () => Math.floor(Date.now() / 1000),
 			get() {
 				return this.getDataValue('updatedAt');
 			},
