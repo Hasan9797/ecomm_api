@@ -25,7 +25,7 @@ const getAll = async (req, res) => {
 				img: category.img,
 				createdAt: category.createdAt,
 				updatedAt: category.updatedAt,
-				subcategory: category.subcategories.map(sub => {
+				subcategories: category.subcategories.map(sub => {
 					return {
 						id: sub.id,
 						title: lang === 'ru' ? sub.title_ru : sub.title_uz,

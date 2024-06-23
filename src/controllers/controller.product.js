@@ -279,6 +279,10 @@ const destroy = async (req, res) => {
 	}
 };
 
+const search = async (req, res) => {};
+
+const filter = async (req, res) => {};
+
 export default {
 	getAll,
 	getById,
