@@ -1,14 +1,14 @@
 import { DataTypes } from 'sequelize';
 import db from '../connections/connection.db.js';
 
-const Category = db.define(
-	'category',
+const Brand = db.define(
+	'brand',
 	{
-		title_uz: {
+		name_uz: {
 			type: DataTypes.STRING,
-			allowNull: false,
+			allowNull: true,
 		},
-		title_ru: {
+		name_ru: {
 			type: DataTypes.STRING,
 			allowNull: true,
 		},
@@ -16,13 +16,9 @@ const Category = db.define(
 			type: DataTypes.STRING,
 			allowNull: true,
 		},
-		parentId: {
-			type: DataTypes.INTEGER,
+		link: {
+			type: DataTypes.STRING,
 			allowNull: true,
-			references: {
-				model: 'categories', // foreign key bo'lgan jadval nomi
-				key: 'id',
-			},
 		},
 		createdAt: {
 			type: DataTypes.INTEGER,
@@ -44,16 +40,16 @@ const Category = db.define(
 	{
 		timestamps: true,
 		hooks: {
-			beforeCreate(category) {
+			beforeCreate(brand) {
 				const currentTimestamp = Math.floor(Date.now() / 1000);
-				category.createdAt = currentTimestamp;
-				category.updatedAt = currentTimestamp;
+				brand.createdAt = currentTimestamp;
+				brand.updatedAt = currentTimestamp;
 			},
-			beforeUpdate(category) {
-				category.updatedAt = Math.floor(Date.now() / 1000);
+			beforeUpdate(brand) {
+				brand.updatedAt = Math.floor(Date.now() / 1000);
 			},
 		},
 	}
 );
 
-export default Category;
+export default Brand;

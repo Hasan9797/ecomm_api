@@ -16,7 +16,9 @@ app.use(cors());
 import categoryRouter from './routers/router.category.js';
 import productRouter from './routers/router.product.js';
 import orderRouter from './routers/router.order.js';
-import reportsRouter from './routers/router.reports.js';
+import reportRouter from './routers/router.reports.js';
+import brandRouter from './routers/router.brand.js';
+import bannerRouter from './routers/router.banner.js';
 
 // import Middlewares
 import errorHandler from './middlewares/errorHandler.js';
@@ -33,7 +35,9 @@ app.use(express.static(path.join(__dirname, '..', 'Uploads')));
 app.use('/api/category', categoryRouter);
 app.use('/api/product', productRouter);
 app.use('/api/order', orderRouter);
-app.use('/api/report', reportsRouter);
+app.use('/api/report', reportRouter);
+app.use('/api/brand', brandRouter);
+app.use('/api/banner', bannerRouter);
 // app.use("/api/user");
 
 // Catch all route for 404 errors
