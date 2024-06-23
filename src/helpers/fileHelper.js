@@ -9,7 +9,7 @@ const uploadFolderPath = path.join(__dirname, '../../', 'Uploads');
 // Fayllarni saqlash konfiguratsiyasi
 const storage = multer.diskStorage({
 	destination: function (req, file, cb) {
-		console.log(req.files);
+		console.log(JSON.stringify(req.files));
 		cb(null, uploadFolderPath);
 	},
 	filename: function (req, file, cb) {
