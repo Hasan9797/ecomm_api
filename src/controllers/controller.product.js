@@ -235,7 +235,7 @@ const update = async (req, res) => {
 			where: { id: req.body.id },
 		});
 
-		if (product === 0) {
+		if (product[0] === 0) {
 			return res
 				.status(200)
 				.json({ message: 'Product not fount', data: product });
