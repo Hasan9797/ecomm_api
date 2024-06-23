@@ -6,17 +6,9 @@ import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const uploadFolderPath = path.join(__dirname, '../../', 'Uploads');
 
-function test(req) {
-	const imgFile = req.files['img'] ? req.files['img'][0] : null;
-	const galleryFiles = req.files['gallery'] || [];
-
-	// Fayllar haqidagi ma'lumotlar
-	console.log(req.files);
-}
-
+// Fayllarni saqlash konfiguratsiyasi
 const storage = multer.diskStorage({
 	destination: function (req, file, cb) {
-		test(req);
 		cb(null, uploadFolderPath);
 	},
 	filename: function (req, file, cb) {
@@ -39,7 +31,7 @@ function checkfile(file, cb) {
 
 export const upload = multer({
 	storage: storage,
-	// limits: { fileSize: 50 * 1024 * 1024 }, // Fayl hajmi limiti
+	limits: { fileSize: 100 * 1024 * 1024 }, // Fayl hajmi limiti 100MB
 	fileFilter: function (req, file, cb) {
 		checkfile(file, cb);
 	},
