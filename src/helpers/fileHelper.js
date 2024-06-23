@@ -12,20 +12,20 @@ const storage = multer.diskStorage({
 		cb(null, uploadFolderPath);
 	},
 	filename: function (req, file, cb) {
-		const uniqueSuffix = Date.now() + '-' + path.extname(file.originalname);
-		cb(null, file.fieldname + '-' + uniqueSuffix);
+		const uniqueSuffix = `${Date.now()}-${file.originalname}`;
+		cb(null, uniqueSuffix);
 	},
 });
 
 function checkfile(file, cb) {
 	const filetypes = /jpeg|jpg|png|gif/;
-	const exnames = filetypes.test(path.extname(file.originalname).toLowerCase());
-	const mimetypes = filetypes.test(file.mimetype);
+	const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+	const mimetype = filetypes.test(file.mimetype);
 
-	if (exnames && mimetypes) {
+	if (extname && mimetype) {
 		return cb(null, true);
 	} else {
-		cb('Error: You can only upload image files');
+		cb(new Error('Error: You can only upload image files'));
 	}
 }
 
