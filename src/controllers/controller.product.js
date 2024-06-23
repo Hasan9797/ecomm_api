@@ -278,7 +278,53 @@ const destroy = async (req, res) => {
 	}
 };
 
-const search = async (req, res) => {};
+const isCyrillic = text => {
+	return /[а-яА-ЯЁё]/.test(text);
+};
+
+const searchProducts = async (req, res) => {
+	try {
+		const searchText = req.query.text || '';
+
+		if (!searchText) {
+			return res.status(400).json({ message: 'Search text is required' });
+		}
+
+		const searchField = isCyrillic(searchText) ? 'title_ru' : 'title_uz';
+
+		const query = `SELECT p.*, c.title_uz as category_title_uz, c.title_ru as category_title_ru FROM products p JOIN categories c ON p.category_id = c.id WHERE p.${searchField} ILIKE :searchText`;
+
+		const products = await SQL.query(query, {
+			replacements: { searchText: `%${searchText}%` },
+			type: SQL.QueryTypes.SELECT,
+		});
+		const array = products.map(product => {
+			return {
+				id: product.id,
+				title: searchField === 'title_ru' ? product.title_ru : product.title_uz,
+				price: product.price,
+				img: product.img,
+				gallery: product.gallery,
+				characteristic: product.characteristic,
+				categoryId: product.category_id,
+				category_name:
+					searchField === 'title_ru' ? product.title_ru : product.title_uz,
+				discription:
+					searchField === 'title_ru'
+						? product.description_ru
+						: product.description_uz,
+				created_at: product.created,
+				updated_at: product.updated,
+			};
+		});
+		res.status(200).json({ message: 'Get product successfully', data: array });
+	} catch (error) {
+		console.error('Error searching products:', error);
+		res
+			.status(500)
+			.json({ message: 'Error searching products', error: error.message });
+	}
+};
 
 const filter = async (req, res) => {};
 
@@ -289,5 +335,6 @@ export default {
 	getProductsByCtegoryId,
 	create,
 	update,
+	searchProducts,
 	destroy,
 };
