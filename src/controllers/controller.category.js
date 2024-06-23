@@ -77,7 +77,7 @@ const update = async (req, res) => {
 			where: { id: req.query.id },
 		});
 
-		if (category === 0) {
+		if (category[0] === 0) {
 			return res
 				.status(200)
 				.json({ message: 'Product not fount', data: category });
