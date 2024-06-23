@@ -67,17 +67,33 @@ const getById = async (req, res) => {
 };
 
 const create = async (req, res) => {
+	const start = Date.now();
 	try {
+		const { title_uz, title_ru } = req.body;
+
+		const img = req.file.img;
+
 		const newCategory = {
-			...req.body,
+			title_uz,
+			title_ru,
+			img: img ? '/' + img.filename : null,
 		};
-		if (req.file) {
-			newCategory['img'] = '/' + req.file.filename;
-		}
+
 		const category = await Category.create(newCategory);
-		res.status(201).json({ message: 'Created successfully', data: category });
+
+		const end = Date.now();
+		// console.log(`Category creation took ${end - start}ms`);
+
+		res.status(201).json({
+			creating: end - start + 'ms',
+			message: 'Category created successfully',
+			data: category,
+		});
 	} catch (error) {
-		throw new Error(error);
+		console.error('Error creating Category:', error);
+		res
+			.status(500)
+			.json({ message: 'Error creating Category', error: error.message });
 	}
 };
 
@@ -102,7 +118,7 @@ const update = async (req, res) => {
 		if (category[0] === 0) {
 			return res
 				.status(200)
-				.json({ message: 'Product not fount', data: category });
+				.json({ message: 'Category not fount', data: category });
 		}
 		res.status(200).json({ message: 'Updated Successfully', data: category });
 	} catch (error) {
