@@ -6,20 +6,17 @@ import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const uploadFolderPath = path.join(__dirname, '../../', 'Uploads');
 
-const { title, price } = req.body;
+function test(req) {
+	const imgFile = req.files['img'] ? req.files['img'][0] : null;
+	const galleryFiles = req.files['gallery'] || [];
 
-// Yuklangan fayllar
-const imgFile = req.files['img'] ? req.files['img'][0] : null;
-const galleryFiles = req.files['gallery'] || [];
-
-// Fayllar haqidagi ma'lumotlar
-console.log('Title:', title);
-console.log('Price:', price);
-console.log('Img file:', imgFile);
-console.log('Gallery files:', galleryFiles);
+	// Fayllar haqidagi ma'lumotlar
+	console.log(req.files);
+}
 
 const storage = multer.diskStorage({
 	destination: function (req, file, cb) {
+		test(req);
 		cb(null, uploadFolderPath);
 	},
 	filename: function (req, file, cb) {
