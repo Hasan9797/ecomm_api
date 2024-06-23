@@ -209,32 +209,49 @@ const getProductsByCtegoryId = async (req, res) => {
 };
 
 const create = async (req, res) => {
-	const files = req.files;
-
-	const img = files.img ? files.img[0] : null;
-	const gallery = files.gallery
-		? files.gallery.map(file => '/' + file.filename)
-		: [];
-
-	const newProduct = {
-		...req.body,
-	};
-
-	if (img) {
-		newProduct['img'] = '/' + img.filename;
-	}
-
-	if (gallery) {
-		newProduct['gallery'] = gallery;
-	}
-
+	const start = Date.now();
 	try {
+		const {
+			title_uz,
+			title_ru,
+			price,
+			description_uz,
+			characteristic,
+			description_ru,
+		} = req.body;
+		const files = req.files;
+
+		const img = files.img ? files.img[0] : null;
+		const gallery = files.gallery
+			? files.gallery.map(file => '/' + file.filename)
+			: [];
+
+		const newProduct = {
+			title_uz,
+			title_ru,
+			price,
+			description_uz,
+			description_ru,
+			characteristic: characteristic,
+			img: img ? '/' + img.filename : null,
+			gallery,
+		};
+
 		const product = await Product.create(newProduct);
-		res
-			.status(201)
-			.json({ message: 'Product created successfully', data: product });
+
+		const end = Date.now();
+		// console.log(`Product creation took ${end - start}ms`);
+
+		res.status(201).json({
+			creating: end - start + 'ms',
+			message: 'Product created successfully',
+			data: product,
+		});
 	} catch (error) {
-		throw new Error(error);
+		console.error('Error creating product:', error);
+		res
+			.status(500)
+			.json({ message: 'Error creating product', error: error.message });
 	}
 };
 
