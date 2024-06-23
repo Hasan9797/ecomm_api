@@ -12,7 +12,7 @@ route.post(
 	'/add',
 	upload.fields([
 		{ name: 'img', maxCount: 1 }, // Bitta img fayli
-		{ name: 'gallery', maxCount: 5 }, // Bir nechta gallery fayllari
+		{ name: 'gallery', maxCount: 10 }, // Bir nechta gallery fayllari
 	]),
 	productControllers.create
 );
