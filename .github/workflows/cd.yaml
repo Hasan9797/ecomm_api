@@ -16,7 +16,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: "20" # Node versiyasi
+          node-version: '20' # Node versiyasi
 
       - name: Install dependencies
         run: npm install
@@ -34,7 +34,6 @@ jobs:
             git config pull.rebase false
             git pull origin main || { echo "git pull failed"; exit 1; }
             npm install
-            npx sequelize-cli db:migrate
             pm2 restart 0
 
       - name: Notify Telegram on success
