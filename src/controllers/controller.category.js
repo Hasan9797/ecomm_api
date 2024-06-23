@@ -13,10 +13,30 @@ const getAll = async (req, res) => {
 				},
 			],
 		});
-		if (categories) {
-			const langCategory = {};
+
+		if (categories.length <= 0) {
+			return res.status(200).json({ message: 'No categories', data: [] });
 		}
-		res.status(200).json({ message: 'Success', data: categories });
+
+		const langCategory = categories.map(category => {
+			return {
+				id: category.id,
+				title: lang === 'ru' ? category.title_ru : category.title_uz,
+				img: category.img,
+				createdAt: category.createdAt,
+				updatedAt: category.updatedAt,
+				subcategory: category.subcategories.map(sub => {
+					return {
+						id: sub.id,
+						title: lang === 'ru' ? sub.title_ru : sub.title_uz,
+						img: category.img,
+						createdAt: sub.createdAt,
+						updatedAt: sub.updatedAt,
+					};
+				}),
+			};
+		});
+		res.status(200).json({ message: 'Success', data: langCategory });
 	} catch (error) {
 		throw new Error(error);
 	}
