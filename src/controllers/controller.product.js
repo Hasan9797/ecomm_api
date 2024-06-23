@@ -234,6 +234,13 @@ const update = async (req, res) => {
 		const product = await Product.update(newProduct, {
 			where: { id: req.body.id },
 		});
+
+		if (product === 0) {
+			return res
+				.status(200)
+				.json({ message: 'Product not fount', data: product });
+		}
+
 		res.status(200).json({ message: 'Updated successfully', data: product });
 	} catch (error) {
 		throw new Error(error);

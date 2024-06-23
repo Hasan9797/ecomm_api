@@ -76,7 +76,13 @@ const update = async (req, res) => {
 		const category = await Category.update(newCategory, {
 			where: { id: req.query.id },
 		});
-		res.status(200).json({ message: 'Updated successfully', data: category });
+
+		if (category === 0) {
+			return res
+				.status(200)
+				.json({ message: 'Product not fount', data: category });
+		}
+		res.status(200).json({ message: 'Updated Successfully', data: category });
 	} catch (error) {
 		throw new Error(error);
 	}
