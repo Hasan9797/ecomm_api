@@ -65,14 +65,14 @@ const update = async (req, res) => {
 
 		if (req.file) {
 			newBanner.img = '/' + req.file.filename;
-			const currentFile = await Brand.findByPk(req.query.id);
+			const currentFile = await Brand.findByPk(req.params.id);
 			if (currentFile && currentFile.img) {
 				unlinkFile([currentFile.img.toString().slice(1)]);
 			}
 		}
 
 		const Banner = await Banner.update(newBanner, {
-			where: { id: req.query.id },
+			where: { id: req.params.id },
 		});
 
 		if (Banner[0] === 0) {

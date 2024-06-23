@@ -6,7 +6,7 @@ const route = Router();
 route.get('/', bannerControllers.getAll);
 route.get('/byId/:id', bannerControllers.getById);
 route.post('/add', upload.single('img'), bannerControllers.create);
-route.post('/update', upload.single('img'), bannerControllers.update);
+route.post('/update/:id', upload.single('img'), bannerControllers.update);
 route.delete('/delete/:id', bannerControllers.destroy);
 
 export default route;
