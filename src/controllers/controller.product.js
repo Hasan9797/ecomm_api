@@ -39,6 +39,7 @@ const getAll = async (req, res) => {
 
 		const array = rows.map(row => {
 			return {
+				id: row.id,
 				title: lang === 'ru' ? row.title_ru : row.title_uz,
 				price: row.price,
 				img: row.img,
@@ -72,6 +73,7 @@ const getById = async (req, res) => {
 			return res.status(200).json({ message: 'Products not found', data: {} });
 		}
 		const langProduct = {
+			id: product.id,
 			title: lang === 'ru' ? product.title_ru : product.title_uz,
 			price: product.price,
 			img: product.img,
@@ -165,6 +167,7 @@ const getProductsByCtegoryId = async (req, res) => {
 
 		const array = rows.map(row => {
 			return {
+				id: row.id,
 				title: lang === 'ru' ? row.title_ru : row.title_uz,
 				price: row.price,
 				img: row.img,
@@ -193,7 +196,7 @@ const create = async (req, res) => {
 
 	const img = files.img ? files.img[0] : null;
 	const gallery = files.gallery ? files.gallery.map(file => file.filename) : [];
-	console.log(req.body);
+
 	const newProduct = {
 		...req.body,
 	};

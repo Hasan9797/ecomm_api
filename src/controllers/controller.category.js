@@ -3,6 +3,7 @@ import { unlinkFile } from '../helpers/fileHelper.js';
 const { Category } = dataBase;
 
 const getAll = async (req, res) => {
+	const lang = req.headers['accept-language'];
 	try {
 		const categories = await Category.findAll({
 			include: [
@@ -12,6 +13,11 @@ const getAll = async (req, res) => {
 				},
 			],
 		});
+		if (categories) {
+			const langCategory = {
+				
+			};
+		}
 		res.status(200).json({ message: 'Success', data: categories });
 	} catch (error) {
 		throw new Error(error);
