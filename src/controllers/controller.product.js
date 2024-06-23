@@ -212,7 +212,9 @@ const create = async (req, res) => {
 	const files = req.files;
 
 	const img = files.img ? files.img[0] : null;
-	const gallery = files.gallery ? files.gallery.map(file => file.filename) : [];
+	const gallery = files.gallery
+		? files.gallery.map(file => '/' + file.filename)
+		: [];
 
 	const newProduct = {
 		...req.body,
