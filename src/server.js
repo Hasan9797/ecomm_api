@@ -19,6 +19,8 @@ import orderRouter from './routers/router.order.js';
 import reportRouter from './routers/router.reports.js';
 import brandRouter from './routers/router.brand.js';
 import bannerRouter from './routers/router.banner.js';
+import usersRouter from './routers/router.user.js';
+import authRouter from './routers/router.auth.js';
 
 // import Middlewares
 import errorHandler from './middlewares/errorHandler.js';
@@ -38,7 +40,8 @@ app.use('/api/order', orderRouter);
 app.use('/api/report', reportRouter);
 app.use('/api/brand', brandRouter);
 app.use('/api/banner', bannerRouter);
-// app.use("/api/user");
+app.use('/api/user', usersRouter);
+app.use('/api/auth', authRouter);
 
 // Catch all route for 404 errors
 app.use((req, res, next) => {

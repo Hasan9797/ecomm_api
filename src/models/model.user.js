@@ -1,5 +1,6 @@
 import { DataTypes } from 'sequelize';
 import db from '../connections/connection.db.js';
+import user_enum from '../enums/user_enum.js';
 
 const User = db.define(
 	'users',
@@ -14,10 +15,20 @@ const User = db.define(
 		},
 		role: {
 			type: DataTypes.INTEGER,
+			defaultValue: user_enum.ROLE_USER_ADMIN,
 			allowNull: false,
 		},
 		status: {
 			type: DataTypes.INTEGER,
+			defaultValue: user_enum.STATUS_CREATE,
+			allowNull: false,
+		},
+		login: {
+			type: DataTypes.STRING,
+			allowNull: false,
+		},
+		password: {
+			type: DataTypes.STRING,
 			allowNull: false,
 		},
 		createdAt: {
