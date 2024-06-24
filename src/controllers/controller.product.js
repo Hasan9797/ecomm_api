@@ -38,7 +38,7 @@ const getAll = async (req, res) => {
         raw: true,
       }
     );
-
+    // console.log(rows);
     const totalPages = Math.ceil(count / limit);
 
     const array = rows.map((row) => {
