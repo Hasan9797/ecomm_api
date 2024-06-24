@@ -29,8 +29,8 @@ const getAll = async (req, res) => {
     // Sahifalangan yozuvlarni olish
     const rows = await SQL.query(
       `SELECT p.*, c.title_uz as category_title_uz, c.title_ru as category_title_ru
-            FROM products p
-       		JOIN categories c ON p.category_id = c.id
+          FROM products p
+       		LEFT JOIN categories c ON p.category_id = c.id
        		LIMIT :limit OFFSET :offset`,
       {
         replacements: { limit: limit, offset: offset },
@@ -48,10 +48,10 @@ const getAll = async (req, res) => {
         price: row.price,
         img: row.img,
         gallery: row.gallery,
-        characteristic: row.characteristic,
-        categoryId: row.category_id,
+        characteristic: row.characteristic || null,
+        categoryId: row.category_id || null,
         category_name:
-          lang === "ru" ? row.category_title_ru : row.category_title_uz,
+          lang === "ru" ? row.category_title_ru : row.category_title_uz || null,
         discription: lang === "ru" ? row.description_ru : row.description_uz,
         created_at: row.createdAt,
         updated_at: row.updatedAt,
