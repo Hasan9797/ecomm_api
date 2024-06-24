@@ -51,7 +51,7 @@ const getAll = async (req, res) => {
         characteristic: row.characteristic || null,
         categoryId: row.category_id || null,
         category_name:
-          lang === "ru" ? row.category_title_ru : row.category_title_uz || null,
+          lang === "ru" ? row.category_title_ru : row.category_title_uz,
         discription: lang === "ru" ? row.description_ru : row.description_uz,
         created_at: row.createdAt,
         updated_at: row.updatedAt,

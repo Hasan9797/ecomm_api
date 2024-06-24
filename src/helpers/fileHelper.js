@@ -1,7 +1,11 @@
 import multer from "multer";
 import path from "path";
 import fs from "fs";
+// import AWS from "aws-sdk";
+// import multerS3 from "multer-s3";
 import { fileURLToPath } from "url";
+// import env from "dotenv";
+// env.config();
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const uploadFolderPath = path.join(__dirname, "../../", "Uploads");
@@ -69,3 +73,47 @@ export const unlinkFile = (unlinkFiles = []) => {
     });
   });
 };
+
+// // DigitalOcean Spaces sozlash
+// const spacesEndpoint = new AWS.Endpoint("nyc3.digitaloceanspaces.com");
+// const s3 = new AWS.S3({
+//   endpoint: spacesEndpoint,
+//   accessKeyId: process.env.DO_SPACES_KEY,
+//   secretAccessKey: process.env.DO_SPACES_SECRET,
+// });
+
+// // Multer sozlash
+// export const upload = multer({
+//   storage: multerS3({
+//     s3: s3,
+//     bucket: "my_access_key_97",
+//     acl: "public-read", // Faylni ochiq qilish (yoki private)
+//     key: function (req, file, cb) {
+//       const fileName = Date.now().toString() + "-" + file.originalname;
+//       const folderPath = "uploads/images/"; // Faylni saqlash uchun papka yo'li
+//       const fileKey = folderPath + fileName; // Faylning to'liq yo'li (key)
+//       cb(null, fileKey); // Keyni qaytarish
+//     },
+//   }),
+// });
+
+// export const unlinkFile = async (unlinkFiles = []) => {
+//   const deleteObjects = unlinkFiles.map((file) => ({
+//     Key: file,
+//   }));
+
+//   const params = {
+//     Bucket: "my_access_key_97",
+//     Delete: {
+//       Objects: deleteObjects,
+//       Quiet: false,
+//     },
+//   };
+
+//   try {
+//     const data = await s3.deleteObjects(params).promise();
+//     console.log("Fayllar muvaffaqiyatli o'chirildi:", data.Deleted);
+//   } catch (err) {
+//     console.error("Fayllarni o'chirishda xatolik yuz berdi:", err);
+//   }
+// };
