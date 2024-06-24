@@ -30,7 +30,14 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
-app.use(express.static(path.join(__dirname, '..', 'Uploads')));
+app.use(
+	express.static(path.join(__dirname, '..', 'Uploads'), {
+		maxAge: '7d',
+		setHeaders: function (res, path) {
+			res.setHeader('Cache-Control', 'public, max-age=604800, no-transform');
+		},
+	})
+);
 
 app.use('/api/category', categoryRouter);
 app.use('/api/product', productRouter);
