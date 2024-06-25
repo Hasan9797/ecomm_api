@@ -1,7 +1,7 @@
-import GeneralError from "../errors/generalError.js";
+import Errors from "../errors/generalError.js";
 
 const errorHandler = (err, req, res, next) => {
-  if (err instanceof GeneralError) {
+  if (err instanceof Errors) {
     return res.status(err.statusCode).json({
       error: {
         name: err.name,
@@ -11,7 +11,7 @@ const errorHandler = (err, req, res, next) => {
   }
 
   // Log error for debugging
-  console.error(err);
+  console.error(err.message);
 
   res.status(500).json({
     error: {
