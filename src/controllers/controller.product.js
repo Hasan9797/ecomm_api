@@ -199,8 +199,8 @@ const create = async (req, res) => {
       title_uz,
       title_ru,
       price,
-      description_uz,
       characteristic,
+      description_uz,
       description_ru,
     } = req.body;
     const files = req.files;
