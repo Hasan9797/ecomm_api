@@ -7,9 +7,11 @@ const { User } = dataBase;
 const login = async (req, res) => {
   try {
     const user = await User.findOne({
-      login: req.body.login,
+      where: {
+        login: req.body.login,
+      },
     });
-    console.log(user);
+
     if (!user) {
       return res
         .status(401)
