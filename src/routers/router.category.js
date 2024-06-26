@@ -6,8 +6,18 @@ const route = Router();
 
 route.get("/", categoryControllers.getAll);
 route.get("/byId/:id", categoryControllers.getById);
-route.post("/add", upload.single("img"), categoryControllers.create);
-route.post("/update/:id", upload.single("img"), categoryControllers.update);
-route.delete("/delete/:id", categoryControllers.destroy);
+route.post(
+  "/add",
+  authenticateToken,
+  upload.single("img"),
+  categoryControllers.create
+);
+route.post(
+  "/update/:id",
+  authenticateToken,
+  upload.single("img"),
+  categoryControllers.update
+);
+route.delete("/delete/:id", authenticateToken, categoryControllers.destroy);
 
 export default route;
