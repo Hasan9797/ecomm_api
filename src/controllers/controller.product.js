@@ -75,8 +75,6 @@ const getAll = async (req, res) => {
 
 const getById = async (req, res) => {
   try {
-    const lang = req.headers["accept-language"];
-
     const product = await Product.findByPk(req.params.id, {
       include: [
         {
@@ -89,24 +87,9 @@ const getById = async (req, res) => {
     if (!product) {
       return res.status(200).json({ message: "Products not found", data: {} });
     }
-
-    const langProduct = {
-      id: product.id,
-      title: lang === "ru" ? product.title_ru : product.title_uz,
-      price: product.price,
-      img: product.img,
-      gallery: product.gallery,
-      characteristic: product.characteristic,
-      categoryId: product.category_id,
-      category_name: lang === "ru" ? product.title_ru : product.itle_uz,
-      discription:
-        lang === "ru" ? product.description_ru : product.description_uz,
-      created_at: product.created,
-      updated_at: product.updated,
-    };
     res
       .status(200)
-      .json({ message: "Get product successfully", data: langProduct });
+      .json({ message: "Get product successfully", data: product });
   } catch (error) {
     next(GlobalError.internal(error.message));
   }
