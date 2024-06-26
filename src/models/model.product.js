@@ -25,6 +25,10 @@ const Product = db.define(
       type: DataTypes.FLOAT,
       allowNull: false,
     },
+    money_type: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
     status: {
       type: DataTypes.INTEGER,
       defaultValue: productEnum.STATUS_CREATE,
