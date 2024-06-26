@@ -238,7 +238,7 @@ const create = async (req, res) => {
       gallery,
     };
 
-    // const product = await Product.create(newProduct);
+    const product = await Product.create(newProduct);
 
     const end = Date.now();
     // console.log(`Product creation took ${end - start}ms`);
@@ -246,7 +246,7 @@ const create = async (req, res) => {
     res.status(201).json({
       creating: end - start + "ms",
       message: "Product created successfully",
-      data: [],
+      data: product,
     });
   } catch (error) {
     console.error("Error creating product:", error);
