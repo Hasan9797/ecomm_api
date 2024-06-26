@@ -1,11 +1,12 @@
-import { Router } from 'express';
-import usersControllers from '../controllers/constroller.users.js';
+import { Router } from "express";
+import usersControllers from "../controllers/constroller.users.js";
+import { authenticateToken } from "../middlewares/verfiy.js";
 const route = Router();
 
-route.get('/', usersControllers.getAll);
-route.get('/byId/:id', usersControllers.getById);
-route.post('/add', usersControllers.create);
-route.post('/update/:id', usersControllers.update);
-route.delete('/delete/:id', usersControllers.destroy);
+route.get("/", authenticateToken, usersControllers.getAll);
+route.get("/byId/:id", authenticateToken, usersControllers.getById);
+route.post("/add", authenticateToken, usersControllers.create);
+route.post("/update/:id", authenticateToken, usersControllers.update);
+route.delete("/delete/:id", authenticateToken, usersControllers.destroy);
 
 export default route;

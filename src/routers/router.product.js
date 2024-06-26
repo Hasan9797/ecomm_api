@@ -11,14 +11,20 @@ route.get("/bycategoryid/:id", productControllers.getProductsByCtegoryId);
 route.post("/byids", productControllers.getProductsInOrder);
 route.post(
   "/add",
+  authenticateToken,
   upload.fields([
     { name: "img", maxCount: 1 }, // Bitta img fayli
     { name: "gallery", maxCount: 5 }, // Bir nechta gallery fayllari
   ]),
   productControllers.create
 );
-route.post("/update/:id", upload.single("img"), productControllers.update);
+route.post(
+  "/update/:id",
+  authenticateToken,
+  upload.single("img"),
+  productControllers.update
+);
 route.get("/search", productControllers.searchProducts);
-route.delete("/delete/:id", productControllers.destroy);
+route.delete("/delete/:id", authenticateToken, productControllers.destroy);
 
 export default route;
