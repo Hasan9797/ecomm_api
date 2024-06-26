@@ -11,7 +11,6 @@ route.get("/bycategoryid/:id", productControllers.getProductsByCtegoryId);
 route.post("/byids", productControllers.getProductsInOrder);
 route.post(
   "/add",
-  authenticateToken,
   upload.fields([
     { name: "img", maxCount: 1 }, // Bitta img fayli
     { name: "gallery", maxCount: 5 }, // Bir nechta gallery fayllari
