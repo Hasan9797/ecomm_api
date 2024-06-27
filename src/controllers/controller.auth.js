@@ -22,7 +22,7 @@ const login = async (req, res) => {
     if (!bcPast) {
       return res.status(401).json({ message: "Wrong password", data: false });
     }
-
+    console.log(user.role);
     const accessToken = jwt.sign(
       {
         id: user.id,
