@@ -28,6 +28,7 @@ route.post(
   productControllers.update
 );
 route.get("/search", productControllers.searchProducts);
+route.get("/filter", productControllers.filter);
 route.delete("/delete/:id", authenticateToken, productControllers.destroy);
 
 export default route;
