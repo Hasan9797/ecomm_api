@@ -244,15 +244,17 @@ const update = async (req, res) => {
     const newProduct = {
       ...req.body,
     };
+
     const files = req.files;
-    if (files) {
-      const currentFile = await Product.findByPk(req.params.id);
-      if (currentFile) {
+    const currentProduct = await Product.findByPk(req.params.id);
+
+    if (files && currentProduct) {
+      if (currentProduct) {
         const img = files.img ? files.img[0] : null;
-        if (img && currentFile.img) {
+        if (img && currentProduct.img) {
           newProduct.img = "/" + img.filename;
-          if (currentFile && currentFile.img) {
-            unlinkFile([currentFile.img]);
+          if (currentProduct && currentProduct.img) {
+            unlinkFile([currentProduct.img]);
           }
         }
 
@@ -260,8 +262,8 @@ const update = async (req, res) => {
           ? files.gallery.map((file) => "/" + file.filename)
           : [];
 
-        if (gallery.length > 0 && currentFile.gallery) {
-          unlinkFile(currentFile.gallery);
+        if (gallery.length > 0 && currentProduct.gallery) {
+          unlinkFile(currentProduct.gallery);
           newProduct.gallery = gallery;
         }
       }
@@ -285,11 +287,22 @@ const update = async (req, res) => {
 
 const destroy = async (req, res) => {
   try {
+    const currentFile = await Product.findByPk(req.params.id);
+
+    if (currentFile) {
+      if (currentFile.img) {
+        unlinkFile([currentFile.img]);
+      }
+
+      if (gallery.length > 0 && currentFile.gallery) {
+        unlinkFile(currentFile.gallery);
+      }
+    }
+
     await Product.destroy({
       where: { id: req.params.id },
     });
-    const currentFile = await Product.findByPk(req.params.id);
-    unlinkFile([currentFile.img.toString().slice(1)]);
+
     res.status(200).json({ message: "Deleted successfully", data: true });
   } catch (error) {
     throw new Error(error.message);
