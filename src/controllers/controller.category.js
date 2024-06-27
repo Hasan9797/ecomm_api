@@ -54,7 +54,7 @@ const getAll = async (req, res, next) => {
 
     return res.status(200).json({ message: "Success", data: langCategory });
   } catch (error) {
-    next(Errors.internal(error.message));
+    throw new Error(error.message);
   }
 };
 
@@ -86,14 +86,14 @@ const getById = async (req, res, next) => {
     });
 
     if (!category) {
-      return next(Errors.notFound("Category not found"));
+      return Errors.notFound("Category not found");
     }
 
     return res
       .status(200)
       .json({ message: "Get category successfully", data: category });
   } catch (error) {
-    next(Errors.internal(error.message));
+    throw new Error(error.message);
   }
 };
 
@@ -119,7 +119,7 @@ const create = async (req, res, next) => {
       data: category,
     });
   } catch (error) {
-    next(Errors.internal(error.message));
+    throw new Error(error.message);
   }
 };
 
@@ -142,14 +142,14 @@ const update = async (req, res, next) => {
     });
 
     if (updated === 0) {
-      return next(Errors.notFound("Category not found"));
+      return Errors.notFound("Category not found");
     }
 
     return res
       .status(200)
       .json({ message: "Updated Successfully", data: newCategory });
   } catch (error) {
-    next(Errors.internal(error.message));
+    throw new Error(error.message);
   }
 };
 
@@ -167,7 +167,7 @@ const destroy = async (req, res, next) => {
       .status(200)
       .json({ message: "Deleted successfully", data: true });
   } catch (error) {
-    next(Errors.internal(error.message));
+    throw new Error(error.message);
   }
 };
 
