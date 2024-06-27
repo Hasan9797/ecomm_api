@@ -107,7 +107,6 @@ const getProductsInOrder = async (req, res) => {
       replacements: { uniqueProductIds },
       type: Sequelize.QueryTypes.SELECT,
     });
-    console.log(productsWithCategories);
 
     if (!productsWithCategories || productsWithCategories.length === 0) {
       return res.status(200).json({
@@ -121,7 +120,12 @@ const getProductsInOrder = async (req, res) => {
       productsMap[product.id] = { ...product, count: 0 };
     });
 
-    const array = productIds.map((item) => {
+    const filterArray = productIds.filter((product) => {
+      if (productsMap[product.id]) {
+        return product;
+      }
+    });
+    const array = filterArray.map((item) => {
       productsMap[item.id].count = item.count;
       productsMap[item.id].price *= item.count;
       return productsMap[item.id];
@@ -275,7 +279,7 @@ const update = async (req, res) => {
 
     if (product[0] === 0) {
       return res
-        .status(200)
+        .status(404)
         .json({ message: "Product not fount", data: product });
     }
 
@@ -329,6 +333,7 @@ const searchProducts = async (req, res) => {
       replacements: { searchText: `%${searchText}%` },
       type: SQL.QueryTypes.SELECT,
     });
+
     const array = products.map((product) => {
       return {
         id: product.id,
@@ -355,7 +360,40 @@ const searchProducts = async (req, res) => {
   }
 };
 
-const filter = async (req, res) => {};
+const filter = async (req, res) => {
+  try {
+    // req.query ichidagi query parametrlari
+    const querys = { ...req.query };
+
+    // SQL queryni qurish uchun boshlang'ich qism
+    let sqlQuery = "SELECT * FROM products WHERE 1=1";
+    let replacements = [];
+
+    // query parametrlari orqali filterlarni qo'shish
+    for (const key in querys) {
+      if (querys.hasOwnProperty(key)) {
+        if (key === "title_uz" || key === "title_ru") {
+          sqlQuery += ` AND ${key} LIKE ?`;
+          replacements.push(`%${querys[key]}%`);
+        }
+
+        sqlQuery += ` AND ${key} = ?`;
+        replacements.push(querys[key]);
+      }
+    }
+
+    // Sequelize orqali raw queryni bajarish
+    const results = await SQL.query(sqlQuery, {
+      replacements: replacements,
+      type: Sequelize.QueryTypes.SELECT,
+    });
+
+    res.json(results);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal Server Error");
+  }
+};
 
 export default {
   getAll,
@@ -365,5 +403,6 @@ export default {
   create,
   update,
   searchProducts,
+  filter,
   destroy,
 };
