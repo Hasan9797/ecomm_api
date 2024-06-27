@@ -8,7 +8,12 @@ const route = Router();
 
 route.get("/", authenticateToken, usersControllers.getAll);
 route.get("/profile", authenticateToken, usersControllers.getById);
-route.post("/add",  usersControllers.create);
+route.post(
+  "/add",
+  authenticateToken,
+  authorizeRoleSuperAdmin,
+  usersControllers.create
+);
 route.put(
   "/update/:id",
   authenticateToken,
