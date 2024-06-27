@@ -287,15 +287,15 @@ const update = async (req, res) => {
 
 const destroy = async (req, res) => {
   try {
-    const currentFile = await Product.findByPk(req.params.id);
+    const currentProduct = await Product.findByPk(req.params.id);
 
-    if (currentFile) {
-      if (currentFile.img) {
-        unlinkFile([currentFile.img]);
+    if (currentProduct) {
+      if (currentProduct.img) {
+        unlinkFile([currentProduct.img]);
       }
 
-      if (gallery.length > 0 && currentFile.gallery) {
-        unlinkFile(currentFile.gallery);
+      if (currentProduct.gallery.length > 0 && currentProduct.gallery) {
+        unlinkFile(currentProduct.gallery);
       }
     }
 
