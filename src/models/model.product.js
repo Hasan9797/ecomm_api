@@ -27,6 +27,7 @@ const Product = db.define(
     },
     money_type: {
       type: DataTypes.STRING,
+      defaultValue: "usd",
       allowNull: false,
     },
     status: {

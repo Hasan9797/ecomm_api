@@ -69,7 +69,7 @@ const getAll = async (req, res) => {
       data: array,
     });
   } catch (error) {
-    next(GlobalError.internal(error.message));
+    throw new GlobalError.internal(error.message);
   }
 };
 
@@ -91,7 +91,7 @@ const getById = async (req, res) => {
       .status(200)
       .json({ message: "Get product successfully", data: product });
   } catch (error) {
-    next(GlobalError.internal(error.message));
+    throw new Error(error.message);
   }
 };
 
@@ -128,7 +128,7 @@ const getProductsInOrder = async (req, res) => {
     });
     res.status(200).json({ message: "get products successfully", data: array });
   } catch (error) {
-    next(GlobalError.internal(error.message));
+    throw new Error(error.message);
   }
 };
 
@@ -188,7 +188,7 @@ const getProductsByCtegoryId = async (req, res) => {
       data: array,
     });
   } catch (error) {
-    next(GlobalError.internal(error.message));
+    throw new Error(error.message);
   }
 };
 
@@ -235,7 +235,7 @@ const create = async (req, res) => {
     });
   } catch (error) {
     console.error("Error creating product:", error);
-    next(GlobalError.internal(error.message));
+    throw new Error(error.message);
   }
 };
 
@@ -264,7 +264,7 @@ const update = async (req, res) => {
 
     res.status(200).json({ message: "Updated successfully", data: product });
   } catch (error) {
-    next(GlobalError.internal(error.message));
+    throw new Error(error.message);
   }
 };
 
@@ -277,7 +277,7 @@ const destroy = async (req, res) => {
     unlinkFile([currentFile.img.toString().slice(1)]);
     res.status(200).json({ message: "Deleted successfully", data: true });
   } catch (error) {
-    next(GlobalError.internal(error.message));
+    throw new Error(error.message);
   }
 };
 
@@ -323,7 +323,7 @@ const searchProducts = async (req, res) => {
     res.status(200).json({ message: "Get product successfully", data: array });
   } catch (error) {
     console.error("Error searching products:", error);
-    next(GlobalError.internal(error.message));
+    throw new Error(error.message);
   }
 };
 
