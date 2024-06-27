@@ -21,7 +21,10 @@ route.post(
 route.post(
   "/update/:id",
   authenticateToken,
-  upload.single("img"),
+  upload.fields([
+    { name: "img", maxCount: 1 }, // Bitta img fayli
+    { name: "gallery", maxCount: 5 }, // Bir nechta gallery fayllari
+  ]),
   productControllers.update
 );
 route.get("/search", productControllers.searchProducts);
