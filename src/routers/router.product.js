@@ -6,7 +6,7 @@ import { authenticateToken } from "../middlewares/verfiy.js";
 const route = Router();
 
 route.get("/", productControllers.getAll);
-route.get("/by/:id", productControllers.getById);
+route.get("/byId/:id", productControllers.getById);
 route.get("/bycategoryid/:id", productControllers.getProductsByCtegoryId);
 route.post("/byids", productControllers.getProductsInOrder);
 route.post(
