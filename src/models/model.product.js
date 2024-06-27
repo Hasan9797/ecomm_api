@@ -23,7 +23,7 @@ const Product = db.define(
     },
     price: {
       type: DataTypes.FLOAT,
-      allowNull: false,
+      allowNull: true,
     },
     money_type: {
       type: DataTypes.STRING,
