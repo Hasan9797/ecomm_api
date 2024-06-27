@@ -244,14 +244,29 @@ const update = async (req, res) => {
     const newProduct = {
       ...req.body,
     };
-
-    if (req.file) {
-      newProduct.img = "/" + req.file.filename;
+    const files = req.files;
+    if (files) {
       const currentFile = await Product.findByPk(req.params.id);
-      if (currentFile && currentFile.img) {
-        unlinkFile([currentFile.img.toString().slice(1)]);
+      if (currentFile) {
+        const img = files.img ? files.img[0] : null;
+        if (img && currentFile.img) {
+          newProduct.img = "/" + img.filename;
+          if (currentFile && currentFile.img) {
+            unlinkFile([currentFile.img]);
+          }
+        }
+
+        const gallery = files.gallery
+          ? files.gallery.map((file) => "/" + file.filename)
+          : [];
+
+        if (gallery.length > 0 && currentFile.gallery) {
+          unlinkFile(currentFile.gallery);
+          newProduct.gallery = gallery;
+        }
       }
     }
+
     const product = await Product.update(newProduct, {
       where: { id: req.params.id },
     });

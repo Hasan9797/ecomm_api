@@ -44,7 +44,7 @@ export const upload = multer({
 });
 
 // Fayl o'chirish funksiyasi
-export const unlinkFile = (unlinkFiles = []) => {
+export const unlinkFile = (array = []) => {
   const imageExtensions = /\.(jpg|jpeg|png|gif)$/i;
 
   fs.readdir(uploadFolderPath, (err, files) => {
@@ -55,6 +55,10 @@ export const unlinkFile = (unlinkFiles = []) => {
       );
       return;
     }
+
+    const unlinkFiles = array.map((unlinkFile) =>
+      unlinkFile.toString().slice(1)
+    );
 
     const imageFiles = files.filter(
       (file) => imageExtensions.test(file) && unlinkFiles.includes(file)
