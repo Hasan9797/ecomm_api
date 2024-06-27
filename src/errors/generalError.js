@@ -12,6 +12,10 @@ class Errors extends Error {
     return new Errors(message, 401);
   }
 
+  static forbeddinError(message = "user role is not Super Admin") {
+    return new Errors(message, 403);
+  }
+
   static badRequest(message = "Bad Request") {
     return new Errors(message, 400);
   }
