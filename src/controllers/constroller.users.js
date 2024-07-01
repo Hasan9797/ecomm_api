@@ -12,7 +12,7 @@ const getAll = async (req, res) => {
     }
     res.status(200).json({ message: "Success", data: users });
   } catch (error) {
-    next(Errors.internal(error.message));
+    throw Errors.internal(error.message);
   }
 };
 
@@ -26,7 +26,7 @@ const getById = async (req, res) => {
     res.status(200).json({ message: "Get user successfully", data: user });
   } catch (error) {
     console.error("Error fetching user with subcategories:", error);
-    next(Errors.internal(error.message));
+    throw Errors.internal(error.message);
   }
 };
 
@@ -53,7 +53,7 @@ const create = async (req, res) => {
     });
   } catch (error) {
     console.error("Error creating User:", error);
-    next(Errors.internal(error.message));
+    throw Errors.internal(error.message);
   }
 };
 
@@ -68,7 +68,7 @@ const update = async (req, res) => {
     }
     res.status(200).json({ message: "Updated Successfully", data: user });
   } catch (error) {
-    next(Errors.internal(error.message));
+    throw Errors.internal(error.message);
   }
 };
 
@@ -79,8 +79,33 @@ const destroy = async (req, res) => {
     });
     res.status(200).json({ message: "Deleted successfully", data: true });
   } catch (error) {
-    next(Errors.internal(error.message));
+    throw Errors.internal(error.message);
   }
 };
 
-export default { getAll, getById, create, update, destroy };
+const generateUser = async (req, res) => {
+  const start = Date.now();
+  try {
+    const hashPass = await bcrypt.hash("admin123", 10);
+    const newUser = await User.create({
+      name: AnvarJigga,
+      phone: "998998889977",
+      role: 2,
+      login: "admin",
+      password: hashPass,
+      status: 1,
+    });
+
+    const end = Date.now();
+    res.status(201).json({
+      creating: end - start + "ms",
+      message: "User generate successfully",
+      data: newUser,
+    });
+  } catch (error) {
+    console.error("Error generate User:", error);
+    throw Errors.internal(error.message);
+  }
+};
+
+export default { getAll, getById, create, update, destroy, generateUser };

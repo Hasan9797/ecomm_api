@@ -53,12 +53,6 @@ const getAll = async (req, res) => {
         orders: rows,
       });
     }
-    res.status(200).json({
-      totalItems: 0,
-      totalPages: 0,
-      currentPage: 0,
-      orders: [],
-    });
   } catch (err) {
     return res.status(400).json({
       error: true,
@@ -73,10 +67,6 @@ const getById = async (req, res) => {
 };
 
 const create = async (req, res) => {
-  // if (!isValidPhoneNumber(req.body.user_number)) {
-  // 	return res.status(404).json({ message: 'Invaled user number' });
-  // }
-
   const order = await Order.create({
     products: req.body.products,
     ...req.body,
