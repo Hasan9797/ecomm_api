@@ -1,73 +1,20 @@
 import { Sequelize, Op } from "sequelize";
 import dataBase from "../models/model.index.js";
 import GlobalError from "../errors/generalError.js";
+import productService from "../services/service.product.js";
 const { Product, SQL, Category } = dataBase;
 
 import { unlinkFile } from "../helpers/fileHelper.js";
+import Errors from "../errors/generalError.js";
 
 const getAll = async (req, res) => {
   const lang = req.headers["accept-language"];
   const page = req.query.page || 1;
   const pageSize = req.query.pageSize || 10;
 
-  const limit = pageSize; // Har bir sahifadagi yozuvlar soni
-  const offset = (page - 1) * pageSize; // Qaysi yozuvdan boshlab olish
-
   try {
-    // Umumiy yozuvlar sonini olish
-    const [countResult] = await SQL.query(
-      "SELECT COUNT(*) as count FROM products",
-      {
-        type: Sequelize.QueryTypes.SELECT,
-      }
-    );
-
-    if (!countResult || countResult.count == 0) {
-      return res.status(200).json({ message: "Products not found", data: [] });
-    }
-    const count = countResult.count;
-
-    // Sahifalangan yozuvlarni olish
-    const rows = await SQL.query(
-      `SELECT p.*, c.title_uz as category_title_uz, c.title_ru as category_title_ru
-          FROM products p
-       		LEFT JOIN categories c ON p.category_id = c.id
-       		LIMIT :limit OFFSET :offset`,
-      {
-        replacements: { limit: limit, offset: offset },
-        type: SQL.QueryTypes.SELECT,
-        raw: true,
-      }
-    );
-    // console.log(rows);
-    const totalPages = Math.ceil(count / limit);
-
-    const array = rows
-      .sort((a, b) => b.id - a.id)
-      .map((row) => {
-        return {
-          id: row.id,
-          title: lang === "ru" ? row.title_ru : row.title_uz,
-          price: row.price,
-          img: row.img,
-          gallery: row.gallery,
-          characteristic: row.characteristic || null,
-          categoryId: row.category_id || null,
-          category_name:
-            lang === "ru" ? row.category_title_ru : row.category_title_uz,
-          discription: lang === "ru" ? row.description_ru : row.description_uz,
-          created_at: row.createdAt,
-          updated_at: row.updatedAt,
-        };
-      });
-
-    res.status(200).json({
-      message: "Get products successfully",
-      totalItems: count,
-      totalPages: totalPages,
-      currentPage: page,
-      data: array,
-    });
+    const products = await productService.getAllProducts(lang, page, pageSize);
+    res.status(200).json(products);
   } catch (error) {
     throw new GlobalError.internal(error.message);
   }
@@ -391,7 +338,7 @@ const filter = async (req, res) => {
     res.json(results);
   } catch (error) {
     console.error(error);
-    res.status(500).send("Internal Server Error");
+    throw Errors.internal(error.message);
   }
 };
 
