@@ -78,7 +78,7 @@ class ProductRepository {
 
   async findProductById(productId) {
     try {
-      const product = await Product.findByPk(req.params.id, {
+      const product = await Product.findByPk(productId, {
         include: [
           {
             model: Category,
