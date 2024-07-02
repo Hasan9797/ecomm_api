@@ -6,5 +6,6 @@ order.get("/", orderControllers.getAll);
 order.get("/filter", orderControllers.filter);
 order.get("/by/:id", orderControllers.getById);
 order.post("/add", orderControllers.create);
+order.put("/update/:id", orderControllers.update);
 
 export default order;

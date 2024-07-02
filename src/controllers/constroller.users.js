@@ -87,6 +87,14 @@ const destroy = async (req, res) => {
 const generateUser = async (req, res) => {
   const start = Date.now();
   try {
+    const currentUser = await User.findOne({ login: "admin" });
+
+    if (currentUser) {
+      return res
+        .status(200)
+        .json({ message: "User already exists", data: false });
+    }
+
     const hashPass = await bcrypt.hash("admin123", 10);
     const newUser = await User.create({
       name: "AnvarJigga",

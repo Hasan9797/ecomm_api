@@ -100,33 +100,56 @@ const getAll = async (req, res) => {
 };
 
 const getById = async (req, res) => {
-  const order = await Order.findByPk(req.params.id);
-  res.status(200).json(order);
+  try {
+    const order = await Order.findByPk(req.params.id);
+    res.status(200).json({ message: "Get Order Successfully", data: order });
+  } catch (error) {
+    console.error(error);
+    throw new Error(error.message);
+  }
 };
 
 const create = async (req, res) => {
-  const order = await Order.create({
-    products: req.body.products,
-    ...req.body,
-  });
-  res.status(201).json(order);
+  try {
+    const order = await Order.create({
+      products: req.body.products,
+      ...req.body,
+    });
+    res.status(201).json({ message: "Created Successfully", data: order });
+  } catch (error) {
+    console.error(error);
+    throw new Error(error.message);
+  }
 };
 
 const update = async (req, res) => {
-  if (req.body.user_number && !isValidPhoneNumber(req.body.user_number)) {
-    return res.status(404).json({ message: "Invaled user number" });
+  try {
+    if (req.body.user_number && !isValidPhoneNumber(req.body.user_number)) {
+      return res.status(404).json({ message: "Invaled user number" });
+    }
+    const order = await Order.update(req.body, {
+      where: { id: req.params.id },
+    });
+    if (order > 0) {
+      res.status(200).json({ message: "Updated Successfully", data: true });
+    }
+    res.status(200).json({ message: "Updated Error", data: false });
+  } catch (error) {
+    console.error(error);
+    throw new Error(error.message);
   }
-  const order = await Order.update(req.body, {
-    where: { id: req.params.id },
-  });
-  res.status(200).json(order);
 };
 
 const destroy = async (req, res) => {
-  const order = await Order.destroy({
-    where: { id: req.params.id },
-  });
-  res.status(200).json(order);
+  try {
+    await Order.destroy({
+      where: { id: req.params.id },
+    });
+    res.status(200).json({ message: "Deleted Successfully", data: true });
+  } catch (error) {
+    console.error(error);
+    throw new Error(error.message);
+  }
 };
 
 const filter = async (req, res) => {
@@ -162,6 +185,11 @@ const filter = async (req, res) => {
     console.error(error);
     throw new Error(error.message);
   }
+};
+
+const getOrdersByProductCode = async () => {
+  try {
+  } catch (error) {}
 };
 
 export default { getAll, getById, create, update, destroy, filter };
