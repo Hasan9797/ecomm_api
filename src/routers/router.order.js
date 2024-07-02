@@ -6,6 +6,7 @@ order.get("/creating", orderControllers.getAllByCreated);
 order.get("/waiting", orderControllers.getAllByWaiting);
 order.get("/success", orderControllers.getAllBySuccess);
 order.get("/inactive", orderControllers.getAllByInactive);
+order.get("/filter", orderControllers.filter);
 order.get("/by/:id", orderControllers.getById);
 order.post("/add", orderControllers.create);
 
