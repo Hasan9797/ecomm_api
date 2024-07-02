@@ -88,22 +88,20 @@ class ProductRepository {
       });
 
       if (!product) {
-        return res.status(404).json({ message: "Product not found", data: {} });
+        return { status: 404, message: "Products not found", data: {} };
       }
 
-      // Aylanishni oldini olish uchun toJSON() metodidan foydalanamiz
-      const plainProduct = product.toJSON();
-
       return {
+        status: 200,
         message: "Get product successfully",
         data: {
-          createdAt: dateHelper(plainProduct.createdAt),
-          updatedAt: dateHelper(plainProduct.updatedAt),
+          createdAt: dateHelper(product.createdAt),
+          updatedAt: dateHelper(product.updatedAt),
           unixTime: {
-            created_at: plainProduct.createdAt,
-            updated_at: plainProduct.updatedAt,
+            created_at: product.createdAt,
+            updated_at: product.updatedAt,
           },
-          ...plainProduct,
+          ...product,
         },
       };
     } catch (error) {
