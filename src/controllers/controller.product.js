@@ -2,7 +2,7 @@ import { Sequelize, Op } from "sequelize";
 import dataBase from "../models/model.index.js";
 import GlobalError from "../errors/generalError.js";
 import productService from "../services/service.product.js";
-import { dateHelper } from "../helpers/dateHelper.js";
+
 const { Product, SQL, Category } = dataBase;
 
 import { unlinkFile } from "../helpers/fileHelper.js";
@@ -23,21 +23,8 @@ const getAll = async (req, res) => {
 
 const getById = async (req, res) => {
   try {
-    const product = await Product.findByPk(req.params.id, {
-      include: [
-        {
-          model: Category,
-          as: "category",
-        },
-      ],
-    });
-
-    if (!product) {
-      return res.status(200).json({ message: "Products not found", data: {} });
-    }
-    res
-      .status(200)
-      .json({ message: "Get product successfully", data: product });
+    const product = await productService.getProductById(req.params.id);
+    res.status(product.status).json(product);
   } catch (error) {
     throw new Error(error.message);
   }
@@ -325,6 +312,12 @@ const filter = async (req, res) => {
         if (key === "title_uz" || key === "title_ru") {
           sqlQuery += ` AND ${key} LIKE ?`;
           replacements.push(`%${querys[key]}%`);
+        }
+
+        if (key === "from_to") {
+          sqlQuery += ` AND createdAt >= ? AND createdAt <= ?`;
+          let fromTo = querys[key].split("-");
+          replacements.push(parseInt(fromTo[0]), fromTo[1]);
         }
 
         sqlQuery += ` AND ${key} = ?`;

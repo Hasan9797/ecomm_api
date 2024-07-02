@@ -1,7 +1,7 @@
 import { Sequelize, Op } from "sequelize";
 import dataBase from "../models/model.index.js";
 import GlobalError from "../errors/generalError.js";
-const { Product, SQL } = dataBase;
+const { Product, SQL, Category } = dataBase;
 
 class ProductRepository {
   async createProduct(product) {
@@ -44,7 +44,28 @@ class ProductRepository {
   }
 
   async findProductById(productId) {
-    return await Product.findByPk(productId);
+    try {
+      const product = await Product.findByPk(productId, {
+        include: [
+          {
+            model: Category,
+            as: "category",
+          },
+        ],
+      });
+
+      if (!product) {
+        return { status: 404, message: "Products not found", data: {} };
+      }
+
+      return {
+        status: 200,
+        message: "Get product successfully",
+        data: product,
+      };
+    } catch (error) {
+      throw new Error(error.message);
+    }
   }
 
   async updateProduct(productId, updateData) {
