@@ -30,31 +30,8 @@ const getAll = async (req, res) => {
 
 const getById = async (req, res) => {
   try {
-    const product = await Product.findByPk(req.params.id, {
-      include: [
-        {
-          model: Category,
-          as: "category",
-        },
-      ],
-    });
-
-    if (!product) {
-      res.status(404).json({ message: "Products not found", data: {} });
-    }
-
-    res.status(200).json({
-      message: "Get product successfully",
-      data: {
-        createdAt: dateHelper(product.createdAt),
-        updatedAt: dateHelper(product.updatedAt),
-        unixTime: {
-          created_at: product.createdAt,
-          updated_at: product.updatedAt,
-        },
-        ...product,
-      },
-    });
+    const product = await productService.getProductById(req.params.id);
+    res.status(product.status).json(product);
   } catch (error) {
     throw new Error(error.message);
   }

@@ -78,7 +78,7 @@ class ProductRepository {
 
   async findProductById(productId) {
     try {
-      const product = await Product.findByPk(productId, {
+      const product = await Product.findByPk(req.params.id, {
         include: [
           {
             model: Category,
@@ -88,20 +88,22 @@ class ProductRepository {
       });
 
       if (!product) {
-        return { status: 404, message: "Products not found", data: {} };
+        return res.status(404).json({ message: "Product not found", data: {} });
       }
 
+      // Aylanishni oldini olish uchun toJSON() metodidan foydalanamiz
+      const plainProduct = product.toJSON();
+
       return {
-        status: 200,
         message: "Get product successfully",
         data: {
-          createdAt: dateHelper(product.createdAt),
-          updatedAt: dateHelper(product.updatedAt),
+          createdAt: dateHelper(plainProduct.createdAt),
+          updatedAt: dateHelper(plainProduct.updatedAt),
           unixTime: {
-            created_at: product.createdAt,
-            updated_at: product.updatedAt,
+            created_at: plainProduct.createdAt,
+            updated_at: plainProduct.updatedAt,
           },
-          ...product,
+          ...plainProduct,
         },
       };
     } catch (error) {
