@@ -30,7 +30,7 @@ const getAll = async (req, res) => {
 
 const getById = async (req, res) => {
   try {
-    const product = await Product.findByPk(productId, {
+    const product = await Product.findByPk(req.params.id, {
       include: [
         {
           model: Category,
@@ -40,11 +40,10 @@ const getById = async (req, res) => {
     });
 
     if (!product) {
-      return { status: 404, message: "Products not found", data: {} };
+      res.status(404).json({ message: "Products not found", data: {} });
     }
 
     res.status(200).json({
-      status: 200,
       message: "Get product successfully",
       data: {
         createdAt: dateHelper(product.createdAt),
