@@ -91,17 +91,19 @@ class ProductRepository {
         return { status: 404, message: "Products not found", data: {} };
       }
 
+      const plainProduct = product.toJSON();
+
       return {
         status: 200,
         message: "Get product successfully",
         data: {
-          createdAt: dateHelper(product.createdAt),
-          updatedAt: dateHelper(product.updatedAt),
+          createdAt: dateHelper(plainProduct.createdAt),
+          updatedAt: dateHelper(plainProduct.updatedAt),
           unixTime: {
-            created_at: product.createdAt,
-            updated_at: product.updatedAt,
+            created_at: plainProduct.createdAt,
+            updated_at: plainProduct.updatedAt,
           },
-          ...product,
+          ...plainProduct,
         },
       };
     } catch (error) {
