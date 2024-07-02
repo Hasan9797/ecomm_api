@@ -9,11 +9,42 @@ class ProductRepository {
     return await Product.create(product);
   }
 
-  async findAllProducts(limit, offset) {
+  async findAllProducts(limit, offset, between) {
     try {
-      // Umumiy yozuvlar sonini olish
+      if (between === false) {
+        const [countResult] = await SQL.query(
+          "SELECT COUNT(*) as count FROM products",
+          {
+            type: Sequelize.QueryTypes.SELECT,
+          }
+        );
+
+        if (!countResult || countResult.count == 0) {
+          throw GlobalError.notFound("Products not found");
+        }
+        const count = countResult.count;
+
+        // Sahifalangan yozuvlarni olish
+        const rows = await SQL.query(
+          `SELECT p.*, c.title_uz as category_title_uz, c.title_ru as category_title_ru
+            FROM products p
+             LEFT JOIN categories c ON p.category_id = c.id
+             LIMIT :limit OFFSET :offset`,
+          {
+            replacements: { limit: limit, offset: offset },
+            type: SQL.QueryTypes.SELECT,
+            raw: true,
+          }
+        );
+        // console.log(rows);
+        const totalPages = Math.ceil(count / limit);
+        return { rows, totalPages, count };
+      }
+
+      // Created_at between
+      const from_to_date = between.split("-");
       const [countResult] = await SQL.query(
-        "SELECT COUNT(*) as count FROM products",
+        `SELECT COUNT(*) as count FROM products WHERE createdAt >= ${from_to_date[0]} AND createdAt <= ${from_to_date[1]}`,
         {
           type: Sequelize.QueryTypes.SELECT,
         }
@@ -27,9 +58,10 @@ class ProductRepository {
       // Sahifalangan yozuvlarni olish
       const rows = await SQL.query(
         `SELECT p.*, c.title_uz as category_title_uz, c.title_ru as category_title_ru
-          FROM products p
-       		LEFT JOIN categories c ON p.category_id = c.id
-       		LIMIT :limit OFFSET :offset`,
+            FROM products p
+             LEFT JOIN categories c ON p.category_id = c.id
+             WHERE createdAt >= ${from_to_date[0]} AND createdAt <= ${from_to_date[1]}
+             LIMIT :limit OFFSET :offset`,
         {
           replacements: { limit: limit, offset: offset },
           type: SQL.QueryTypes.SELECT,

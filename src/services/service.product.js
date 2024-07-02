@@ -2,14 +2,15 @@ import ProductRepository from "../repositories/repo.product.js";
 import GlobalError from "../errors/generalError.js";
 import { dateHelper } from "../helpers/dateHelper.js";
 
-const getAllProducts = async (lang, page, pageSize) => {
+const getAllProducts = async (lang, page, pageSize, between) => {
   try {
     const limit = pageSize; // Har bir sahifadagi yozuvlar soni
     const offset = (page - 1) * pageSize; // Qaysi yozuvdan boshlab olish
 
     const { rows, totalPages, count } = await ProductRepository.findAllProducts(
       limit,
-      offset
+      offset,
+      between
     );
 
     const array = rows
