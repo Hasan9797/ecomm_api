@@ -88,13 +88,13 @@ class ProductRepository {
       });
 
       if (!product) {
-        return res.status(404).json({ message: "Product not found", data: {} });
+        return { status: 404, message: "Products not found", data: {} };
       }
 
-      // Aylanishni oldini olish uchun toJSON() metodidan foydalanamiz
       const plainProduct = product.toJSON();
 
       return {
+        status: 200,
         message: "Get product successfully",
         data: {
           createdAt: dateHelper(plainProduct.createdAt),
