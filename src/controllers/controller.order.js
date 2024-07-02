@@ -2,6 +2,7 @@
 import { Sequelize, Op } from "sequelize";
 import dataBase from "../models/model.index.js";
 import order_enum from "../enums/order_enum.js";
+import { dateHelper } from "../helpers/dateHelper.js";
 const { Order, SQL } = dataBase;
 
 function isValidPhoneNumber(value) {
@@ -9,14 +10,7 @@ function isValidPhoneNumber(value) {
   return regex.test(value) && value.replace(/\D/g, "").length >= 7;
 }
 
-// Orders
-const getAll = async (req, res) => {
-  const page = parseInt(req.query.page) || 1;
-  const pageSize = parseInt(req.query.pageSize) || 20;
-
-  const limit = pageSize; // Har bir sahifadagi order soni
-  const offset = (page - 1) * pageSize; // Qaysi orderdan boshlab olish
-
+const getAll = async (limit, offset, page, status) => {
   try {
     // Umumiy orderlar sonini olish
     const countResult = await SQL.query(
@@ -31,14 +25,7 @@ const getAll = async (req, res) => {
       // Sahifalangan orderlarni olish
       const rows = await SQL.query(
         `SELECT * FROM orders
-      			 ORDER BY 
-     			 CASE 
-        		  WHEN status = ${order_enum.STATUS_CREATE} THEN 1
-       		  	  WHEN status = ${order_enum.STATUS_WAITING} THEN 2
-        		  WHEN status = ${order_enum.STATUS_SUCCESS} THEN 2
-        		  WHEN status = ${order_enum.STATUS_INACTIVE} THEN 4
-      			ELSE 5
-     			END
+        	WHERE status = ${status}
      			LIMIT ${limit} OFFSET ${offset};`,
         {
           type: Sequelize.QueryTypes.SELECT,
@@ -46,19 +33,64 @@ const getAll = async (req, res) => {
       );
       const totalPages = Math.ceil(count / limit);
 
-      return res.status(200).json({
+      return {
         totalItems: +count,
         totalPages: totalPages,
         currentPage: page,
         orders: rows,
-      });
+      };
     }
   } catch (err) {
-    return res.status(400).json({
-      error: true,
-      errorMessage: err.message,
-    });
+    throw new Error(err.message);
   }
+};
+// Orders
+const getAllByCreated = async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const pageSize = parseInt(req.query.pageSize) || 20;
+
+  const limit = pageSize; // Har bir sahifadagi order soni
+  const offset = (page - 1) * pageSize; // Qaysi orderdan boshlab olish
+
+  const result = await getAll(limit, offset, page, order_enum.STATUS_CREATE);
+
+  res.status(200).json(result);
+};
+
+const getAllByWaiting = async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const pageSize = parseInt(req.query.pageSize) || 20;
+
+  const limit = pageSize; // Har bir sahifadagi order soni
+  const offset = (page - 1) * pageSize; // Qaysi orderdan boshlab olish
+
+  const result = await getAll(limit, offset, page, order_enum.STATUS_WAITING);
+
+  res.status(200).json(result);
+};
+
+const getAllBySuccess = async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const pageSize = parseInt(req.query.pageSize) || 20;
+
+  const limit = pageSize; // Har bir sahifadagi order soni
+  const offset = (page - 1) * pageSize; // Qaysi orderdan boshlab olish
+
+  const result = await getAll(limit, offset, page, order_enum.STATUS_SUCCESS);
+
+  res.status(200).json(result);
+};
+
+const getAllByInactive = async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const pageSize = parseInt(req.query.pageSize) || 20;
+
+  const limit = pageSize; // Har bir sahifadagi order soni
+  const offset = (page - 1) * pageSize; // Qaysi orderdan boshlab olish
+
+  const result = await getAll(limit, offset, page, order_enum.STATUS_INACTIVE);
+
+  res.status(200).json(result);
 };
 
 const getById = async (req, res) => {
@@ -91,4 +123,13 @@ const destroy = async (req, res) => {
   res.status(200).json(order);
 };
 
-export default { getAll, getById, create, update, destroy };
+export default {
+  getAllByCreated,
+  getAllByWaiting,
+  getAllBySuccess,
+  getAllByInactive,
+  getById,
+  create,
+  update,
+  destroy,
+};

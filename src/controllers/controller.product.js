@@ -2,6 +2,7 @@ import { Sequelize, Op } from "sequelize";
 import dataBase from "../models/model.index.js";
 import GlobalError from "../errors/generalError.js";
 import productService from "../services/service.product.js";
+import { dateHelper } from "../helpers/dateHelper.js";
 const { Product, SQL, Category } = dataBase;
 
 import { unlinkFile } from "../helpers/fileHelper.js";

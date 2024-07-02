@@ -1,6 +1,7 @@
 import dataBase from "../models/model.index.js";
 import { unlinkFile } from "../helpers/fileHelper.js";
 import Errors from "../errors/generalError.js";
+import { dateHelper } from "../helpers/dateHelper.js";
 const { Category } = dataBase;
 
 const getAll = async (req, res, next) => {
@@ -47,8 +48,12 @@ const getAll = async (req, res, next) => {
           id: sub.id,
           title: lang === "ru" ? sub.title_ru : sub.title_uz,
           img: sub.img,
-          createdAt: sub.createdAt,
-          updatedAt: sub.updatedAt,
+          createdAt: dateHelper(sub.createdAt),
+          updatedAt: dateHelper(sub.updatedAt),
+          unixtime: {
+            created_unixtime: sub.createdAt,
+            updated_unixtime: sub.updatedAt,
+          },
         })),
       }));
 
