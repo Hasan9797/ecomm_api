@@ -26,6 +26,7 @@ const getAllProducts = async (lang, page, pageSize) => {
           category_name:
             lang === "ru" ? row.category_title_ru : row.category_title_uz,
           discription: lang === "ru" ? row.description_ru : row.description_uz,
+          code: row.code,
           created_at: dateHelper(row.createdAt),
           updated_at: dateHelper(row.updatedAt),
           unixdate: {
