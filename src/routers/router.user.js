@@ -7,7 +7,7 @@ import {
 const route = Router();
 
 route.get("/", authenticateToken, usersControllers.getAll);
-route.post("/generate", usersControllers.generateUser);
+route.get("/generate", usersControllers.generateUser);
 route.get("/profile", authenticateToken, usersControllers.getById);
 route.post(
   "/add",

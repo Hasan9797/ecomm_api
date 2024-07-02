@@ -1,19 +1,32 @@
 import jwt from "jsonwebtoken";
 import Errors from "../errors/generalError.js";
 import user_enum from "../enums/user_enum.js";
+import User from "../models/model.user.js";
 // Authentication Middleware
 export const authenticateToken = (req, res, next) => {
   const authHeader = req.headers.authorization;
   const token = authHeader && authHeader.split("|")[1];
 
-  if (token == null) return next(Errors.noAuthorization());
+  if (!token) {
+    return next(Errors.noAuthorization());
+  }
 
-  jwt.verify(token, process.env.JWT_SEC, (err, user) => {
+  jwt.verify(token, process.env.JWT_SEC, (err, decoded) => {
     if (err) {
       return next(Errors.noAuthorization(err));
     }
-    req.user = user;
-    next();
+
+    User.findByPk(decoded.id)
+      .then((user) => {
+        if (!user) {
+          return next(Errors.noAuthorization());
+        }
+        req.user = user;
+        next();
+      })
+      .catch((err) => {
+        return next(Errors.noAuthorization(err));
+      });
   });
 };
 
