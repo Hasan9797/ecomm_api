@@ -164,13 +164,19 @@ const filter = async (req, res) => {
     // query parametrlari orqali filterlarni qo'shish
     for (const key in querys) {
       if (querys.hasOwnProperty(key)) {
-        if (key === "user_name") {
+        if (key === "user_name" || key === "user_number") {
           sqlQuery += ` AND ${key} LIKE ?`;
           replacements.push(`%${querys[key]}%`);
+        } else if (key === "from_to") {
+          let fromTo = querys[key].split("-");
+          if (fromTo.length === 2) {
+            sqlQuery += ` AND "createdAt" >= ? AND "createdAt" <= ?`;
+            replacements.push(fromTo[0], fromTo[1]);
+          }
+        } else {
+          sqlQuery += ` AND ${key} = ?`;
+          replacements.push(querys[key]);
         }
-
-        sqlQuery += ` AND ${key} = ?`;
-        replacements.push(querys[key]);
       }
     }
 
@@ -180,7 +186,7 @@ const filter = async (req, res) => {
       type: Sequelize.QueryTypes.SELECT,
     });
 
-    res.status(200).json(results);
+    res.json(results);
   } catch (error) {
     console.error(error);
     throw new Error(error.message);

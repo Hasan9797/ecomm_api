@@ -7,6 +7,7 @@ const { Product, SQL, Category } = dataBase;
 
 import { unlinkFile } from "../helpers/fileHelper.js";
 import Errors from "../errors/generalError.js";
+import { dateHelper } from "../helpers/dateHelper.js";
 
 const getAll = async (req, res) => {
   const lang = req.headers["accept-language"];
@@ -115,8 +116,12 @@ const getProductsByCtegoryId = async (req, res) => {
       gallery: row.gallery,
       characteristic: row.characteristic,
       discription: lang === "ru" ? row.description_ru : row.description_uz,
-      created_at: row.created,
-      updated_at: row.updated,
+      createdAt: dateHelper(row.createdAt),
+      updatedAt: dateHelper(row.updatedAt),
+      unixTime: {
+        created_at: row.created,
+        updated_at: row.updated,
+      },
     }));
 
     res.status(200).json({
@@ -312,16 +317,16 @@ const filter = async (req, res) => {
         if (key === "title_uz" || key === "title_ru") {
           sqlQuery += ` AND ${key} LIKE ?`;
           replacements.push(`%${querys[key]}%`);
-        }
-
-        if (key === "from_to") {
-          sqlQuery += ` AND createdAt >= ? AND createdAt <= ?`;
+        } else if (key === "from_to") {
           let fromTo = querys[key].split("-");
-          replacements.push(parseInt(fromTo[0]), fromTo[1]);
+          if (fromTo.length === 2) {
+            sqlQuery += ` AND "createdAt" >= ? AND "createdAt" <= ?`;
+            replacements.push(fromTo[0], fromTo[1]);
+          }
+        } else {
+          sqlQuery += ` AND ${key} = ?`;
+          replacements.push(querys[key]);
         }
-
-        sqlQuery += ` AND ${key} = ?`;
-        replacements.push(querys[key]);
       }
     }
 
