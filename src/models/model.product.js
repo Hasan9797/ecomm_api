@@ -27,6 +27,7 @@ const Product = db.define(
     },
     price: {
       type: DataTypes.FLOAT,
+      defaultValue: 0,
       allowNull: true,
     },
     money_type: {

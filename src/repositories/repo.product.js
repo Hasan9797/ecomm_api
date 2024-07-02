@@ -1,6 +1,7 @@
 import { Sequelize, Op } from "sequelize";
 import dataBase from "../models/model.index.js";
 import GlobalError from "../errors/generalError.js";
+import { dateHelper } from "../helpers/dateHelper.js";
 const { Product, SQL, Category } = dataBase;
 
 class ProductRepository {
@@ -61,7 +62,15 @@ class ProductRepository {
       return {
         status: 200,
         message: "Get product successfully",
-        data: product,
+        data: {
+          createdAt: dateHelper(product.createdAt),
+          updatedAt: dateHelper(product.updatedAt),
+          unixTime: {
+            created_at: product.createdAt,
+            updated_at: product.updatedAt,
+          },
+          ...product,
+        },
       };
     } catch (error) {
       throw new Error(error.message);
