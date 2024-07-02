@@ -7,9 +7,13 @@ const Product = db.define(
   {
     title_uz: {
       type: DataTypes.STRING,
-      allowNull: true,
+      allowNull: false,
     },
     title_ru: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    code: {
       type: DataTypes.STRING,
       allowNull: true,
     },
@@ -79,6 +83,9 @@ const Product = db.define(
       },
       {
         fields: ["title_ru"],
+      },
+      {
+        fields: ["code"],
       },
       {
         fields: ["category_id"],
