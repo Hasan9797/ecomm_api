@@ -30,17 +30,34 @@ const getAll = async (req, res) => {
 
 const getById = async (req, res) => {
   try {
-    const product = await productService.getProductById(req.params.id);
-    res.status(product.status).json(product);
-  } catch (error) {
-    console.error(error);
+    const product = await Product.findByPk(productId, {
+      include: [
+        {
+          model: Category,
+          as: "category",
+        },
+      ],
+    });
 
-    // Circular structure dan qochish uchun errorni minimal formatda qaytaring
-    const simpleError = {
-      message: error.message,
-      stack: error.stack,
-    };
-    res.status(500).json(simpleError);
+    if (!product) {
+      return { status: 404, message: "Products not found", data: {} };
+    }
+
+    res.status(200).json({
+      status: 200,
+      message: "Get product successfully",
+      data: {
+        createdAt: dateHelper(product.createdAt),
+        updatedAt: dateHelper(product.updatedAt),
+        unixTime: {
+          created_at: product.createdAt,
+          updated_at: product.updatedAt,
+        },
+        ...product,
+      },
+    });
+  } catch (error) {
+    throw new Error(error.message);
   }
 };
 
