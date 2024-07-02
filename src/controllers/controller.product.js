@@ -13,9 +13,15 @@ const getAll = async (req, res) => {
   const lang = req.headers["accept-language"];
   const page = req.query.page || 1;
   const pageSize = req.query.pageSize || 10;
+  const between = req.query.from_to || false;
 
   try {
-    const products = await productService.getAllProducts(lang, page, pageSize);
+    const products = await productService.getAllProducts(
+      lang,
+      page,
+      pageSize,
+      between
+    );
     res.status(200).json(products);
   } catch (error) {
     throw new GlobalError.internal(error.message);
@@ -27,7 +33,14 @@ const getById = async (req, res) => {
     const product = await productService.getProductById(req.params.id);
     res.status(product.status).json(product);
   } catch (error) {
-    throw new Error(error.message);
+    console.error(error);
+
+    // Circular structure dan qochish uchun errorni minimal formatda qaytaring
+    const simpleError = {
+      message: error.message,
+      stack: error.stack,
+    };
+    res.status(500).json(simpleError);
   }
 };
 
