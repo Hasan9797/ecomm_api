@@ -150,6 +150,7 @@ const create = async (req, res) => {
     const {
       title_uz,
       title_ru,
+      code,
       price,
       category_id,
       characteristic,
@@ -166,6 +167,7 @@ const create = async (req, res) => {
     const newProduct = {
       title_uz,
       title_ru,
+      code,
       price,
       description_uz,
       description_ru,
