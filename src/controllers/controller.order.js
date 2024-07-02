@@ -187,9 +187,37 @@ const filter = async (req, res) => {
   }
 };
 
-const getOrdersByProductCode = async () => {
+const getOrdersByProductCode = async (req, res) => {
   try {
-  } catch (error) {}
+    const date = req.query.date;
+
+    let sqlQuery = `SELECT * FROM orders WHERE created_at = ${date}`;
+
+    const orders = await SQL.query(sqlQuery, {
+      type: Sequelize.QueryTypes.SELECT,
+    });
+
+    const array = orders.map((order) => {
+      order.products.forEach((product) => {
+        if (product.code === req.query.code) {
+          return order;
+        }
+      });
+    });
+
+    res.status(200).json({ message: "Get Order Successfully", data: array });
+  } catch (error) {
+    console.error(error);
+    throw new Error(error.message);
+  }
 };
 
-export default { getAll, getById, create, update, destroy, filter };
+export default {
+  getAll,
+  getById,
+  create,
+  update,
+  destroy,
+  filter,
+  getOrdersByProductCode,
+};
