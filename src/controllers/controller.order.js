@@ -196,17 +196,25 @@ const filter = async (req, res) => {
 const getOrdersByProductCode = async (req, res) => {
   try {
     const date = req.query.date;
+    const code = req.query.code;
 
-    let sqlQuery = `SELECT * FROM orders WHERE created_at = ${date}`;
+    let sqlQuery = "";
+
+    if (!date) {
+      sqlQuery = `SELECT * FROM orders`;
+    } else {
+      sqlQuery = `SELECT * FROM orders WHERE created_at = ${date}`;
+    }
 
     const orders = await SQL.query(sqlQuery, {
       type: Sequelize.QueryTypes.SELECT,
     });
-
-    const array = orders.map((order) => {
+    console.log(orders);
+    const array = [];
+    orders.forEach((order) => {
       order.products.forEach((product) => {
-        if (product.code === req.query.code) {
-          return order;
+        if (product.code === code) {
+          array.push(order);
         }
       });
     });

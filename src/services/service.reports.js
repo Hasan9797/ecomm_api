@@ -1,3 +1,4 @@
+import order_enum from "../enums/order_enum.js";
 import usersRepositorys from "../repositories/repo.reports.js";
 
 const getUserReport = async (from, to, userNumber) => {
@@ -53,7 +54,11 @@ const getUsersReports = async (from, to) => {
           amount += product.price;
         });
         // report orders by status
-        totalReportByStatus.push({ status: item.status, amount, count });
+        totalReportByStatus.push({
+          status: order_enum.getStatusName(item.status),
+          amount,
+          count,
+        });
       });
     });
 
