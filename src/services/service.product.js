@@ -20,6 +20,7 @@ const getAllProducts = async (lang, page, pageSize, between) => {
           id: row.id,
           title: lang === "ru" ? row.title_ru : row.title_uz,
           price: row.price,
+          money_type: row.money_type,
           img: row.img,
           gallery: row.gallery,
           characteristic: row.characteristic || null,
