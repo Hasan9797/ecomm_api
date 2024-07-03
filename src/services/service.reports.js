@@ -39,36 +39,38 @@ const getUsersReports = async (from, to) => {
     const result = await usersRepositorys.getAllReport(from, to);
     const cleanResult = result.map((record) => record.toJSON());
 
-    const totalReportByStatus = [];
+    const totalReportByStatus = {};
     let totalOrdersCount = 0;
-    // All groups by status
+
     cleanResult.forEach((element) => {
-      // orders
       element.orders.forEach((item) => {
         totalOrdersCount++;
-        let amount = 0;
-        let count = 0;
+        // report orders by status
+        totalReportByStatus[item.status] = {
+          status: order_enum.getStatusName(item.status),
+          amount: 0,
+          count: 0,
+        };
+      });
+
+      element.orders.forEach((item) => {
         // products by order
         item.products.forEach((product) => {
-          count += 1;
-          amount += product.price;
-        });
-        // report orders by status
-        totalReportByStatus.push({
-          status: order_enum.getStatusName(item.status),
-          amount,
-          count,
+          totalReportByStatus[item.status].amount += product.price;
+          totalReportByStatus[item.status].count += product.count;
         });
       });
     });
 
+    const array = Object.values(totalReportByStatus);
+
     let totalOrdersAmount = 0;
-    totalReportByStatus.forEach((report) => {
+    array.forEach((report) => {
       totalOrdersAmount += report.amount;
     });
     return {
       reportAll: { totalOrdersCount, totalOrdersAmount },
-      reportByStatus: totalReportByStatus,
+      reportByStatus: array,
     };
   } catch (error) {
     throw new Error(error.message);
