@@ -21,7 +21,7 @@ async function sendTelegramMessage(message) {
       console.error("Error sending message:", response.data);
     }
   } catch (error) {
-    console.error("Error sending message:", error.message);
+    console.error("Error message:", error.message);
   }
 }
 
