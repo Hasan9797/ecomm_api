@@ -17,8 +17,8 @@ const sendDailyReports = async () => {
     usersReports.reportByStatus.forEach((report) => {
       message += `<b>✅ Status</b>: ${report.status}\n<b>💰 Amount</b>: ${report.amount}\n<b>🔄 Count</b>: ${report.count}\n\n`;
     });
-    await tgHelper.sendTelegramMessage(message);
-    console.log(message);
+    const result = await tgHelper.sendTelegramMessage(message);
+    console.log(result);
   } catch (error) {
     console.error("Error sending daily reports:", error);
   }
