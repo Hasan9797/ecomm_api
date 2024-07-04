@@ -3,16 +3,75 @@ import dataBase from "../models/model.index.js";
 const { Category, SQL } = dataBase;
 
 class CategoryRepository {
-  async createCategory(category) {
-    return await Category.create(category);
+  async createCategory(newCategory) {
+    try {
+      return await Category.create(newCategory);
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 
   async findAllCategorys() {
-    return await Category.findAll();
+    try {
+      return await Category.findAll({
+        include: [
+          {
+            model: Category,
+            as: "subcategories",
+            attributes: [
+              "id",
+              "title_uz",
+              "title_ru",
+              "img",
+              "createdAt",
+              "updatedAt",
+            ],
+          },
+        ],
+        attributes: [
+          "id",
+          "title_uz",
+          "title_ru",
+          "img",
+          "createdAt",
+          "updatedAt",
+        ],
+      });
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 
   async findCategoryById(categoryId) {
-    return await Category.findByPk(categoryId);
+    try {
+      const category = await Category.findByPk(categoryId, {
+        include: [
+          {
+            model: Category,
+            as: "subcategories",
+            attributes: [
+              "id",
+              "title_uz",
+              "title_ru",
+              "img",
+              "createdAt",
+              "updatedAt",
+            ],
+          },
+        ],
+        attributes: [
+          "id",
+          "title_uz",
+          "title_ru",
+          "img",
+          "createdAt",
+          "updatedAt",
+        ],
+      });
+      return category ? category.toJSON() : null;
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 
   async updateCategory(categoryId, updateData) {
