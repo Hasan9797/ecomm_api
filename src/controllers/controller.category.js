@@ -1,106 +1,33 @@
 import dataBase from "../models/model.index.js";
 import { unlinkFile } from "../helpers/fileHelper.js";
 import Errors from "../errors/generalError.js";
-import { dateHelper } from "../helpers/dateHelper.js";
+import categoryService from "../services/service.category.js";
 const { Category } = dataBase;
 
 const getAll = async (req, res, next) => {
   const lang = req.headers["accept-language"] || "uz";
   try {
-    const categories = await Category.findAll({
-      include: [
-        {
-          model: Category,
-          as: "subcategories",
-          attributes: [
-            "id",
-            "title_uz",
-            "title_ru",
-            "img",
-            "createdAt",
-            "updatedAt",
-          ],
-        },
-      ],
-      attributes: [
-        "id",
-        "title_uz",
-        "title_ru",
-        "img",
-        "createdAt",
-        "updatedAt",
-      ],
-    });
-
-    if (categories.length <= 0) {
-      return res.status(200).json({ message: "No categories", data: [] });
+    const categories = await categoryService.getAll(lang);
+    if (categories.status === 404) {
+      return res
+        .status(404)
+        .json({ message: categories.message, data: categories.data });
     }
-
-    const langCategory = categories
-      .sort((a, b) => b.id - a.id)
-      .map((category) => ({
-        id: category.id,
-        title: lang === "ru" ? category.title_ru : category.title_uz,
-        img: category.img,
-        createdAt: dateHelper(category.createdAt),
-        updatedAt: dateHelper(category.updatedAt),
-        unixtime: {
-          created_unixtime: category.createdAt,
-          updated_unixtime: category.updatedAt,
-        },
-        subcategories: category.subcategories.map((sub) => ({
-          id: sub.id,
-          title: lang === "ru" ? sub.title_ru : sub.title_uz,
-          img: sub.img,
-          createdAt: dateHelper(sub.createdAt),
-          updatedAt: dateHelper(sub.updatedAt),
-          unixtime: {
-            created_unixtime: sub.createdAt,
-            updated_unixtime: sub.updatedAt,
-          },
-        })),
-      }));
-
-    return res.status(200).json({ message: "Success", data: langCategory });
-  } catch (error) {
-    throw new Error(error.message);
+    res.status(200).json(categories);
+  } catch (err) {
+    throw new Error(err);
   }
 };
 
 const getById = async (req, res, next) => {
   try {
-    const category = await Category.findByPk(req.params.id, {
-      include: [
-        {
-          model: Category,
-          as: "subcategories",
-          attributes: [
-            "id",
-            "title_uz",
-            "title_ru",
-            "img",
-            "createdAt",
-            "updatedAt",
-          ],
-        },
-      ],
-      attributes: [
-        "id",
-        "title_uz",
-        "title_ru",
-        "img",
-        "createdAt",
-        "updatedAt",
-      ],
-    });
-
-    if (!category) {
-      return Errors.notFound("Category not found");
+    const category = await categoryService.getById(req.params.id);
+    if (category.status === 404) {
+      return res
+        .status(404)
+        .json({ message: category.message, data: category.data });
     }
-
-    return res
-      .status(200)
-      .json({ message: "Get category successfully", data: category });
+    return res.status(200).json(category);
   } catch (error) {
     throw new Error(error.message);
   }
@@ -112,17 +39,15 @@ const create = async (req, res, next) => {
     const { title_uz, title_ru } = req.body;
     const img = req.file;
 
-    const newCategory = {
-      title_uz,
-      title_ru,
-      img: img ? "/" + img.filename : null,
-    };
-
-    const category = await Category.create(newCategory);
+    const category = await categoryService.create(title_uz, title_ru, img);
 
     const end = Date.now();
 
-    return res.status(201).json({
+    if (!category) {
+      throw new Error(`Cannot create category`);
+    }
+
+    res.status(201).json({
       creating: end - start + "ms",
       message: "Category created successfully",
       data: category,
