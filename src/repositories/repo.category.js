@@ -46,8 +46,8 @@ class CategoryRepository {
               "title_uz",
               "title_ru",
               "img",
-              "createdAt",
-              "updatedAt",
+              "created_at",
+              "updated_at",
             ],
           },
         ],
@@ -56,8 +56,8 @@ class CategoryRepository {
           "title_uz",
           "title_ru",
           "img",
-          "createdAt",
-          "updatedAt",
+          "created_at",
+          "updated_at",
         ],
       });
     } catch (error) {
@@ -77,8 +77,8 @@ class CategoryRepository {
               "title_uz",
               "title_ru",
               "img",
-              "createdAt",
-              "updatedAt",
+              "created_at",
+              "updated_at",
             ],
           },
         ],
@@ -87,8 +87,8 @@ class CategoryRepository {
           "title_uz",
           "title_ru",
           "img",
-          "createdAt",
-          "updatedAt",
+          "created_at",
+          "updated_at",
         ],
       });
       return category ? category.toJSON() : null;

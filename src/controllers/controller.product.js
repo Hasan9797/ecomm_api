@@ -1,6 +1,5 @@
 import { Sequelize, Op } from "sequelize";
 import dataBase from "../models/model.index.js";
-import GlobalError from "../errors/generalError.js";
 import productService from "../services/service.product.js";
 
 const { Product, SQL, Category } = dataBase;
@@ -15,8 +14,8 @@ const getAll = async (req, res) => {
   try {
     const products = await productService.getAllProducts(
       lang,
-      page,
-      pageSize,
+      parseInt(page),
+      parseInt(pageSize),
       filters
     );
     res.status(200).json(products);
@@ -123,8 +122,8 @@ const getProductsByCtegoryId = async (req, res) => {
       created_at: dateHelper(row.created_at),
       updated_at: dateHelper(row.updated_at),
       unixTime: {
-        created_at: row.created,
-        updated_at: row.updated,
+        created_at: row.created_at,
+        updated_at: row.updated_at,
       },
     }));
 
@@ -297,8 +296,8 @@ const searchProducts = async (req, res) => {
           searchField === "title_ru"
             ? product.description_ru
             : product.description_uz,
-        created_at: product.created,
-        updated_at: product.updated,
+        created_at: dateHelper(product.created_at),
+        updated_at: dateHelper(product.updated_at),
       };
     });
     res.status(200).json({ message: "Get product successfully", data: array });
