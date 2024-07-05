@@ -6,7 +6,7 @@ const { Category } = dataBase;
 
 const getAll = async (req, res, next) => {
   const lang = req.headers["accept-language"] || "uz";
-  const filters = req.query || {};
+  const { page, pageSize, ...filters } = req.query;
   try {
     const categories = await categoryService.getAll(lang, filters);
     if (categories.status === 404) {
