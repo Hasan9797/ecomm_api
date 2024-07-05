@@ -17,8 +17,11 @@ class CategoryRepository {
       // Query parametrlari orqali filterlarni qo'shish
       for (const key in filters) {
         if (filters.hasOwnProperty(key)) {
-          if (key === "title_uz" || key === "title_ru") {
-            whereClause[key] = { [Sequelize.Op.like]: `%${filters[key]}%` };
+          if (key === "title") {
+            whereClause[Sequelize.Op.or] = [
+              { title_uz: { [Sequelize.Op.like]: `%${filters[key]}%` } },
+              { title_ru: { [Sequelize.Op.like]: `%${filters[key]}%` } },
+            ];
           } else if (key === "from_to") {
             let fromTo = filters[key].split("-");
             if (fromTo.length === 2) {
