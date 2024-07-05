@@ -81,7 +81,12 @@ class ProductRepository {
       });
 
       if (!countResult || countResult.count == 0) {
-        throw new Error(`Products not found`);
+        return {
+          totalItems: 0,
+          totalPages: 0,
+          currentPage: 0,
+          rows: [],
+        };
       }
       const count = countResult.count;
 

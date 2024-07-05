@@ -12,7 +12,7 @@ const getAllProducts = async (lang, page, pageSize, filters) => {
       offset,
       filters
     );
-
+ 
     const array = rows.map((row) => {
       return {
         id: row.id,
