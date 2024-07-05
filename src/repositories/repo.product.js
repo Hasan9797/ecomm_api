@@ -56,8 +56,8 @@ class ProductRepository {
       for (const key in filters) {
         if (filters.hasOwnProperty(key)) {
           if (key === "title_uz" || key === "title_ru") {
-            sqlQuery += ` AND p.${key} LIKE ?`;
-            countQuery += ` AND p.${key} LIKE ?`;
+            sqlQuery += ` OR p.${key} LIKE ?`;
+            countQuery += ` OR p.${key} LIKE ?`;
             replacements.push(`%${filters[key]}%`);
           } else if (key === "from_to") {
             let fromTo = filters[key].split("-");
