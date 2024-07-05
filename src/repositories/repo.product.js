@@ -64,7 +64,7 @@ class ProductRepository {
             if (fromTo.length === 2) {
               sqlQuery += ` AND p.created_at >= ? AND p.created_at <= ?`;
               countQuery += ` AND p.created_at >= ? AND p.created_at <= ?`;
-              replacements.push(fromTo[0], fromTo[1]);
+              replacements.push(parseInt(fromTo[0]), parseInt(fromTo[1]));
             }
           } else {
             sqlQuery += ` AND p.${key} = ?`;
