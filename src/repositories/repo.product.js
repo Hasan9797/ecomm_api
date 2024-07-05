@@ -55,10 +55,10 @@ class ProductRepository {
       // Query parametrlari orqali filterlarni qo'shish
       for (const key in filters) {
         if (filters.hasOwnProperty(key)) {
-          if (key === "title_uz" || key === "title_ru") {
-            sqlQuery += ` OR p.${key} LIKE ?`;
-            countQuery += ` OR p.${key} LIKE ?`;
-            replacements.push(`%${filters[key]}%`);
+          if (key === "title") {
+            sqlQuery += ` AND (p.title_uz LIKE ? OR p.title_ru LIKE ?)`;
+            countQuery += ` AND (p.title_uz LIKE ? OR p.title_ru LIKE ?)`;
+            replacements.push(`%${filters[key]}%`, `%${filters[key]}%`);
           } else if (key === "from_to") {
             let fromTo = filters[key].split("-");
             if (fromTo.length === 2) {
