@@ -95,7 +95,7 @@ const Product = db.define(
         fields: ["price"],
       },
       {
-        fields: ["createdAt"],
+        fields: ["created_at"],
       },
     ],
   },
