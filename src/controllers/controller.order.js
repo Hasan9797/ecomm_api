@@ -1,7 +1,7 @@
 // Models
 import { Sequelize, Op } from "sequelize";
 import dataBase from "../models/model.index.js";
-import order_enum from "../enums/order_enum.js";
+import orderService from "../services/service.order.js";
 const { Order, SQL } = dataBase;
 
 function isValidPhoneNumber(value) {
@@ -11,88 +11,21 @@ function isValidPhoneNumber(value) {
 
 // Orders
 const getAll = async (req, res) => {
-  const page = parseInt(req.query.page) || 1;
-  const pageSize = parseInt(req.query.pageSize) || 20;
-  const status = parseInt(req.query.status) || 0;
+  const { limit, offset, page, pageSize, ...filters } = req.query;
+  const oerderPage = parseInt(page) || 1;
+  const orderPageSize = parseInt(pageSize) || 20;
 
-  const limit = pageSize; // Har bir sahifadagi order soni
-  const offset = (page - 1) * pageSize; // Qaysi orderdan boshlab olish
+  const orderLimit = orderPageSize; // Har bir sahifadagi order soni
+  const orderOffset = (oerderPage - 1) * orderPageSize; // Qaysi orderdan boshlab olish
 
   try {
-    if (status === 0) {
-      // Umumiy orderlar sonini olish
-      const countResult = await SQL.query(
-        "SELECT COUNT(*) as count FROM orders",
-        {
-          type: Sequelize.QueryTypes.SELECT,
-        }
-      );
-
-      if (countResult[0].count > 0) {
-        const count = countResult[0].count;
-
-        // Sahifalangan orderlarni olish
-        const rows = await SQL.query(
-          `SELECT * FROM orders
-               ORDER BY 
-              CASE 
-                WHEN status = ${order_enum.STATUS_CREATE} THEN 1
-                   WHEN status = ${order_enum.STATUS_WAITING} THEN 2
-                WHEN status = ${order_enum.STATUS_SUCCESS} THEN 2
-                WHEN status = ${order_enum.STATUS_INACTIVE} THEN 4
-              ELSE 5
-             END
-             LIMIT ${limit} OFFSET ${offset};`,
-          {
-            type: Sequelize.QueryTypes.SELECT,
-          }
-        );
-        const totalPages = Math.ceil(count / limit);
-
-        return res.status(200).json({
-          totalItems: +count,
-          totalPages: totalPages,
-          currentPage: page,
-          orders: rows,
-        });
-      }
-    }
-    // Status orqali orderlar sonini olish
-    const countResult = await SQL.query(
-      `SELECT COUNT(*) as count FROM orders WHERE status = ${status}`,
-      {
-        type: Sequelize.QueryTypes.SELECT,
-      }
+    const orders = await orderService.getAllOrders(
+      orderLimit,
+      orderOffset,
+      oerderPage,
+      filters
     );
-
-    if (countResult[0].count > 0) {
-      const count = countResult[0].count;
-
-      // Sahifalangan orderlarni olish
-      const rows = await SQL.query(
-        `SELECT * FROM orders
-        	WHERE status = ${status}
-     			LIMIT ${limit} OFFSET ${offset};`,
-        {
-          type: Sequelize.QueryTypes.SELECT,
-        }
-      );
-      const totalPages = Math.ceil(count / limit);
-
-      return res.status(200).json({
-        totalItems: +count,
-        totalPages: totalPages,
-        currentPage: page,
-        orders: rows,
-      });
-    }
-
-    return res.status(200).json({
-      totalItems: 0,
-      totalPages: 0,
-      currentPage: 0,
-      orders: [],
-    });
+    res.status(200).json(orders);
   } catch (err) {
     console.error(err);
     throw new Error(err.message);
@@ -101,7 +34,10 @@ const getAll = async (req, res) => {
 
 const getById = async (req, res) => {
   try {
-    const order = await Order.findByPk(req.params.id);
+    const order = await orderService.getOrderById(req.params.id);
+    if (!order) {
+      return res.status(404).json({ message: "Order not found", data: false });
+    }
     res.status(200).json({ message: "Get Order Successfully", data: order });
   } catch (error) {
     console.error(error);
@@ -111,10 +47,8 @@ const getById = async (req, res) => {
 
 const create = async (req, res) => {
   try {
-    const order = await Order.create({
-      products: req.body.products,
-      ...req.body,
-    });
+    const order = await orderService.createOrder(req.body);
+
     res.status(201).json({ message: "Created Successfully", data: order });
   } catch (error) {
     console.error(error);
@@ -170,7 +104,7 @@ const filter = async (req, res) => {
         } else if (key === "from_to") {
           let fromTo = querys[key].split("-");
           if (fromTo.length === 2) {
-            sqlQuery += ` AND "createdAt" >= ? AND "createdAt" <= ?`;
+            sqlQuery += ` AND "created_at" >= ? AND "created_at" <= ?`;
             replacements.push(fromTo[0], fromTo[1]);
           }
         } else {

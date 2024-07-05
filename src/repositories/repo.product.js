@@ -9,9 +9,9 @@ class ProductRepository {
     return await Product.create(product);
   }
 
-  async findAllProducts(limit, offset, between) {
+  async findAllProducts(limit, offset, filters) {
     try {
-      if (between === false) {
+      if (filters === false) {
         const [countResult] = await SQL.query(
           "SELECT COUNT(*) as count FROM products",
           {
@@ -24,51 +24,77 @@ class ProductRepository {
         }
         const count = countResult.count;
 
-        // Sahifalangan yozuvlarni olish
+        // Sahifalangan yozuvlarni olish (oxiridan)
         const rows = await SQL.query(
           `SELECT p.*, c.title_uz as category_title_uz, c.title_ru as category_title_ru
-            FROM products p
-             LEFT JOIN categories c ON p.category_id = c.id
-             LIMIT :limit OFFSET :offset`,
+          FROM products p
+          LEFT JOIN categories c ON p.category_id = c.id
+          ORDER BY p.id DESC
+          LIMIT :limit OFFSET :offset`,
           {
             replacements: { limit: limit, offset: offset },
             type: SQL.QueryTypes.SELECT,
             raw: true,
           }
         );
-        // console.log(rows);
+
         const totalPages = Math.ceil(count / limit);
         return { rows, totalPages, count };
       }
 
-      // Created_at between
-      const from_to_date = between.split("-");
-      const [countResult] = await SQL.query(
-        `SELECT COUNT(*) as count FROM products WHERE createdAt >= ${from_to_date[0]} AND createdAt <= ${from_to_date[1]}`,
-        {
-          type: Sequelize.QueryTypes.SELECT,
+      let sqlQuery = `SELECT p.*, c.title_uz as category_title_uz, c.title_ru as category_title_ru
+                  FROM products p
+                  LEFT JOIN categories c ON p.category_id = c.id
+                  WHERE 1=1`;
+      let countQuery = `SELECT COUNT(*) as count
+                    FROM products p
+                    LEFT JOIN categories c ON p.category_id = c.id
+                    WHERE 1=1`;
+      let replacements = [];
+
+      // Query parametrlari orqali filterlarni qo'shish
+      for (const key in filters) {
+        if (filters.hasOwnProperty(key)) {
+          if (key === "title_uz" || key === "title_ru") {
+            sqlQuery += ` AND p.${key} LIKE ?`;
+            countQuery += ` AND p.${key} LIKE ?`;
+            replacements.push(`%${filters[key]}%`);
+          } else if (key === "from_to") {
+            let fromTo = filters[key].split("-");
+            if (fromTo.length === 2) {
+              sqlQuery += ` AND p.created_at >= ? AND p.created_at <= ?`;
+              countQuery += ` AND p.created_at >= ? AND p.created_at <= ?`;
+              replacements.push(fromTo[0], fromTo[1]);
+            }
+          } else {
+            sqlQuery += ` AND p.${key} = ?`;
+            countQuery += ` AND p.${key} = ?`;
+            replacements.push(filters[key]);
+          }
         }
-      );
+      }
+
+      // COUNT queryni bajarish
+      const [countResult] = await SQL.query(countQuery, {
+        replacements: replacements,
+        type: Sequelize.QueryTypes.SELECT,
+      });
 
       if (!countResult || countResult.count == 0) {
-        throw GlobalError.notFound("Products not found");
+        throw new Error(`Products not found`);
       }
       const count = countResult.count;
 
-      // Sahifalangan yozuvlarni olish
-      const rows = await SQL.query(
-        `SELECT p.*, c.title_uz as category_title_uz, c.title_ru as category_title_ru
-            FROM products p
-             LEFT JOIN categories c ON p.category_id = c.id
-             WHERE createdAt >= ${from_to_date[0]} AND createdAt <= ${from_to_date[1]}
-             LIMIT :limit OFFSET :offset`,
-        {
-          replacements: { limit: limit, offset: offset },
-          type: SQL.QueryTypes.SELECT,
-          raw: true,
-        }
-      );
-      // console.log(rows);
+      // Sahifalangan yozuvlarni olish (oxiridan)
+      sqlQuery += ` ORDER BY p.id DESC LIMIT ? OFFSET ?`;
+      replacements.push(limit, offset);
+
+      const rows = await SQL.query(sqlQuery, {
+        replacements: replacements,
+        type: SQL.QueryTypes.SELECT,
+        raw: true,
+      });
+
       const totalPages = Math.ceil(count / limit);
       return { rows, totalPages, count };
     } catch (error) {
@@ -97,11 +123,11 @@ class ProductRepository {
         status: 200,
         message: "Get product successfully",
         data: {
-          createdAt: dateHelper(plainProduct.createdAt),
-          updatedAt: dateHelper(plainProduct.updatedAt),
+          created_at: dateHelper(plainProduct.created_at),
+          updated_at: dateHelper(plainProduct.updated_at),
           unixTime: {
-            created_at: plainProduct.createdAt,
-            updated_at: plainProduct.updatedAt,
+            created_at: plainProduct.created_at,
+            updated_at: plainProduct.updated_at,
           },
           ...plainProduct,
         },

@@ -11,20 +11,17 @@ import { dateHelper } from "../helpers/dateHelper.js";
 
 const getAll = async (req, res) => {
   const lang = req.headers["accept-language"];
-  const page = req.query.page || 1;
-  const pageSize = req.query.pageSize || 10;
-  const between = req.query.from_to || false;
-
+  const { page, pageSize, ...filters } = req.query;
   try {
     const products = await productService.getAllProducts(
       lang,
       page,
       pageSize,
-      between
+      filters
     );
     res.status(200).json(products);
   } catch (error) {
-    throw new GlobalError.internal(error.message);
+    throw new Error(error.message);
   }
 };
 
@@ -123,8 +120,8 @@ const getProductsByCtegoryId = async (req, res) => {
       gallery: row.gallery,
       characteristic: row.characteristic,
       discription: lang === "ru" ? row.description_ru : row.description_uz,
-      createdAt: dateHelper(row.createdAt),
-      updatedAt: dateHelper(row.updatedAt),
+      created_at: dateHelper(row.created_at),
+      updated_at: dateHelper(row.updated_at),
       unixTime: {
         created_at: row.created,
         updated_at: row.updated,
@@ -329,7 +326,7 @@ const filter = async (req, res) => {
         } else if (key === "from_to") {
           let fromTo = querys[key].split("-");
           if (fromTo.length === 2) {
-            sqlQuery += ` AND "createdAt" >= ? AND "createdAt" <= ?`;
+            sqlQuery += ` AND "created_at" >= ? AND "created_at" <= ?`;
             replacements.push(fromTo[0], fromTo[1]);
           }
         } else {

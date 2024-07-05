@@ -1,16 +1,16 @@
-import ProductRepository from "../repositories/repo.product.js";
+import OrderRepository from "../repositories/repo.order.js";
 import GlobalError from "../errors/generalError.js";
 import { dateHelper } from "../helpers/dateHelper.js";
 
-const getAllOrders = async (lang, page, pageSize) => {
-  const limit = pageSize; // Har bir sahifadagi yozuvlar soni
-  const offset = (page - 1) * pageSize; // Qaysi yozuvdan boshlab olish
-
+const getAllOrders = async (limit, offset, page, filters) => {
   try {
-    const { rows, totalPages, count } = await ProductRepository.findAllProducts(
+    const orders = await OrderRepository.findAllOrders(
       limit,
-      offset
+      offset,
+      page,
+      filters
     );
+    return orders;
   } catch (error) {
     console.error("Error fetching products:", error);
     throw GlobalError.internal(error.message);
@@ -19,14 +19,22 @@ const getAllOrders = async (lang, page, pageSize) => {
 
 const getOrderById = async (orderId) => {
   try {
-    return await ProductRepository.findProductById(orderId);
+    return await OrderRepository.findOrderById(orderId);
   } catch (error) {
     console.error("Error fetching product:", error);
     throw GlobalError.internal(error.message);
   }
 };
 
-const createOrder = async (orderData) => {};
+const createOrder = async (body) => {
+  try {
+    const order = await OrderRepository.createOrder(body);
+    return order;
+  } catch (error) {
+    console.error("Error creating order:", error);
+    throw GlobalError.internal(error.message);
+  }
+};
 
 const updateOrder = async (orderId, updateData) => {};
 
@@ -34,4 +42,4 @@ const deleteOrder = async (orderId) => {};
 
 const getOrdersByProductCode = async (productCode, productCodeUpdate) => {};
 
-export default { getAllOrders, getOrderById };
+export default { getAllOrders, getOrderById, createOrder };

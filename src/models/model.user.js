@@ -33,20 +33,20 @@ const User = db.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    createdAt: {
+    created_at: {
       type: DataTypes.INTEGER,
       allowNull: false,
       defaultValue: Math.floor(Date.now() / 1000),
       get() {
-        return this.getDataValue("createdAt");
+        return this.getDataValue("created_at");
       },
     },
-    updatedAt: {
+    updated_at: {
       type: DataTypes.INTEGER,
       allowNull: false,
       defaultValue: Math.floor(Date.now() / 1000),
       get() {
-        return this.getDataValue("updatedAt");
+        return this.getDataValue("updated_at");
       },
     },
   },
@@ -55,11 +55,11 @@ const User = db.define(
     hooks: {
       beforeCreate(order) {
         const currentTimestamp = Math.floor(Date.now() / 1000);
-        order.createdAt = currentTimestamp;
-        order.updatedAt = currentTimestamp;
+        order.created_at = currentTimestamp;
+        order.updated_at = currentTimestamp;
       },
       beforeUpdate(order) {
-        order.updatedAt = Math.floor(Date.now() / 1000);
+        order.updated_at = Math.floor(Date.now() / 1000);
       },
     },
   }

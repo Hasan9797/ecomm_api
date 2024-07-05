@@ -1,9 +1,9 @@
 import { dateHelper } from "../helpers/dateHelper.js";
 import CategoryRepository from "../repositories/repo.category.js";
 
-const getAll = async (lang) => {
+const getAll = async (lang, filters) => {
   try {
-    const categories = await CategoryRepository.findAllCategorys();
+    const categories = await CategoryRepository.findAllCategorys(filters);
 
     if (categories.length <= 0) {
       return { status: 404, message: "No categories", data: [] };
@@ -15,21 +15,21 @@ const getAll = async (lang) => {
         id: category.id,
         title: lang === "ru" ? category.title_ru : category.title_uz,
         img: category.img,
-        createdAt: dateHelper(category.createdAt),
-        updatedAt: dateHelper(category.updatedAt),
+        created_at: dateHelper(category.created_at),
+        updated_at: dateHelper(category.updated_at),
         unixtime: {
-          created_unixtime: category.createdAt,
-          updated_unixtime: category.updatedAt,
+          created_unixtime: category.created_at,
+          updated_unixtime: category.updated_at,
         },
         subcategories: category.subcategories.map((sub) => ({
           id: sub.id,
           title: lang === "ru" ? sub.title_ru : sub.title_uz,
           img: sub.img,
-          createdAt: dateHelper(sub.createdAt),
-          updatedAt: dateHelper(sub.updatedAt),
+          created_at: dateHelper(sub.created_at),
+          updated_at: dateHelper(sub.updated_at),
           unixtime: {
-            created_unixtime: sub.createdAt,
-            updated_unixtime: sub.updatedAt,
+            created_unixtime: sub.created_at,
+            updated_unixtime: sub.updated_at,
           },
         })),
       }));
@@ -54,12 +54,13 @@ const getById = async (categoryId) => {
   }
 };
 
-const create = async (title_uz, title_ru, photo) => {
+const create = async (title_uz, title_ru, photo, parentId) => {
   try {
     const newCategory = {
       title_uz,
       title_ru,
       img: photo ? "/" + photo.filename : null,
+      parentId,
     };
     return await CategoryRepository.createCategory(newCategory);
   } catch (error) {

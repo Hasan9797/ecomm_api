@@ -6,8 +6,9 @@ const { Category } = dataBase;
 
 const getAll = async (req, res, next) => {
   const lang = req.headers["accept-language"] || "uz";
+  const filters = req.query || {};
   try {
-    const categories = await categoryService.getAll(lang);
+    const categories = await categoryService.getAll(lang, filters);
     if (categories.status === 404) {
       return res
         .status(404)
@@ -36,10 +37,15 @@ const getById = async (req, res, next) => {
 const create = async (req, res, next) => {
   const start = Date.now();
   try {
-    const { title_uz, title_ru } = req.body;
+    const { title_uz, title_ru, parentId } = req.body;
     const img = req.file;
 
-    const category = await categoryService.create(title_uz, title_ru, img);
+    const category = await categoryService.create(
+      title_uz,
+      title_ru,
+      img,
+      parentId
+    );
 
     const end = Date.now();
 
