@@ -24,12 +24,12 @@ class CategoryRepository {
             ];
           } else if (key === "from_to") {
             let fromTo = filters[key].split("-");
-            if (fromTo.length === 2) {
-              whereClause.createdAt = {
-                [Sequelize.Op.between]: [
-                  new Date(fromTo[0]),
-                  new Date(fromTo[1]),
-                ],
+            const fromDate = parseInt(fromTo[0]);
+            const toDate = parseInt(fromTo[1]);
+
+            if (!isNaN(fromDate) && !isNaN(toDate)) {
+              whereClause.created_at = {
+                [Sequelize.Op.between]: [fromDate, toDate],
               };
             }
           } else {
