@@ -11,9 +11,32 @@ class CategoryRepository {
     }
   }
 
-  async findAllCategorys() {
+  async findAllCategorys(filters) {
     try {
+      const whereClause = {};
+      // Query parametrlari orqali filterlarni qo'shish
+      for (const key in filters) {
+        if (filters.hasOwnProperty(key)) {
+          if (key === "title_uz" || key === "title_ru") {
+            whereClause[key] = { [Sequelize.Op.like]: `%${filters[key]}%` };
+          } else if (key === "from_to") {
+            let fromTo = filters[key].split("-");
+            if (fromTo.length === 2) {
+              whereClause.createdAt = {
+                [Sequelize.Op.between]: [
+                  new Date(fromTo[0]),
+                  new Date(fromTo[1]),
+                ],
+              };
+            }
+          } else {
+            whereClause[key] = filters[key];
+          }
+        }
+      }
+
       return await Category.findAll({
+        where: whereClause,
         include: [
           {
             model: Category,
