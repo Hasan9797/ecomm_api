@@ -78,7 +78,7 @@ const getProductsInOrder = async (req, res) => {
 const getProductsByCtegoryId = async (req, res) => {
   const lang = req.headers["accept-language"];
   const page = req.query.page || 1;
-  const pageSize = 5; //req.query.pageSize || 10;
+  const pageSize = req.query.pageSize || 20;
 
   const limit = pageSize; // Har bir sahifadagi yozuvlar soni
   const offset = (page - 1) * pageSize; // Qaysi yozuvdan boshlab olish
