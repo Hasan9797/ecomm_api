@@ -1,6 +1,7 @@
 import { Sequelize, Op } from "sequelize";
 import dataBase from "../models/model.index.js";
 import productService from "../services/service.product.js";
+import categoryService from "../services/service.category.js";
 
 const { Product, SQL, Category } = dataBase;
 
@@ -83,13 +84,71 @@ const getProductsByCtegoryId = async (req, res) => {
   const offset = (page - 1) * pageSize; // Qaysi yozuvdan boshlab olish
 
   try {
-    // Umumiy yozuvlar sonini olish
+    const categoryIds = await categoryService.getSubCategoriesInCategory(
+      req.params.id
+    );
+
+    if (categoryIds.length > 0) {
+      const [countResult] = await SQL.query(
+        `SELECT COUNT(*) as count FROM products WHERE category_id IN (${categoryIds})`,
+        {
+          type: Sequelize.QueryTypes.SELECT,
+        }
+      );
+      if (!countResult || countResult.count == 0) {
+        return res
+          .status(200)
+          .json({ message: "Products not found", data: [] });
+      }
+      const count = countResult.count;
+
+      // Sahifalangan yozuvlarni olish
+      const rows = await SQL.query(
+        `SELECT * FROM products WHERE category_id IN (:categoryIds) LIMIT :limit OFFSET :offset`,
+        {
+          replacements: {
+            categoryIds: categoryIds,
+            limit: limit,
+            offset: offset,
+          },
+          type: Sequelize.QueryTypes.SELECT,
+        }
+      );
+      const totalPages = Math.ceil(count / limit);
+
+      const array = rows.map((row) => ({
+        id: row.id,
+        title: lang === "ru" ? row.title_ru : row.title_uz,
+        price: row.price,
+        money_type: row.money_type,
+        img: row.img,
+        gallery: row.gallery,
+        characteristic: row.characteristic,
+        discription: lang === "ru" ? row.description_ru : row.description_uz,
+        created_at: dateHelper(row.created_at),
+        updated_at: dateHelper(row.updated_at),
+        unixTime: {
+          created_at: row.created_at,
+          updated_at: row.updated_at,
+        },
+      }));
+
+      return res.status(200).json({
+        message: "Get products successfully",
+        totalItems: count,
+        totalPages: totalPages,
+        currentPage: page,
+        data: array,
+      });
+    }
+
     const [countResult] = await SQL.query(
-      "SELECT COUNT(*) as count FROM products",
+      `SELECT COUNT(*) as count FROM products WHERE category_id = ${req.params.id}`,
       {
         type: Sequelize.QueryTypes.SELECT,
       }
     );
+
     if (!countResult || countResult.count == 0) {
       return res.status(200).json({ message: "Products not found", data: [] });
     }
@@ -107,7 +166,6 @@ const getProductsByCtegoryId = async (req, res) => {
         type: Sequelize.QueryTypes.SELECT,
       }
     );
-
     const totalPages = Math.ceil(count / limit);
 
     const array = rows.map((row) => ({

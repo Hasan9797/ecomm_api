@@ -54,6 +54,23 @@ const getById = async (categoryId) => {
   }
 };
 
+const getSubCategoriesInCategory = async (categoryId) => {
+  try {
+    const category = await CategoryRepository.findCategoryById(categoryId);
+
+    if (category === null) {
+      return { status: 404, message: "No categories", data: {} };
+    }
+
+    const subcategories = category.subcategories.map((sub) => sub.id);
+    subcategories.push(categoryId);
+
+    return subcategories;
+  } catch (err) {
+    throw new Error(err.message);
+  }
+};
+
 const create = async (title_uz, title_ru, photo, parentId) => {
   try {
     const newCategory = {
@@ -68,4 +85,4 @@ const create = async (title_uz, title_ru, photo, parentId) => {
   }
 };
 
-export default { getAll, getById, create };
+export default { getAll, getById, create, getSubCategoriesInCategory };
