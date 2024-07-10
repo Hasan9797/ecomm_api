@@ -85,4 +85,49 @@ const create = async (title_uz, title_ru, photo, parentId) => {
   }
 };
 
-export default { getAll, getById, create, getSubCategoriesInCategory };
+const getCategories = async (lang) => {
+  try {
+    const categories = await CategoryRepository.getCategories();
+
+    if (categories.length <= 0) {
+      return { status: 404, message: "No categories", data: [] };
+    }
+
+    const langCategory = categories
+      .sort((a, b) => b.id - a.id)
+      .map((category) => ({
+        id: category.id,
+        title: lang === "ru" ? category.title_ru : category.title_uz,
+        img: category.img,
+        created_at: dateHelper(category.created_at),
+        updated_at: dateHelper(category.updated_at),
+        unixtime: {
+          created_unixtime: category.created_at,
+          updated_unixtime: category.updated_at,
+        },
+        subcategories: category.subcategories.map((sub) => ({
+          id: sub.id,
+          title: lang === "ru" ? sub.title_ru : sub.title_uz,
+          img: sub.img,
+          created_at: dateHelper(sub.created_at),
+          updated_at: dateHelper(sub.updated_at),
+          unixtime: {
+            created_unixtime: sub.created_at,
+            updated_unixtime: sub.updated_at,
+          },
+        })),
+      }));
+
+    return { message: "Success", data: langCategory };
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+export default {
+  getAll,
+  getCategories,
+  getById,
+  create,
+  getSubCategoriesInCategory,
+};
