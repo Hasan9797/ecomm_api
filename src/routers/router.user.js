@@ -1,5 +1,5 @@
 import { Router } from "express";
-import usersControllers from "../controllers/constroller.users.js";
+import usersControllers from "../controllers/controller.users.js";
 import {
   authenticateToken,
   authorizeRoleSuperAdmin,

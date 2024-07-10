@@ -38,8 +38,8 @@ class CategoryRepository {
         }
       }
 
-      // parentId qiymati 0 dan katta bo'lgan shartni qo'shish
-      whereClause.parentId = null;
+      // // parentId qiymati 0 dan katta bo'lgan shartni qo'shish
+      // whereClause.parentId = null;
 
       return await Category.findAll({
         where: whereClause,
@@ -113,6 +113,38 @@ class CategoryRepository {
     return await Category.destroy({
       where: { id: categoryId },
     });
+  }
+
+  async getCategories() {
+    try {
+      return await Category.findAll({
+        where: { parentId: null },
+        include: [
+          {
+            model: Category,
+            as: "subcategories",
+            attributes: [
+              "id",
+              "title_uz",
+              "title_ru",
+              "img",
+              "created_at",
+              "updated_at",
+            ],
+          },
+        ],
+        attributes: [
+          "id",
+          "title_uz",
+          "title_ru",
+          "img",
+          "created_at",
+          "updated_at",
+        ],
+      });
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 }
 
