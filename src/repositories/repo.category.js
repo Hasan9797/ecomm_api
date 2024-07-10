@@ -38,6 +38,9 @@ class CategoryRepository {
         }
       }
 
+      // parentId qiymati 0 dan katta bo'lgan shartni qo'shish
+      whereClause.parentId = null;
+
       return await Category.findAll({
         where: whereClause,
         include: [
