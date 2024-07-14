@@ -1,45 +1,31 @@
-// src/models/model.index.js
+import { Sequelize } from 'sequelize';
+import Category from './model.category.js';
+import Product from './model.product.js';
+import Order from './model.order.js';
+import User from './model.user.js';
+import Banner from './model.banner.js';
+import Brand from './model.brand.js';
+import { sequelize } from '../config/connection.db.js';
 
-import Category from "./model.category.js";
-import Product from "./model.product.js";
-import Order from "./model.order.js";
-import User from "./model.user.js";
-import Banner from "./model.banner.js";
-import Brand from "./model.brand.js";
-import db from "../connections/connection.db.js";
-
-const dataBase = {
-  SQL: db,
-  Category,
-  Product,
-  Order,
-  User,
-  Banner,
-  Brand,
+const db = {
+	SQL: sequelize,
+	Category,
+	Product,
+	Order,
+	User,
+	Banner,
+	Brand,
 };
 
-// DB connection sequelize
+// const sequelize = new Sequelize(process.env[config.use_env_variable], config);
 
-// Models associations
-dataBase.Category.hasMany(dataBase.Product, {
-  as: "products",
-  onDelete: "CASCADE",
-  constraints: true,
+Object.keys(db).forEach(modelName => {
+	if (db[modelName].associate) {
+		db[modelName].associate(db);
+	}
 });
 
-dataBase.Product.belongsTo(dataBase.Category, {
-  foreignKey: "category_id",
-  as: "category",
-});
+db.sequelize = sequelize;
+db.Sequelize = Sequelize;
 
-dataBase.Category.hasMany(dataBase.Category, {
-  as: "subcategories",
-  foreignKey: "parentId",
-});
-
-dataBase.Category.belongsTo(dataBase.Category, {
-  as: "parent",
-  foreignKey: "parentId",
-});
-
-export default dataBase;
+export default db;
