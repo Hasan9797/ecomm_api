@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "start": "nodemon src/server.js",
-    "test": "node src/test.js"
+    "test": "node src/test.js",
+    "migrate": "npx sequelize-cli db:migrate"
   },
   "keywords": [],
   "author": "",
