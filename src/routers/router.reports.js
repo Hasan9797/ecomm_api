@@ -1,13 +1,19 @@
 import Router from 'express';
 import reportControllers from '../controllers/controller.reports.js';
+import { authenticateToken } from '../middlewares/verfiy.js';
 const order = Router();
 
-order.get('/', reportControllers.getAllReports);
-order.get('/user', reportControllers.getUserReport);
+order.get('/', authenticateToken, reportControllers.getAllReports);
+order.get('/user', authenticateToken, reportControllers.getUserReport);
 order.get(
 	'/products-in-maxcount',
+	authenticateToken,
 	reportControllers.getProductsInCountMaxByOrder
 );
-order.get('/clients-in-maxcount', reportControllers.getUsersInCountMaxByOrder);
+order.get(
+	'/clients-in-maxcount',
+	authenticateToken,
+	reportControllers.getUsersInCountMaxByOrder
+);
 
 export default order;
