@@ -1,81 +1,79 @@
-import multer from "multer";
-import path from "path";
-import fs from "fs";
+import multer from 'multer';
+import path from 'path';
+import fs from 'fs';
 // import AWS from "aws-sdk";
 // import multerS3 from "multer-s3";
-import { fileURLToPath } from "url";
+import { fileURLToPath } from 'url';
 // import env from "dotenv";
 // env.config();
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const uploadFolderPath = path.join(__dirname, "../../", "Uploads");
+const uploadFolderPath = path.join(__dirname, '../../', 'Uploads');
 
 // Fayllarni saqlash konfiguratsiyasi
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, uploadFolderPath);
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = `${Date.now()}-${file.originalname
-      .trim()
-      .replace(/\s+/g, "-")}`;
-    cb(null, uniqueSuffix);
-  },
+	destination: function (req, file, cb) {
+		cb(null, uploadFolderPath);
+	},
+	filename: function (req, file, cb) {
+		const uniqueSuffix = `${Date.now()}-${file.originalname
+			.trim()
+			.replace(/\s+/g, '-')}`;
+		cb(null, uniqueSuffix);
+	},
 });
 
 function checkfile(file, cb) {
-  const filetypes = /jpeg|jpg|png|gif/;
-  const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-  const mimetype = filetypes.test(file.mimetype);
+	const filetypes = /jpeg|jpg|png|gif|mp4/;
+	const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+	const mimetype = filetypes.test(file.mimetype);
 
-  if (extname && mimetype) {
-    return cb(null, true);
-  } else {
-    cb(new Error("Error: You can only upload image files"));
-  }
+	if (extname && mimetype) {
+		return cb(null, true);
+	} else {
+		cb(new Error('Error: You can only upload image files'));
+	}
 }
 
 export const upload = multer({
-  storage: storage,
-  limits: { fileSize: 100 * 1024 * 1024 }, // Fayl hajmi limiti 100MB
-  fileFilter: function (req, file, cb) {
-    checkfile(file, cb);
-  },
+	storage: storage,
+	limits: { fileSize: 200 * 1024 * 1024 }, // Fayl hajmi limiti 200MB
+	fileFilter: function (req, file, cb) {
+		checkfile(file, cb);
+	},
 });
 
 // Fayl o'chirish funksiyasi
 export const unlinkFile = (array = []) => {
-  const imageExtensions = /\.(jpg|jpeg|png|gif)$/i;
+	const imageExtensions = /\.(jpg|jpeg|png|gif|mp4)$/i;
 
-  fs.readdir(uploadFolderPath, (err, files) => {
-    if (err) {
-      console.error(
-        "Upload papkasidagi fayllarni o'qishda xatolik yuz berdi:",
-        err
-      );
-      return;
-    }
+	fs.readdir(uploadFolderPath, (err, files) => {
+		if (err) {
+			console.error(
+				"Upload papkasidagi fayllarni o'qishda xatolik yuz berdi:",
+				err
+			);
+			return;
+		}
 
-    const unlinkFiles = array.map((unlinkFile) =>
-      unlinkFile.toString().slice(1)
-    );
+		const unlinkFiles = array.map(unlinkFile => unlinkFile.toString().slice(1));
 
-    const imageFiles = files.filter(
-      (file) => imageExtensions.test(file) && unlinkFiles.includes(file)
-    );
+		const imageFiles = files.filter(
+			file => imageExtensions.test(file) && unlinkFiles.includes(file)
+		);
 
-    imageFiles.forEach((file) => {
-      const filePath = path.join(uploadFolderPath, file);
+		imageFiles.forEach(file => {
+			const filePath = path.join(uploadFolderPath, file);
 
-      fs.unlink(filePath, (err) => {
-        if (err) {
-          console.error(`${file} faylini o'chirishda xatolik yuz berdi:`, err);
-        } else {
-          console.log(`${file} muvaffaqiyatli o'chirildi.`);
-        }
-      });
-    });
-  });
+			fs.unlink(filePath, err => {
+				if (err) {
+					console.error(`${file} faylini o'chirishda xatolik yuz berdi:`, err);
+				} else {
+					console.log(`${file} muvaffaqiyatli o'chirildi.`);
+				}
+			});
+		});
+	});
 };
 
 // // DigitalOcean Spaces sozlash

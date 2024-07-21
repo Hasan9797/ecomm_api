@@ -42,8 +42,13 @@ const deleteOrder = async orderId => {};
 
 const getOrdersByProductCode = async (productCode, productCodeUpdate) => {};
 
+const getOrdersByUser = async (querys, limit, offset, page) => {
+	return await OrderRepository.getByUserName(querys, limit, offset, page);
+};
+
 export default {
 	getAllOrders,
 	getOrderById,
 	createOrder,
+	getOrdersByUser,
 };

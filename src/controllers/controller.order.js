@@ -11,7 +11,7 @@ function isValidPhoneNumber(value) {
 
 // Orders
 const getAll = async (req, res) => {
-	const { limit, offset, page, pageSize, ...filters } = req.query;
+	const { page, pageSize, ...filters } = req.query;
 	const oerderPage = parseInt(page) || 1;
 	const orderPageSize = parseInt(pageSize) || 20;
 
@@ -86,46 +86,27 @@ const destroy = async (req, res) => {
 	}
 };
 
-// const filter = async (req, res) => {
-//   try {
-//     // req.query ichidagi query parametrlari
-//     const querys = { ...req.query };
+const getOrderByUserName = async (req, res) => {
+	try {
+		const { page, pageSize, ...querys } = req.query;
+		const oerderPage = page || 1;
+		const orderPageSize = pageSize || 20;
 
-//     // SQL queryni qurish uchun boshlang'ich qism
-//     let sqlQuery = "SELECT * FROM orders WHERE 1=1";
-//     let replacements = [];
+		const limit = orderPageSize; // Har bir sahifadagi order soni
+		const offset = (oerderPage - 1) * orderPageSize; // Qaysi orderdan boshlab olish
 
-//     // query parametrlari orqali filterlarni qo'shish
-//     for (const key in querys) {
-//       if (querys.hasOwnProperty(key)) {
-//         if (key === "user_name" || key === "user_number") {
-//           sqlQuery += ` AND ${key} LIKE ?`;
-//           replacements.push(`%${querys[key]}%`);
-//         } else if (key === "from_to") {
-//           let fromTo = querys[key].split("-");
-//           if (fromTo.length === 2) {
-//             sqlQuery += ` AND "created_at" >= ? AND "created_at" <= ?`;
-//             replacements.push(fromTo[0], fromTo[1]);
-//           }
-//         } else {
-//           sqlQuery += ` AND ${key} = ?`;
-//           replacements.push(querys[key]);
-//         }
-//       }
-//     }
-
-//     // Sequelize orqali raw queryni bajarish
-//     const results = await SQL.query(sqlQuery, {
-//       replacements: replacements,
-//       type: Sequelize.QueryTypes.SELECT,
-//     });
-
-//     res.json(results);
-//   } catch (error) {
-//     console.error(error);
-//     throw new Error(error.message);
-//   }
-// };
+		const results = await orderService.getOrdersByUser(
+			querys,
+			limit,
+			offset,
+			page
+		);
+		res.json(results);
+	} catch (error) {
+		console.error(error);
+		throw new Error(error.message);
+	}
+};
 
 const getOrdersByProductCode = async (req, res) => {
 	try {
@@ -160,8 +141,6 @@ const getOrdersByProductCode = async (req, res) => {
 	}
 };
 
-
-
 export default {
 	getAll,
 	getById,
@@ -169,4 +148,5 @@ export default {
 	update,
 	destroy,
 	getOrdersByProductCode,
+	getOrderByUserName,
 };

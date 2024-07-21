@@ -234,6 +234,76 @@ class OrderRepository {
 			throw new Error(error);
 		}
 	}
+
+	async getByUserName(querys, limit, offset, page) {
+		try {
+			// Sequelize orqali raw queryni bajarish
+			let sqlQuery = `SELECT * FROM orders WHERE 1=1`;
+			let countQuery = `SELECT COUNT(*) as count FROM orders WHERE 1=1`;
+			let replacements = [];
+
+			// Query parametrlari orqali filterlarni qo'shish
+			for (const key in querys) {
+				if (querys.hasOwnProperty(key)) {
+					if (key === 'user_name' || key === 'user_number') {
+						sqlQuery += ` AND ${key} LIKE ?`;
+						countQuery += ` AND ${key} LIKE ?`;
+						replacements.push(`%${querys[key]}%`);
+					} else if (key === 'from_to') {
+						let fromTo = querys[key].split('-');
+						if (fromTo.length === 2) {
+							sqlQuery += ` AND created_at >= ? AND created_at <= ?`;
+							countQuery += ` AND created_at >= ? AND created_at <= ?`;
+							replacements.push(parseInt(fromTo[0]), parseInt(fromTo[1]));
+						}
+					} else {
+						sqlQuery += ` AND ${key} = ?`;
+						countQuery += ` AND ${key} = ?`;
+						replacements.push(querys[key]);
+					}
+				}
+			}
+
+			// COUNT queryni bajarish
+			const [countResult] = await SQL.query(countQuery, {
+				replacements: replacements,
+				type: Sequelize.QueryTypes.SELECT,
+			});
+
+			if (!countResult || countResult.count == 0) {
+				return {
+					totalItems: 0,
+					totalPages: 0,
+					currentPage: 0,
+					orders: [],
+				};
+			}
+
+			const count = countResult.count;
+
+			// Sahifalangan yozuvlarni olish (oxiridan)
+			// sqlQuery += ` ORDER BY id DESC LIMIT ? OFFSET ?`;
+			// replacements.push(limit, offset);
+
+			const rows = await SQL.query(sqlQuery, {
+				replacements: replacements,
+				type: SQL.QueryTypes.SELECT,
+				raw: true,
+			});
+
+			const totalPages = Math.ceil(count / limit);
+
+			// return {
+			// 	totalItems: +count,
+			// 	totalPages: totalPages,
+			// 	currentPage: page,
+			// 	orders: rows,
+			// };
+			return rows;
+		} catch (error) {
+			throw new Error(error);
+		}
+	}
 }
 
 export default new OrderRepository();
