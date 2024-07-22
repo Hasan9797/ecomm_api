@@ -31,9 +31,11 @@ const login = async (req, res) => {
       process.env.JWT_SEC,
       { expiresIn: "6d" }
     );
+
+    const numberRandom = Math.floor(Math.random() * 9) + 1;
     res.status(200).json({
       message: "Authorization successfully",
-      token: "2|" + accessToken,
+      token: numberRandom + "|" + accessToken,
     });
   } catch (err) {
     throw new Error(err);
@@ -53,14 +55,14 @@ const refreshToken = async (req, res) => {
     }
     const refToken = jwt.sign(
       {
-        _id: req.user._id,
-        password: req.user.password,
-        isAdmin: req.user?.isAdmin,
+        id: req.user.id,
+        role: req.user.role,
       },
       process.env.JWT_SEC,
       { expiresIn: "6d" }
     );
-    res.status(200).json({ refreshToken: refToken });
+    const numberRandom = Math.floor(Math.random() * 9) + 1;
+    res.status(200).json({ refreshToken: numberRandom + "|" + refToken });
   } catch (err) {
     return res.status(500).json(err);
   }
