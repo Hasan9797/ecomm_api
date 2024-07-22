@@ -282,8 +282,8 @@ class OrderRepository {
       const count = countResult.count;
 
       // Sahifalangan yozuvlarni olish (oxiridan)
-      // sqlQuery += ` ORDER BY id DESC LIMIT ? OFFSET ?`;
-      // replacements.push(limit, offset);
+      sqlQuery += ` ORDER BY id DESC LIMIT ? OFFSET ?`;
+      replacements.push(limit, offset);
 
       const rows = await SQL.query(sqlQuery, {
         replacements: replacements,
