@@ -293,13 +293,12 @@ class OrderRepository {
 
       const totalPages = Math.ceil(count / limit);
 
-      // return {
-      // 	totalItems: +count,
-      // 	totalPages: totalPages,
-      // 	currentPage: page,
-      // 	orders: rows,
-      // };
-      return rows;
+      return {
+        totalItems: +count,
+        totalPages: totalPages,
+        currentPage: page,
+        orders: rows,
+      };
     } catch (error) {
       throw new Error(error);
     }
