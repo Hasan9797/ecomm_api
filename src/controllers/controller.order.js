@@ -1,152 +1,133 @@
 // Models
-import { Sequelize, Op } from 'sequelize';
-import dataBase from '../models/model.index.js';
-import orderService from '../services/service.order.js';
+import { Sequelize, Op } from "sequelize";
+import dataBase from "../models/model.index.js";
+import orderService from "../services/service.order.js";
 const { Order, SQL } = dataBase;
 
 function isValidPhoneNumber(value) {
-	const regex = /^[\d+]+$/;
-	return regex.test(value) && value.replace(/\D/g, '').length >= 7;
+  const regex = /^[\d+]+$/;
+  return regex.test(value) && value.replace(/\D/g, "").length >= 7;
 }
 
 // Orders
 const getAll = async (req, res) => {
-	const { page, pageSize, ...filters } = req.query;
-	const oerderPage = parseInt(page) || 1;
-	const orderPageSize = parseInt(pageSize) || 20;
+  const { page, pageSize, ...filters } = req.query;
+  const oerderPage = parseInt(page) || 1;
+  const orderPageSize = parseInt(pageSize) || 20;
 
-	const orderLimit = orderPageSize; // Har bir sahifadagi order soni
-	const orderOffset = (oerderPage - 1) * orderPageSize; // Qaysi orderdan boshlab olish
+  const orderLimit = orderPageSize; // Har bir sahifadagi order soni
+  const orderOffset = (oerderPage - 1) * orderPageSize; // Qaysi orderdan boshlab olish
 
-	try {
-		const orders = await orderService.getAllOrders(
-			orderLimit,
-			orderOffset,
-			oerderPage,
-			filters
-		);
-		res.status(200).json(orders);
-	} catch (err) {
-		console.error(err);
-		throw new Error(err.message);
-	}
+  try {
+    const orders = await orderService.getAllOrders(
+      orderLimit,
+      orderOffset,
+      oerderPage,
+      filters
+    );
+    res.status(200).json(orders);
+  } catch (err) {
+    console.error(err);
+    throw new Error(err.message);
+  }
 };
 
 const getById = async (req, res) => {
-	try {
-		const order = await orderService.getOrderById(req.params.id);
-		if (!order) {
-			return res.status(404).json({ message: 'Order not found', data: false });
-		}
-		res.status(200).json({ message: 'Get Order Successfully', data: order });
-	} catch (error) {
-		console.error(error);
-		throw new Error(error.message);
-	}
+  try {
+    const order = await orderService.getOrderById(req.params.id);
+    if (!order) {
+      return res.status(404).json({ message: "Order not found", data: false });
+    }
+    res.status(200).json({ message: "Get Order Successfully", data: order });
+  } catch (error) {
+    console.error(error);
+    throw new Error(error.message);
+  }
 };
 
 const create = async (req, res) => {
-	try {
-		const order = await orderService.createOrder(req.body);
+  try {
+    const order = await orderService.createOrder(req.body);
 
-		res.status(201).json({ message: 'Created Successfully', data: order });
-	} catch (error) {
-		console.error(error);
-		throw new Error(error.message);
-	}
+    res.status(201).json({ message: "Created Successfully", data: order });
+  } catch (error) {
+    console.error(error);
+    throw new Error(error.message);
+  }
 };
 
 const update = async (req, res) => {
-	try {
-		if (req.body.user_number && !isValidPhoneNumber(req.body.user_number)) {
-			return res.status(404).json({ message: 'Invaled user number' });
-		}
-		const order = await Order.update(req.body, {
-			where: { id: req.params.id },
-		});
-		if (order > 0) {
-			res.status(200).json({ message: 'Updated Successfully', data: true });
-		}
-		res.status(200).json({ message: 'Updated Error', data: false });
-	} catch (error) {
-		console.error(error);
-		throw new Error(error.message);
-	}
+  try {
+    if (req.body.user_number && !isValidPhoneNumber(req.body.user_number)) {
+      return res.status(404).json({ message: "Invaled user number" });
+    }
+    const order = await Order.update(req.body, {
+      where: { id: req.params.id },
+    });
+    if (order > 0) {
+      res.status(200).json({ message: "Updated Successfully", data: true });
+    }
+    res.status(200).json({ message: "Updated Error", data: false });
+  } catch (error) {
+    console.error(error);
+    throw new Error(error.message);
+  }
 };
 
 const destroy = async (req, res) => {
-	try {
-		await Order.destroy({
-			where: { id: req.params.id },
-		});
-		res.status(200).json({ message: 'Deleted Successfully', data: true });
-	} catch (error) {
-		console.error(error);
-		throw new Error(error.message);
-	}
+  try {
+    await Order.destroy({
+      where: { id: req.params.id },
+    });
+    res.status(200).json({ message: "Deleted Successfully", data: true });
+  } catch (error) {
+    console.error(error);
+    throw new Error(error.message);
+  }
 };
 
 const getOrderByUserName = async (req, res) => {
-	try {
-		const { page, pageSize, ...querys } = req.query;
-		const oerderPage = page || 1;
-		const orderPageSize = pageSize || 20;
+  try {
+    const { page, pageSize, ...querys } = req.query;
+    const oerderPage = page || 1;
+    const orderPageSize = pageSize || 20;
 
-		const limit = orderPageSize; // Har bir sahifadagi order soni
-		const offset = (oerderPage - 1) * orderPageSize; // Qaysi orderdan boshlab olish
+    const limit = orderPageSize; // Har bir sahifadagi order soni
+    const offset = (oerderPage - 1) * orderPageSize; // Qaysi orderdan boshlab olish
 
-		const results = await orderService.getOrdersByUser(
-			querys,
-			limit,
-			offset,
-			page
-		);
-		res.json(results);
-	} catch (error) {
-		console.error(error);
-		throw new Error(error.message);
-	}
+    const results = await orderService.getOrdersByUser(
+      querys,
+      limit,
+      offset,
+      page
+    );
+    res.json(results);
+  } catch (error) {
+    console.error(error);
+    throw new Error(error.message);
+  }
 };
 
 const getOrdersByProductCode = async (req, res) => {
-	try {
-		const date = req.query.date;
-		const code = req.query.code;
+  try {
+    const date = req.query.date || "";
+    const code = req.query.code;
 
-		let sqlQuery = '';
+    const array = await orderService.getOrdersByProductCode(code, date);
 
-		if (!date) {
-			sqlQuery = `SELECT * FROM orders`;
-		} else {
-			sqlQuery = `SELECT * FROM orders WHERE created_at = ${date}`;
-		}
-
-		const orders = await SQL.query(sqlQuery, {
-			type: Sequelize.QueryTypes.SELECT,
-		});
-		console.log(orders);
-		const array = [];
-		orders.forEach(order => {
-			order.products.forEach(product => {
-				if (product.code === code) {
-					array.push(order);
-				}
-			});
-		});
-
-		res.status(200).json({ message: 'Get Order Successfully', data: array });
-	} catch (error) {
-		console.error(error);
-		throw new Error(error.message);
-	}
+    res.status(200).json({ message: "Get Order Successfully", data: array });
+  } catch (error) {
+    console.error(error);
+    throw new Error(error.message);
+  }
 };
 
 export default {
-	getAll,
-	getById,
-	create,
-	update,
-	destroy,
-	getOrdersByProductCode,
-	getOrderByUserName,
+  getAll,
+  getById,
+  create,
+  update,
+  destroy,
+  getOrdersByProductCode,
+  getOrderByUserName,
 };

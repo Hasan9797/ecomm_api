@@ -7,7 +7,7 @@ order.get('/', authenticateToken, orderControllers.getAll);
 order.get('/by/:id', authenticateToken, orderControllers.getById);
 order.get(
 	'/filter-code',
-	authenticateToken,
+	// authenticateToken,
 	orderControllers.getOrdersByProductCode
 );
 order.get(
