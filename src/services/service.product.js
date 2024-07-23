@@ -12,7 +12,7 @@ const getAllProducts = async (lang, page, pageSize, filters) => {
       offset,
       filters
     );
- 
+
     const array = rows.map((row) => {
       return {
         id: row.id,
@@ -58,4 +58,13 @@ const getProductById = async (productId) => {
   }
 };
 
-export default { getAllProducts, getProductById };
+const getCodesByProducts = async () => {
+  try {
+    return await ProductRepository.getCodeByProducts();
+  } catch (error) {
+    console.error("Error updating product:", error);
+    throw GlobalError.internal(error.message);
+  }
+};
+
+export default { getAllProducts, getProductById, getCodesByProducts };

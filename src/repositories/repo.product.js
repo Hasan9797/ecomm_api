@@ -183,6 +183,22 @@ class ProductRepository {
       where: { id: productId },
     });
   }
+
+  async getCodeByProducts() {
+    try {
+      // SQL queryni qurish uchun boshlang'ich qism
+      let sqlQuery = "SELECT code FROM products";
+
+      // Sequelize orqali raw queryni bajarish
+      const results = await SQL.query(sqlQuery, {
+        type: Sequelize.QueryTypes.SELECT,
+      });
+
+      return results;
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
 }
 
 export default new ProductRepository();
