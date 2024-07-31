@@ -11,11 +11,12 @@ const errorHandler = (err, req, res, next) => {
   }
 
   // Log error for debugging
-  console.error(err.message);
+  console.error(err.original);
 
   res.status(500).json({
     error: {
-      name: "InternalServerError",
+      name: err.name,
+      original: err.original,
       message: err.message, //'Something went wrong!',
       code: err.code,
     },

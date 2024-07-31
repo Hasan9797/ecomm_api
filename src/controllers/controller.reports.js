@@ -45,7 +45,7 @@ const getProductsInCountMaxByOrder = async (req, res) => {
     res.status(200).json({ success: true, data: result });
   } catch (error) {
     console.error(error);
-    throw new Error(error.message);
+    next(error);
   }
 };
 
@@ -55,7 +55,7 @@ const getUsersInCountMaxByOrder = async (req, res) => {
     res.status(200).json({ success: true, data: result });
   } catch (error) {
     console.error(error);
-    throw new Error(error.message);
+    next(error);
   }
 };
 
