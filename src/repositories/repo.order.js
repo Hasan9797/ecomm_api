@@ -175,7 +175,7 @@ class OrderRepository {
     try {
       const products = await Order.findAll({
         where: {
-          status: order_enum.STATUS_CREATE,
+          status: order_enum.STATUS_SUCCESS,
           created_at: {
             [Sequelize.Op.gte]: currentMonthStartTimestamp,
             [Sequelize.Op.lte]: unixNow,
@@ -216,7 +216,7 @@ class OrderRepository {
     try {
       const products = await Order.findAll({
         where: {
-          status: order_enum.STATUS_SUCCESS,
+          status: order_enum.STATUS_CREATE,
           created_at: {
             [Sequelize.Op.gte]: currentMonthStartTimestamp,
             [Sequelize.Op.lte]: unixNow,

@@ -64,6 +64,7 @@ const update = async (req, res) => {
     const order = await Order.update(req.body, {
       where: { id: req.params.id },
     });
+    
     if (order > 0) {
       res.status(200).json({ message: "Updated Successfully", data: true });
     }
