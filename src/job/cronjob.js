@@ -2,7 +2,10 @@ import tgHelper from "../helpers/telegramBotHelper.js";
 import reportAll from "../services/service.reports.js";
 import { dateHelper } from "../helpers/dateHelper.js";
 
-const sendDailyReports = () => {
+// @ts-ignore
+import cron from "node-cron";
+
+const allReports = () => {
   const fromDate = Math.floor(Date.now() / 1000) - 84600;
   const toDate = Math.floor(Date.now() / 1000);
 
@@ -29,4 +32,8 @@ const sendDailyReports = () => {
     });
 };
 
-sendDailyReports();
+cron.schedule("0 0 * * *", () => {
+  console.log("Running a task at 12:00 AM every day");
+  allReports();
+});
+// ("0 0 * * *");

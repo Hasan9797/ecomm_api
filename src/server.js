@@ -22,6 +22,9 @@ import bannerRouter from "./routers/router.banner.js";
 import usersRouter from "./routers/router.user.js";
 import authRouter from "./routers/router.auth.js";
 
+// Cron Jobs
+import "./job/cronjob.js";
+
 // import Middlewares
 import errorHandler from "./middlewares/errorHandler.js";
 
