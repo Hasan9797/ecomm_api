@@ -4,7 +4,7 @@ import Errors from "../errors/generalError.js";
 import categoryService from "../services/service.category.js";
 const { Category } = dataBase;
 
-const getAll = async (req, res) => {
+const getAll = async (req, res, next) => {
   const lang = req.headers["accept-language"] || "uz";
   const { page, pageSize, ...filters } = req.query;
   try {
@@ -15,8 +15,9 @@ const getAll = async (req, res) => {
         .json({ message: categories.message, data: categories.data });
     }
     res.status(200).json(categories);
-  } catch (err) {
-    throw new Error(err);
+  } catch (error) {
+    console.error(error);
+    next(error);
   }
 };
 
@@ -30,11 +31,12 @@ const getById = async (req, res, next) => {
     }
     return res.status(200).json(category);
   } catch (error) {
-    throw new Error(error.message);
+    console.error(error);
+    next(error);
   }
 };
 
-const create = async (req, res) => {
+const create = async (req, res, next) => {
   const start = Date.now();
   try {
     const { title_uz, title_ru, parentId } = req.body;
@@ -59,7 +61,8 @@ const create = async (req, res) => {
       data: category,
     });
   } catch (error) {
-    throw new Error(error.message);
+    console.error(error);
+    next(error);
   }
 };
 
@@ -89,7 +92,8 @@ const update = async (req, res, next) => {
       .status(200)
       .json({ message: "Updated Successfully", data: newCategory });
   } catch (error) {
-    throw new Error(error.message);
+    console.error(error);
+    next(error);
   }
 };
 
@@ -107,7 +111,8 @@ const destroy = async (req, res, next) => {
       .status(200)
       .json({ message: "Deleted successfully", data: true });
   } catch (error) {
-    throw new Error(error.message);
+    console.error(error);
+    next(error);
   }
 };
 

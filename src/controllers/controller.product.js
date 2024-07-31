@@ -9,7 +9,7 @@ import { unlinkFile } from "../helpers/fileHelper.js";
 import Errors from "../errors/generalError.js";
 import { dateHelper } from "../helpers/dateHelper.js";
 
-const getAll = async (req, res) => {
+const getAll = async (req, res, next) => {
   const lang = req.headers["accept-language"];
   const { page, pageSize, ...filters } = req.query;
   try {
@@ -21,20 +21,22 @@ const getAll = async (req, res) => {
     );
     res.status(200).json(products);
   } catch (error) {
-    throw new Error(error.message);
+    console.error(error);
+    next(error);
   }
 };
 
-const getById = async (req, res) => {
+const getById = async (req, res, next) => {
   try {
     const product = await productService.getProductById(req.params.id);
     res.status(product.status).json(product);
   } catch (error) {
-    throw new Error(error.message);
+    console.error(error);
+    next(error);
   }
 };
 
-const getProductsInOrder = async (req, res) => {
+const getProductsInOrder = async (req, res, next) => {
   const { productIds } = req.body;
 
   const uniqueProductIds = productIds.map((item) => item.id);
@@ -71,11 +73,12 @@ const getProductsInOrder = async (req, res) => {
     });
     res.status(200).json({ message: "get products successfully", data: array });
   } catch (error) {
-    throw new Error(error.message);
+    console.error(error);
+    next(error);
   }
 };
 
-const getProductsByCtegoryId = async (req, res) => {
+const getProductsByCtegoryId = async (req, res, next) => {
   const lang = req.headers["accept-language"];
   const page = req.query.page || 1;
   const pageSize = req.query.pageSize || 20;
@@ -194,11 +197,12 @@ const getProductsByCtegoryId = async (req, res) => {
       data: array,
     });
   } catch (error) {
-    throw new Error(error.message);
+    console.error(error);
+    next(error);
   }
 };
 
-const create = async (req, res) => {
+const create = async (req, res, next) => {
   const start = Date.now();
   try {
     const {
@@ -245,11 +249,11 @@ const create = async (req, res) => {
     });
   } catch (error) {
     console.error("Error creating product:", error);
-    throw new Error(error.message);
+    next(error);
   }
 };
 
-const update = async (req, res) => {
+const update = async (req, res, next) => {
   try {
     const newProduct = {
       ...req.body,
@@ -291,11 +295,12 @@ const update = async (req, res) => {
 
     res.status(200).json({ message: "Updated successfully", data: product });
   } catch (error) {
-    throw new Error(error.message);
+    console.error(error);
+    next(error);
   }
 };
 
-const destroy = async (req, res) => {
+const destroy = async (req, res, next) => {
   try {
     const currentProduct = await Product.findByPk(req.params.id);
 
@@ -315,7 +320,8 @@ const destroy = async (req, res) => {
 
     res.status(200).json({ message: "Deleted successfully", data: true });
   } catch (error) {
-    throw new Error(error.message);
+    console.error(error);
+    next(error);
   }
 };
 
@@ -323,7 +329,7 @@ const isCyrillic = (text) => {
   return /[а-яА-ЯЁё]/.test(text);
 };
 
-const searchProducts = async (req, res) => {
+const searchProducts = async (req, res, next) => {
   try {
     const searchText = req.query.text || "";
 
@@ -362,17 +368,17 @@ const searchProducts = async (req, res) => {
     res.status(200).json({ message: "Get product successfully", data: array });
   } catch (error) {
     console.error("Error searching products:", error);
-    throw new Error(error.message);
+    next(error);
   }
 };
 
-const getProductCodeList = async (req, res) => {
+const getProductCodeList = async (req, res, next) => {
   try {
     const results = await productService.getCodesByProducts();
     res.status(200).json({ message: "success", data: results });
   } catch (error) {
     console.error(error);
-    throw Errors.internal(error.message);
+    next(error);
   }
 };
 

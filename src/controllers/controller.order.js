@@ -10,7 +10,7 @@ function isValidPhoneNumber(value) {
 }
 
 // Orders
-const getAll = async (req, res) => {
+const getAll = async (req, res, next) => {
   const { page, pageSize, ...filters } = req.query;
   const oerderPage = parseInt(page) || 1;
   const orderPageSize = parseInt(pageSize) || 20;
@@ -26,13 +26,13 @@ const getAll = async (req, res) => {
       filters
     );
     res.status(200).json(orders);
-  } catch (err) {
-    console.error(err);
-    throw new Error(err.message);
+  } catch (error) {
+    console.error(error);
+    next(error);
   }
 };
 
-const getById = async (req, res) => {
+const getById = async (req, res, next) => {
   try {
     const order = await orderService.getOrderById(req.params.id);
     if (!order) {
@@ -41,22 +41,22 @@ const getById = async (req, res) => {
     res.status(200).json({ message: "Get Order Successfully", data: order });
   } catch (error) {
     console.error(error);
-    throw new Error(error.message);
+    next(error);
   }
 };
 
-const create = async (req, res) => {
+const create = async (req, res, next) => {
   try {
     const order = await orderService.createOrder(req.body);
 
     res.status(201).json({ message: "Created Successfully", data: order });
   } catch (error) {
     console.error(error);
-    throw new Error(error.message);
+    next(error);
   }
 };
 
-const update = async (req, res) => {
+const update = async (req, res, next) => {
   try {
     if (req.body.user_number && !isValidPhoneNumber(req.body.user_number)) {
       return res.status(404).json({ message: "Invaled user number" });
@@ -64,18 +64,18 @@ const update = async (req, res) => {
     const order = await Order.update(req.body, {
       where: { id: req.params.id },
     });
-    
+
     if (order > 0) {
       res.status(200).json({ message: "Updated Successfully", data: true });
     }
     res.status(200).json({ message: "Updated Error", data: false });
   } catch (error) {
     console.error(error);
-    throw new Error(error.message);
+    next(error);
   }
 };
 
-const destroy = async (req, res) => {
+const destroy = async (req, res, next) => {
   try {
     await Order.destroy({
       where: { id: req.params.id },
@@ -83,11 +83,11 @@ const destroy = async (req, res) => {
     res.status(200).json({ message: "Deleted Successfully", data: true });
   } catch (error) {
     console.error(error);
-    throw new Error(error.message);
+    next(error);
   }
 };
 
-const getOrderByUserName = async (req, res) => {
+const getOrderByUserName = async (req, res, next) => {
   try {
     const { page, pageSize, ...querys } = req.query;
     const oerderPage = page || 1;
@@ -105,11 +105,11 @@ const getOrderByUserName = async (req, res) => {
     res.json(results);
   } catch (error) {
     console.error(error);
-    throw new Error(error.message);
+    next(error);
   }
 };
 
-const getOrdersByProductCode = async (req, res) => {
+const getOrdersByProductCode = async (req, res, next) => {
   try {
     const date = req.query.date || "";
     const code = req.query.code;
@@ -119,7 +119,7 @@ const getOrdersByProductCode = async (req, res) => {
     res.status(200).json({ message: "Get Order Successfully", data: array });
   } catch (error) {
     console.error(error);
-    throw new Error(error.message);
+    next(error);
   }
 };
 
