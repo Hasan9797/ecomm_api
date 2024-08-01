@@ -7,11 +7,7 @@ const route = Router();
 
 route.get("/", productControllers.getAll);
 route.get("/byId/:id", productControllers.getById);
-route.get(
-  "/bycategoryid/:id",
-  authenticateToken,
-  productControllers.getProductsByCtegoryId
-);
+route.get("/bycategoryid/:id", productControllers.getProductsByCtegoryId);
 route.get("/codes", authenticateToken, productControllers.getProductCodeList);
 
 route.post("/byids", productControllers.getProductsInOrder);
