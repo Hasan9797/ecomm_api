@@ -1,9 +1,9 @@
+// @ts-ignore
+import cron from "node-cron";
+
 import tgHelper from "../helpers/telegramBotHelper.js";
 import reportAll from "../services/service.reports.js";
 import { dateHelper } from "../helpers/dateHelper.js";
-
-// @ts-ignore
-import cron from "node-cron";
 
 const allReports = () => {
   const fromDate = Math.floor(Date.now() / 1000) - 84600;
@@ -19,7 +19,9 @@ const allReports = () => {
       message += `\n\n`;
       message += `<b>❗️ОТЧЕТ ПО СТАТУСАМ ЗАКАЗОВ</b>:\n`;
       usersReports.reportByStatus.forEach((report) => {
-        message += `<b>✅ Status</b>: ${report.status}\n<b>💰 Amount</b>: ${report.amount}\n<b>🔄 Count</b>: ${report.count}\n\n`;
+        message += `<b>✅ Status</b>: ${report.status}\n
+        <b>💰 Amount</b>: ${report.amount}\n
+        <b>🔄 Count</b>: ${report.count}\n\n`;
       });
 
       return tgHelper.sendTelegramMessage(message);
@@ -32,7 +34,7 @@ const allReports = () => {
     });
 };
 
-cron.schedule("0 0 * * *", () => {
+cron.schedule("*/5 * * * *", () => {
   console.log("Running a task at 12:00 AM every day");
   allReports();
 });
