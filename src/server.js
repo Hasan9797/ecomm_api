@@ -44,10 +44,7 @@ app.use("/api/brand", brandRouter);
 app.use("/api/banner", bannerRouter);
 app.use("/api/user", usersRouter);
 app.use("/api/auth", authRouter);
-app.get("/error", (req, res, next) => {
-  // Ataylab xato yaratish
-  throw new Error("This is a deliberate error!");
-});
+
 // Error handling middleware
 app.use(errorHandler);
 

@@ -63,12 +63,22 @@ const getUsersReports = async (from, to) => {
       });
     });
 
-    const array = Object.values(totalReportByStatus);
+    let array = Object.values(totalReportByStatus);
 
     let totalOrdersAmount = 0;
     array.forEach((report) => {
       totalOrdersAmount += report.amount;
     });
+
+    if (array.length === 0) {
+      array = [
+        { status: "CREATE", amount: 0, count: 0 },
+        { status: "WAITING", amount: 0, count: 0 },
+        { status: "SUCCESS", amount: 0, count: 0 },
+        { status: "INACTIVE", amount: 0, count: 0 },
+      ];
+    }
+
     return {
       reportAll: { totalOrdersCount, totalOrdersAmount },
       reportByStatus: array,
