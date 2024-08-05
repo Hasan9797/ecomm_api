@@ -6,7 +6,11 @@ import reportAll from "../services/service.reports.js";
 import { dateHelper } from "../helpers/dateHelper.js";
 
 const allReports = () => {
-  const fromDate = Math.floor(Date.now() / 1000) - 84600;
+  const startOfYesterday = new Date();
+  startOfYesterday.setDate(startOfYesterday.getDate() - 1); // Kechagi kun
+  startOfYesterday.setHours(0, 0, 0, 0); // Kun boshiga o'rnatish
+
+  const fromDate = Math.floor(startOfYesterday.getTime() / 1000);
   const toDate = Math.floor(Date.now() / 1000);
 
   reportAll
@@ -34,7 +38,7 @@ const allReports = () => {
     });
 };
 
-cron.schedule("*/5 * * * *", () => {
+cron.schedule("0 0 * * *", () => {
   console.log("Running a task at 12:00 AM every day");
   allReports();
 });
