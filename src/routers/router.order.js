@@ -15,6 +15,11 @@ order.get(
   authenticateToken,
   orderControllers.getOrderByUserName
 );
+order.get(
+  "/get-users-products-info-by-order",
+  authenticateToken,
+  orderControllers.getUsersInfoByOrder
+);
 order.post("/add", orderControllers.create);
 order.put("/update/:id", authenticateToken, orderControllers.update);
 

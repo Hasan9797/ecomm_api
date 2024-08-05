@@ -70,6 +70,6 @@ const getUsersInCountMaxByOrder = async (req, res, next) => {
 export default {
   getAllReports,
   getUserReport,
-  getProductsInCountMaxByOrder,
   getUsersInCountMaxByOrder,
+  getProductsInCountMaxByOrder,
 };

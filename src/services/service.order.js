@@ -1,6 +1,7 @@
 import OrderRepository from "../repositories/repo.order.js";
 import GlobalError from "../errors/generalError.js";
 import { dateHelper } from "../helpers/dateHelper.js";
+import order from "../routers/router.order.js";
 
 const getAllOrders = async (limit, offset, page, filters) => {
   try {
@@ -62,10 +63,36 @@ const getOrdersByUser = async (querys, limit, offset, page) => {
   return await OrderRepository.getByUserName(querys, limit, offset, page);
 };
 
+const getUsersInfoBySuccessOrder = async (page, pageSize, filters) => {
+  const orders = await OrderRepository.getUserInfoBySuccessOrder(
+    page,
+    pageSize,
+    filters
+  );
+
+  // const sortedData = orders.sort(
+  //   (a, b) => a.products.length - b.products.length
+  // );
+
+  let array = [];
+
+  orders.raws.forEach((order) => {
+    array.push({
+      order_id: order.id,
+      name: order.user_name,
+      number: order.user_number,
+      product_count: order.products.length,
+    });
+  });
+
+  return { raws: array, ...orders };
+};
+
 export default {
   getAllOrders,
   getOrderById,
   createOrder,
   getOrdersByUser,
   getOrdersByProductCode,
+  getUsersInfoBySuccessOrder,
 };
