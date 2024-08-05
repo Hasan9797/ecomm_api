@@ -34,7 +34,7 @@ const allReports = () => {
     });
 };
 
-cron.schedule("*/5 * * * *", () => {
+cron.schedule("0 0 * * *", () => {
   console.log("Running a task at 12:00 AM every day");
   allReports();
 });
