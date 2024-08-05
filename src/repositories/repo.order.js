@@ -254,7 +254,7 @@ class OrderRepository {
           totalItems: 0,
           totalPages: 0,
           currentPage: 0,
-          raws: [],
+          rows: [],
         };
       }
 

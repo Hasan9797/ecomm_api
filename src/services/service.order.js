@@ -76,7 +76,7 @@ const getUsersInfoBySuccessOrder = async (page, pageSize, filters) => {
 
   let array = [];
 
-  orders.raws.forEach((order) => {
+  orders.rows?.forEach((order) => {
     array.push({
       order_id: order.id,
       name: order.user_name,
@@ -85,7 +85,7 @@ const getUsersInfoBySuccessOrder = async (page, pageSize, filters) => {
     });
   });
 
-  return { raws: array, ...orders };
+  return { ...orders, rows: array };
 };
 
 export default {
