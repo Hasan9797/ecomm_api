@@ -36,7 +36,6 @@ const allReports = () => {
 
 cron.schedule("*/5 * * * *", () => {
   console.log("Running a task at 12:00 AM every day");
-  tgHelper.sendTelegramMessage('Anvar Jiggaa');
-  // allReports();
+  allReports();
 });
 // ("0 0 * * *");

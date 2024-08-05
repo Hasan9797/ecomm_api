@@ -135,12 +135,13 @@ const getUsersNameBySuccessOrder = async () => {
     });
   });
 
-  return array;
+  return array.splice(-3);
 };
+
 
 export default {
   getUserReport,
   getUsersReports,
-  getProductsInCountMaxByNewOrder,
   getUsersNameBySuccessOrder,
+  getProductsInCountMaxByNewOrder,
 };

@@ -123,12 +123,31 @@ const getOrdersByProductCode = async (req, res, next) => {
   }
 };
 
+const getUsersInfoByOrder = async (req, res, next) => {
+  const { page, pageSize, ...filters } = req.query;
+  const oerderPage = parseInt(page) || 1;
+  const orderPageSize = parseInt(pageSize) || 20;
+  const orderFilters = filters || {};
+  try {
+    const result = await orderService.getUsersInfoBySuccessOrder(
+      parseInt(oerderPage),
+      parseInt(orderPageSize),
+      orderFilters
+    );
+    res.status(200).json({ success: true, data: result });
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+};
+
 export default {
   getAll,
   getById,
   create,
   update,
   destroy,
+  getUsersInfoByOrder,
   getOrdersByProductCode,
   getOrderByUserName,
 };

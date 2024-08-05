@@ -194,6 +194,96 @@ class OrderRepository {
     }
   }
 
+  async getUserInfoBySuccessOrder(page, pageSize, filters) {
+    try {
+      const now = new Date();
+
+      // Joriy oyning 1 kuni dan hozirgacha
+      const currentMonthStart = new Date();
+      currentMonthStart.setDate(1);
+      currentMonthStart.setHours(0, 0, 0, 0);
+      const currentMonthStartTimestamp = Math.floor(
+        currentMonthStart.getTime() / 1000
+      );
+      const unixNow = Math.floor(now.getTime() / 1000);
+
+      const limit = pageSize;
+      const offset = (page - 1) * limit;
+
+      let sqlQuery = `SELECT * FROM orders WHERE status = ${order_enum.STATUS_SUCCESS}`;
+      let countQuery = `SELECT COUNT(*) as count FROM orders WHERE status = ${order_enum.STATUS_SUCCESS}`;
+      let replacements = [];
+
+      if (filters != {}) {
+        for (const key in filters) {
+          if (filters.hasOwnProperty(key)) {
+            if (key === "user_name" || key === "user_number") {
+              sqlQuery += ` AND ${key} LIKE ?`;
+              countQuery += ` AND ${key} LIKE ?`;
+              replacements.push(`%${filters[key]}%`);
+            }
+
+            if (key === "from_to") {
+              let fromTo = filters[key].split("-");
+              if (fromTo.length === 2) {
+                sqlQuery += ` AND created_at >= ? AND created_at <= ?`;
+                countQuery += ` AND created_at >= ? AND created_at <= ?`;
+                replacements.push(parseInt(fromTo[0]), parseInt(fromTo[1]));
+              }
+            } else {
+              sqlQuery += ` AND created_at >= ? AND created_at <= ?`;
+              countQuery += ` AND created_at >= ? AND created_at <= ?`;
+              replacements.push(currentMonthStartTimestamp, unixNow);
+            }
+          }
+        }
+      } else {
+        sqlQuery += ` AND created_at >= ? AND created_at <= ?`;
+        countQuery += ` AND created_at >= ? AND created_at <= ?`;
+        replacements.push(currentMonthStartTimestamp, unixNow);
+      }
+
+      // COUNT queryni bajarish
+      const [countResult] = await SQL.query(countQuery, {
+        replacements: replacements,
+        type: Sequelize.QueryTypes.SELECT,
+      });
+
+      if (!countResult || countResult.count == 0) {
+        return {
+          totalItems: 0,
+          totalPages: 0,
+          currentPage: 0,
+          raws: [],
+        };
+      }
+
+      const count = countResult.count;
+
+      // Sahifalangan yozuvlarni olish (oxiridan)
+      sqlQuery += ` ORDER BY id DESC LIMIT ? OFFSET ?`;
+      replacements.push(limit, offset);
+
+      const rows = await SQL.query(sqlQuery, {
+        replacements: replacements,
+        type: Sequelize.QueryTypes.SELECT,
+        raw: true,
+      });
+
+      const totalPages = Math.ceil(count / limit);
+
+      return {
+        totalItems: +count,
+        totalPages: totalPages,
+        currentPage: page,
+        rows,
+      };
+    } catch (error) {
+      console.error("Unable to connect to the database:", error);
+      throw new Error(error);
+    }
+  }
+
   async getCreatingOrder() {
     const now = new Date();
 
