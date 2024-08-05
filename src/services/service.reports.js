@@ -84,7 +84,7 @@ const getUsersReports = async (from, to) => {
       reportByStatus: array,
     };
   } catch (error) {
-    throw new Error(error.message);
+    throw error;
   }
 };
 
