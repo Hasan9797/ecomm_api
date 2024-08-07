@@ -263,23 +263,24 @@ const update = async (req, res, next) => {
     const currentProduct = await Product.findByPk(req.params.id);
 
     if (files && currentProduct) {
-      if (currentProduct) {
-        const img = files.img ? files.img[0] : null;
-        if (img && currentProduct.img) {
-          newProduct.img = "/" + img.filename;
-          if (currentProduct && currentProduct.img) {
-            unlinkFile([currentProduct.img]);
-          }
+      const img = files.img ? files.img[0] : null;
+      if (img && currentProduct.img) {
+        newProduct.img = "/" + img.filename;
+        if (currentProduct && currentProduct.img) {
+          unlinkFile([currentProduct.img]);
         }
+      }
 
-        const gallery = files.gallery
-          ? files.gallery.map((file) => "/" + file.filename)
-          : [];
+      const gallery = files.gallery;
 
-        if (gallery.length > 0 && currentProduct.gallery) {
+      if (gallery.length > 0) {
+        newProduct.gallery = files.gallery.map((file) => "/" + file.filename);
+
+        if (currentProduct.gallery.length > 0) {
           unlinkFile(currentProduct.gallery);
-          newProduct.gallery = gallery;
         }
+      } else {
+        newProduct.gallery = currentProduct.gallery;
       }
     }
 
