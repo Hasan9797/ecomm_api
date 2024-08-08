@@ -271,16 +271,12 @@ const update = async (req, res, next) => {
         }
       }
 
-      const gallery = files.gallery;
+      newProduct.gallery = files.gallery
+        ? files.gallery.map((file) => "/" + file.filename)
+        : [];
 
-      if (gallery && gallery.length > 0) {
-        newProduct.gallery = files.gallery.map((file) => "/" + file.filename);
-
-        if (currentProduct.gallery.length > 0) {
-          unlinkFile(currentProduct.gallery);
-        }
-      } else {
-        newProduct.gallery = currentProduct.gallery;
+      if (currentProduct.gallery.length > 0) {
+        unlinkFile(currentProduct.gallery);
       }
     }
 
