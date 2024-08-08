@@ -273,7 +273,7 @@ const update = async (req, res, next) => {
 
       const gallery = files.gallery;
 
-      if (gallery.length > 0) {
+      if (gallery && gallery.length > 0) {
         newProduct.gallery = files.gallery.map((file) => "/" + file.filename);
 
         if (currentProduct.gallery.length > 0) {
