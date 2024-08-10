@@ -271,10 +271,10 @@ const update = async (req, res, next) => {
         }
       }
 
-      if (files.gallery) {
+      if (files.gallery && files.gallery.length > 0) {
         newProduct.gallery = files.gallery.map((file) => "/" + file.filename);
 
-        if (currentProduct.gallery.length > 0) {
+        if (currentProduct.gallery && currentProduct.gallery.length > 0) {
           unlinkFile(currentProduct.gallery);
         }
       }
