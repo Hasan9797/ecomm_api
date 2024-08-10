@@ -23,7 +23,8 @@ import usersRouter from "./routers/router.user.js";
 import authRouter from "./routers/router.auth.js";
 
 // Cron Jobs
-import "./job/cronjob.js";
+import cronJob from "./job/cronjob.js";
+cronJob();
 
 // import Middlewares
 import errorHandler from "./middlewares/errorHandler.js";

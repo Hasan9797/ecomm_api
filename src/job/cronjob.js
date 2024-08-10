@@ -38,8 +38,12 @@ const allReports = () => {
     });
 };
 
-cron.schedule("*/5 * * * *", () => {
-  console.log("Running a task at 12:00 AM every day");
-  allReports();
-});
+const cronJob = () => {
+  cron.schedule("0 * * * *", () => {
+    console.log("Running a task at 12:00 AM every day");
+    allReports();
+  });
+};
 // ("0 0 * * *");
+
+export default cronJob;
