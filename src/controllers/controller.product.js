@@ -264,21 +264,36 @@ const update = async (req, res, next) => {
 
     if (files && currentProduct) {
       const img = files.img ? files.img[0] : null;
+
       if (img && currentProduct.img) {
         newProduct.img = "/" + img.filename;
-        if (currentProduct && currentProduct.img) {
+        if (currentProduct.img) {
           unlinkFile([currentProduct.img]);
         }
       }
 
       if (files.gallery && files.gallery.length > 0) {
-        newProduct.gallery.push(
-          files.gallery.map((file) => "/" + file.filename)
-        );
+        // Fayllar asosida yangi gallery hosil qilish
+        let array = Array.isArray(currentProduct.gallery)
+          ? currentProduct.gallery
+          : [];
 
-        // if (currentProduct.gallery && currentProduct.gallery.length > 0) {
-        //   unlinkFile(currentProduct.gallery);
-        // }
+        array.push(...files.gallery.map((file) => "/" + file.filename));
+        newProduct.gallery = array;
+      } else {
+        // Hech qanday yangi rasm bo'lmasa, eskilarini o'chirish
+        let galleryArray = JSON.parse(req.body.gallery); // String JSON formatidagi ma'lumotni arrayga o'girish
+        newProduct.gallery = Array.isArray(galleryArray) ? galleryArray : [];
+
+        if (currentProduct.gallery && currentProduct.gallery.length > 0) {
+          let deleteImgs = [];
+          currentProduct.gallery.forEach((file) => {
+            if (!newProduct.gallery.includes(file)) {
+              deleteImgs.push(file);
+            }
+          });
+          unlinkFile(deleteImgs);
+        }
       }
     }
 
@@ -289,7 +304,7 @@ const update = async (req, res, next) => {
     if (product[0] === 0) {
       return res
         .status(404)
-        .json({ message: "Product not fount", data: product });
+        .json({ message: "Product not found", data: product });
     }
 
     res.status(200).json({ message: "Updated successfully", data: product });
