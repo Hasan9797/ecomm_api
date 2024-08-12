@@ -282,7 +282,7 @@ const update = async (req, res, next) => {
         newProduct.gallery = array;
       } else {
         // Hech qanday yangi rasm bo'lmasa, eskilarini o'chirish
-        let galleryArray = JSON.parse(req.body.gallery); // String JSON formatidagi ma'lumotni arrayga o'girish
+        let galleryArray = req.body.gallery; // String JSON formatidagi ma'lumotni arrayga o'girish
         newProduct.gallery = Array.isArray(galleryArray) ? galleryArray : [];
 
         if (currentProduct.gallery && currentProduct.gallery.length > 0) {
