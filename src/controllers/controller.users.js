@@ -60,6 +60,11 @@ const create = async (req, res) => {
 
 const update = async (req, res) => {
   try {
+    if (req.body.password) {
+      const hashPass = await bcrypt.hash(req.body.password, 10);
+      req.body.password = hashPass;
+    }
+
     const user = await User.update(req.body, {
       where: { id: req.params.id },
     });
