@@ -255,7 +255,9 @@ const create = async (req, res, next) => {
 
 const update = async (req, res, next) => {
   try {
-    const oldGallery = JSON.parse(req.body.old_gallery);
+    const oldGallery = Array.isArray(req.body.old_gallery)
+      ? req.body.old_gallery
+      : JSON.parse(req.body.old_gallery);
 
     const newProduct = {
       gallery: oldGallery,
