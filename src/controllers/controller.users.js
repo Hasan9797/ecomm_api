@@ -101,6 +101,7 @@ const generateUser = async (req, res) => {
     }
 
     const hashPass = await bcrypt.hash("admin123", 10);
+    
     const newUser = await User.create({
       name: "AnvarJigga",
       phone: "998998889977",
