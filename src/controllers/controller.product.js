@@ -255,7 +255,10 @@ const create = async (req, res, next) => {
 
 const update = async (req, res, next) => {
   try {
+    const oldGallery = JSON.parse(req.body.old_gallery);
+
     const newProduct = {
+      gallery: oldGallery,
       ...req.body,
     };
 
@@ -272,28 +275,21 @@ const update = async (req, res, next) => {
         }
       }
 
-      if (files.gallery && files.gallery.length > 0) {
-        // Fayllar asosida yangi gallery hosil qilish
-        let array = Array.isArray(currentProduct.gallery)
-          ? currentProduct.gallery
-          : [];
+      if (currentProduct.gallery.length > 0) {
+        // is array
+        let deleteImgs = [];
+        currentProduct.gallery.forEach((file) => {
+          if (!newProduct.gallery.includes(file)) {
+            deleteImgs.push(file);
+          }
+        });
+        if (deleteImgs.length > 0) unlinkFile(deleteImgs);
+      }
 
-        array.push(...files.gallery.map((file) => "/" + file.filename));
-        newProduct.gallery = array;
-      } else {
-        // Hech qanday yangi rasm bo'lmasa, eskilarini o'chirish
-        let galleryArray = req.body.gallery; // String JSON formatidagi ma'lumotni arrayga o'girish
-        newProduct.gallery = Array.isArray(galleryArray) ? galleryArray : [];
-
-        if (currentProduct.gallery && currentProduct.gallery.length > 0) {
-          let deleteImgs = [];
-          currentProduct.gallery.forEach((file) => {
-            if (!newProduct.gallery.includes(file)) {
-              deleteImgs.push(file);
-            }
-          });
-          unlinkFile(deleteImgs);
-        }
+      if (files.gallery) {
+        newProduct.gallery.push(
+          ...files.gallery.map((file) => "/" + file.filename)
+        );
       }
     }
 
