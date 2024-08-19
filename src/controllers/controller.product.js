@@ -255,12 +255,9 @@ const create = async (req, res, next) => {
 
 const update = async (req, res, next) => {
   try {
-    const oldGallery = []; //
-    if (req.body.old_gallery) {
-      oldGallery = Array.isArray(req.body.old_gallery)
-        ? req.body.old_gallery
-        : JSON.parse(req.body.old_gallery);
-    }
+    const oldGallery = Array.isArray(req.body.old_gallery)
+      ? req.body.old_gallery
+      : JSON.parse(req.body.old_gallery);
 
     const newProduct = {
       gallery: [],
@@ -291,6 +288,8 @@ const update = async (req, res, next) => {
           }
         });
         if (deleteImgs.length > 0) unlinkFile(deleteImgs);
+      } else {
+        newProduct.gallery = currentProduct.gallery;
       }
 
       if (files.gallery) {
