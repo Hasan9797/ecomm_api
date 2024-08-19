@@ -260,7 +260,6 @@ const update = async (req, res, next) => {
       : JSON.parse(req.body.old_gallery);
 
     const newProduct = {
-      gallery: [],
       ...req.body,
     };
 
@@ -280,13 +279,18 @@ const update = async (req, res, next) => {
       if (currentProduct.gallery.length > 0 && oldGallery.length > 0) {
         // is array
         let deleteImgs = [];
+        let gallery = [];
+
         currentProduct.gallery.forEach((file) => {
           if (oldGallery.includes(file) === true) {
-            newProduct.gallery.push(file);
+            gallery.push(file);
           } else {
             deleteImgs.push(file);
           }
         });
+
+        newProduct.gallery = gallery;
+
         if (deleteImgs.length > 0) unlinkFile(deleteImgs);
       } else {
         newProduct.gallery = currentProduct.gallery;
