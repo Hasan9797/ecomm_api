@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 import Errors from "../errors/generalError.js";
 import user_enum from "../enums/user_enum.js";
 import User from "../models/model.user.js";
+
 // Authentication Middleware
 export const authenticateToken = (req, res, next) => {
   const authHeader = req.headers.authorization;

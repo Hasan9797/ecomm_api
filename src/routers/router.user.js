@@ -8,7 +8,8 @@ const route = Router();
 
 route.get("/", authenticateToken, usersControllers.getAll);
 route.get("/generate", usersControllers.generateUser);
-route.get("/me/:id", authenticateToken, usersControllers.getById);
+
+route.get("/me", authenticateToken, usersControllers.getById);
 
 route.post(
   "/add",

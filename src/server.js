@@ -53,7 +53,7 @@ app.use(errorHandler);
 app.use((req, res, next) => {
   const errorFilePath = path.join(__dirname, "errors", "notfound.html");
 
-  res.sendFile(errorFilePath, (err) => {
+  res.status(404).sendFile(errorFilePath, (err) => {
     if (err) {
       console.error("Faylni jo'natishda xato:", err);
       res.status(500).send("Server ichki xato");
