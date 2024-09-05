@@ -19,11 +19,12 @@ const getAll = async (req, res) => {
 
 const getById = async (req, res) => {
   try {
-    const user = await User.findByPk(req.params.id);
+    const user = req.user; // await User.findByPk(req.user.id);
 
     if (!user) {
       return res.status(200).json({ message: "User not found", data: {} });
     }
+
     res.status(200).json({ message: "Get user successfully", data: user });
   } catch (error) {
     console.error("Error fetching user with subcategories:", error);
@@ -101,7 +102,7 @@ const generateUser = async (req, res) => {
     }
 
     const hashPass = await bcrypt.hash("admin123", 10);
-    
+
     const newUser = await User.create({
       name: "AnvarJigga",
       phone: "998998889977",

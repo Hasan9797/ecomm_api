@@ -275,7 +275,7 @@ const update = async (req, res, next) => {
           unlinkFile([currentProduct.img]);
         }
       }
-
+      // Agar o'chirilgan file lar bo'lsa ularni gallery dan tozalash
       if (currentProduct.gallery.length > 0 && oldGallery.length > 0) {
         // is array
         let deleteImgs = [];
