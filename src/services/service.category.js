@@ -6,7 +6,7 @@ const getAll = async (lang, filters) => {
     const categories = await CategoryRepository.findAllCategorys(filters);
 
     if (categories.length <= 0) {
-      return { status: 404, message: "No categories", data: [] };
+      return [];
     }
 
     const langCategory = categories

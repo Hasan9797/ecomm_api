@@ -9,11 +9,6 @@ const getAll = async (req, res, next) => {
   const { page, pageSize, ...filters } = req.query;
   try {
     const categories = await categoryService.getAll(lang, filters);
-    if (categories.status === 404) {
-      return res
-        .status(404)
-        .json({ message: categories.message, data: categories.data });
-    }
     res.status(200).json(categories);
   } catch (error) {
     console.error(error);
