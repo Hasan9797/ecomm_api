@@ -18,7 +18,7 @@
   "production": {
     "username": "postgres",
     "password": "pg97",
-    "database": "ecomm_api",
+    "database": "zarring",
     "host": "localhost",
     "dialect": "postgres",
     "port": 5432

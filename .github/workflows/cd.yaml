@@ -34,7 +34,7 @@ jobs:
             git stash || { echo "git stash failed"; exit 1; }
             git pull origin main || { echo "git pull failed"; exit 1; }
             npm install
-            npx sequelize-cli db:migrate
+            NODE_ENV=production npx sequelize-cli db:migrate
             pm2 restart 0
 
       - name: Notify Telegram on success
