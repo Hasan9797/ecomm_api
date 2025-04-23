@@ -120,12 +120,24 @@ class OrderRepository {
       });
 
       const totalPages = Math.ceil(count / limit);
+      // Orderlarni vaqtlarini formatlash
+      const mappedRows = rows.map((row) => {
+        return {
+          ...row,
+          created_at: dateHelper(row.created_at),
+          updated_at: dateHelper(row.updated_at),
+          unixTime: {
+            created_at: Number(created_at),
+            updated_at: Number(updated_at),
+          },
+        };
+      });
 
       return {
         totalItems: +count,
         totalPages: totalPages,
         currentPage: page,
-        orders: rows,
+        orders: mappedRows,
       };
     } catch (err) {
       console.error(err);
