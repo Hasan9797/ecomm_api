@@ -2,6 +2,8 @@ import { Sequelize, Op } from "sequelize";
 import dataBase from "../models/model.index.js";
 import GlobalError from "../errors/generalError.js";
 import { dateHelper } from "../helpers/dateHelper.js";
+import { buildQuery } from "../helpers/filterWhereHelper.js";
+
 const { Product, SQL, Category } = dataBase;
 
 class ProductRepository {
@@ -12,96 +14,50 @@ class ProductRepository {
   async findAllProducts(limit, offset, filters) {
     try {
       if (filters === false) {
-        const [countResult] = await SQL.query(
-          "SELECT COUNT(*) as count FROM products",
-          {
-            type: Sequelize.QueryTypes.SELECT,
-          }
-        );
+        const [countResult] = await SQL.query('SELECT COUNT(*) as count FROM products', {
+          type: Sequelize.QueryTypes.SELECT,
+        });
 
-        if (!countResult || countResult.count == 0) {
-          throw GlobalError.notFound("Products not found");
+        const count = countResult?.count || 0;
+        if (count === 0) {
+          throw GlobalError.notFound('Products not found');
         }
-        const count = countResult.count;
 
-        // Sahifalangan yozuvlarni olish (oxiridan)
         const rows = await SQL.query(
           `SELECT p.*, c.title_uz as category_title_uz, c.title_ru as category_title_ru
-          FROM products p
-          LEFT JOIN categories c ON p.category_id = c.id
-          ORDER BY p.id DESC
-          LIMIT :limit OFFSET :offset`,
+         FROM products p
+         LEFT JOIN categories c ON p.category_id = c.id
+         ORDER BY p.id DESC
+         LIMIT :limit OFFSET :offset`,
           {
-            replacements: { limit: limit, offset: offset },
-            type: SQL.QueryTypes.SELECT,
+            replacements: { limit, offset },
+            type: Sequelize.QueryTypes.SELECT,
             raw: true,
           }
         );
 
-        const totalPages = Math.ceil(count / limit);
-        return { rows, totalPages, count };
-      }
-
-      let sqlQuery = `SELECT p.*, c.title_uz as category_title_uz, c.title_ru as category_title_ru
-                  FROM products p
-                  LEFT JOIN categories c ON p.category_id = c.id
-                  WHERE 1=1`;
-      let countQuery = `SELECT COUNT(*) as count
-                    FROM products p
-                    LEFT JOIN categories c ON p.category_id = c.id
-                    WHERE 1=1`;
-      let replacements = [];
-
-      // Query parametrlari orqali filterlarni qo'shish
-      for (const key in filters) {
-        if (filters.hasOwnProperty(key)) {
-          if (key === "title") {
-            sqlQuery += ` AND (p.title_uz LIKE ? OR p.title_ru LIKE ?)`;
-            countQuery += ` AND (p.title_uz LIKE ? OR p.title_ru LIKE ?)`;
-            replacements.push(`%${filters[key]}%`, `%${filters[key]}%`);
-          } else if (key === "from_to") {
-            let fromTo = filters[key].split("-");
-            if (fromTo.length === 2) {
-              sqlQuery += ` AND p.created_at >= ? AND p.created_at <= ?`;
-              countQuery += ` AND p.created_at >= ? AND p.created_at <= ?`;
-              replacements.push(parseInt(fromTo[0]), parseInt(fromTo[1]));
-            }
-          } else {
-            sqlQuery += ` AND p.${key} = ?`;
-            countQuery += ` AND p.${key} = ?`;
-            replacements.push(filters[key]);
-          }
-        }
-      }
-
-      // COUNT queryni bajarish
-      const [countResult] = await SQL.query(countQuery, {
-        replacements: replacements,
-        type: Sequelize.QueryTypes.SELECT,
-      });
-
-      if (!countResult || countResult.count == 0) {
         return {
-          totalItems: 0,
-          totalPages: 0,
-          currentPage: 0,
-          rows: [],
+          totalItems: count,
+          totalPages: Math.ceil(count / limit),
+          currentPage: Math.floor(offset / limit) + 1,
+          rows,
         };
       }
-      const count = countResult.count;
 
-      // Sahifalangan yozuvlarni olish (oxiridan)
-      sqlQuery += ` ORDER BY p.id DESC LIMIT ? OFFSET ?`;
-      replacements.push(limit, offset);
+      // Filterlar bilan query
+      const baseQuery = `SELECT p.*, c.title_uz as category_title_uz, c.title_ru as category_title_ru
+                      FROM products p
+                      LEFT JOIN categories c ON p.category_id = c.id`;
+      const baseCountQuery = `SELECT COUNT(*) as count
+                          FROM products p
+                          LEFT JOIN categories c ON p.category_id = c.id`;
+      const result = await buildQuery(SQL, baseQuery, baseCountQuery, filters, limit, offset, 'p.');
 
-      const rows = await SQL.query(sqlQuery, {
-        replacements: replacements,
-        type: SQL.QueryTypes.SELECT,
-        raw: true,
-      });
-
-      const totalPages = Math.ceil(count / limit);
-      return { rows, totalPages, count };
+      return {
+        rows: result.rows,
+        totalPages: result.totalPages,
+        count: result.totalItems,
+      };
     } catch (error) {
       throw GlobalError.internal(error.message);
     }
