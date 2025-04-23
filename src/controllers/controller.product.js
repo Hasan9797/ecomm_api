@@ -10,7 +10,7 @@ import Errors from "../errors/generalError.js";
 import { dateHelper } from "../helpers/dateHelper.js";
 
 const getAll = async (req, res, next) => {
-  const lang = req.headers["accept-language"];
+  const lang = req.headers["accept-language"] || "uz";
   const { page, pageSize, ...filters } = req.query;
   try {
     const products = await productService.getAllProducts(

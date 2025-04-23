@@ -2,21 +2,21 @@ import { Sequelize, Op } from "sequelize";
 import dataBase from "../models/model.index.js";
 import order_enum from "../enums/order_enum.js";
 import { dateHelper } from "../helpers/dateHelper.js";
+import { buildQuery } from "../helpers/filterWhereHelper.js";
+
 const { Order, SQL } = dataBase;
 
 class OrderRepository {
   async findAllOrders(limit, offset, page, filters) {
     try {
-      if (filters == {}) {
+      if (Object.keys(filters).length === 0) {
         // Umumiy orderlar sonini olish
-        const countResult = await SQL.query(
-          "SELECT COUNT(*) as count FROM orders",
-          {
-            type: Sequelize.QueryTypes.SELECT,
-          }
-        );
+        const [countResult] = await SQL.query('SELECT COUNT(*) as count FROM orders', {
+          type: Sequelize.QueryTypes.SELECT,
+        });
 
-        if (!countResult || countResult.count == 0) {
+        const count = countResult?.count || 0;
+        if (count === 0) {
           return {
             totalItems: 0,
             totalPages: 0,
@@ -25,104 +25,26 @@ class OrderRepository {
           };
         }
 
-        const count = countResult[0].count;
-
         // Sahifalangan orderlarni olish
         const rows = await SQL.query(
           `SELECT * FROM orders
-               ORDER BY 
-              CASE 
-                WHEN status = ${order_enum.STATUS_CREATE} THEN 1
-                WHEN status = ${order_enum.STATUS_WAITING} THEN 2
-                WHEN status = ${order_enum.STATUS_SUCCESS} THEN 2
-                WHEN status = ${order_enum.STATUS_INACTIVE} THEN 4
-              ELSE 5
+           ORDER BY 
+             CASE 
+               WHEN status = ${order_enum.STATUS_CREATE} THEN 1
+               WHEN status = ${order_enum.STATUS_WAITING} THEN 2
+               WHEN status = ${order_enum.STATUS_SUCCESS} THEN 3
+               WHEN status = ${order_enum.STATUS_INACTIVE} THEN 4
+               ELSE 5
              END
-             LIMIT ${limit} OFFSET ${offset};`,
+           LIMIT :limit OFFSET :offset`,
           {
+            replacements: { limit, offset },
             type: Sequelize.QueryTypes.SELECT,
           }
         );
-        const totalPages = Math.ceil(count / limit);
+
         // Orderlarni vaqtlarini formatlash
-        const mappedRows = rows.map((row) => {
-          return {
-            ...row,
-            created_at: dateHelper(row.created_at),
-            updated_at: dateHelper(row.updated_at),
-            unixTime: {
-              created_at: Number(row.created_at),
-              updated_at: Number(row.updated_at),
-            },
-          };
-        });
-
-        return {
-          totalItems: +count,
-          totalPages: totalPages,
-          currentPage: page,
-          orders: mappedRows,
-        };
-      }
-
-      // Status orqali orderlar sonini olish
-      let sqlQuery = `SELECT * FROM orders WHERE 1=1`;
-      let countQuery = `SELECT COUNT(*) as count FROM orders WHERE 1=1`;
-      let replacements = [];
-
-      // Query parametrlari orqali filterlarni qo'shish
-      for (const key in filters) {
-        if (filters.hasOwnProperty(key)) {
-          if (key === "user_name" || key === "user_number") {
-            sqlQuery += ` AND ${key} LIKE ?`;
-            countQuery += ` AND ${key} LIKE ?`;
-            replacements.push(`%${filters[key]}%`);
-          } else if (key === "from_to") {
-            let fromTo = filters[key].split("-");
-            if (fromTo.length === 2) {
-              sqlQuery += ` AND created_at >= ? AND created_at <= ?`;
-              countQuery += ` AND created_at >= ? AND created_at <= ?`;
-              replacements.push(parseInt(fromTo[0]), parseInt(fromTo[1]));
-            }
-          } else {
-            sqlQuery += ` AND ${key} = ?`;
-            countQuery += ` AND ${key} = ?`;
-            replacements.push(filters[key]);
-          }
-        }
-      }
-
-      // COUNT queryni bajarish
-      const [countResult] = await SQL.query(countQuery, {
-        replacements: replacements, // Query parametrlari
-        type: Sequelize.QueryTypes.SELECT,
-      });
-
-      if (!countResult || countResult.count == 0) {
-        return {
-          totalItems: 0,
-          totalPages: 0,
-          currentPage: 0,
-          orders: [],
-        };
-      }
-
-      const count = countResult.count;
-
-      // Sahifalangan yozuvlarni olish (oxiridan)
-      sqlQuery += ` ORDER BY id DESC LIMIT ? OFFSET ?`;
-      replacements.push(limit, offset);
-
-      const rows = await SQL.query(sqlQuery, {
-        replacements: replacements,
-        type: SQL.QueryTypes.SELECT,
-        raw: true,
-      });
-
-      const totalPages = Math.ceil(count / limit);
-      // Orderlarni vaqtlarini formatlash
-      const mappedRows = rows.map((row) => {
-        return {
+        const mappedRows = rows.map((row) => ({
           ...row,
           created_at: dateHelper(row.created_at),
           updated_at: dateHelper(row.updated_at),
@@ -130,14 +52,27 @@ class OrderRepository {
             created_at: Number(row.created_at),
             updated_at: Number(row.updated_at),
           },
-        };
-      });
+        }));
 
+        return {
+          totalItems: count,
+          totalPages: Math.ceil(count / limit),
+          currentPage: page,
+          orders: mappedRows,
+        };
+      }
+
+      // Filterlar bilan query
+      const baseQuery = 'SELECT * FROM orders';
+      const baseCountQuery = 'SELECT COUNT(*) as count FROM orders';
+      const result = await buildQuery(SQL, baseQuery, baseCountQuery, filters, limit, offset);
+
+      // Orderlarni vaqtlarini formatlash
       return {
-        totalItems: +count,
-        totalPages: totalPages,
+        totalItems: result.totalItems,
+        totalPages: result.totalPages,
         currentPage: page,
-        orders: mappedRows,
+        orders: result.rows,
       };
     } catch (err) {
       console.error(err);
