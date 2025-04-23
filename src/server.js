@@ -21,6 +21,7 @@ import brandRouter from "./routers/router.brand.js";
 import bannerRouter from "./routers/router.banner.js";
 import usersRouter from "./routers/router.user.js";
 import authRouter from "./routers/router.auth.js";
+import settingsRouter from "./routers/settings.route.js";
 
 // Cron Jobs
 import cronJob from "./job/cronjob.js";
@@ -45,6 +46,7 @@ app.use("/api/brand", brandRouter);
 app.use("/api/banner", bannerRouter);
 app.use("/api/user", usersRouter);
 app.use("/api/auth", authRouter);
+app.use("/api/settings", settingsRouter);
 
 // Error handling middleware
 app.use(errorHandler);

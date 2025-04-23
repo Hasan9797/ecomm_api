@@ -32,10 +32,9 @@ const login = async (req, res) => {
       { expiresIn: "6d" }
     );
 
-    const numberRandom = Math.floor(Math.random() * 9) + 1;
     res.status(200).json({
       message: "Authorization successfully",
-      token: numberRandom + "|" + accessToken,
+      token: accessToken,
     });
   } catch (err) {
     throw new Error(err);
