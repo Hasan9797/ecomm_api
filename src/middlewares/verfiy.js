@@ -6,7 +6,7 @@ import User from "../models/model.user.js";
 // Authentication Middleware
 export const authenticateToken = (req, res, next) => {
   const authHeader = req.headers.authorization;
-  const token = authHeader && authHeader.split("|")[1];
+  const token = authHeader && authHeader.split(" ")[1];
 
   if (!token) {
     return next(Errors.noAuthorization());

@@ -9,7 +9,7 @@ const route = Router();
 route.get("/", authenticateToken, usersControllers.getAll);
 route.get("/generate", usersControllers.generateUser);
 
-route.get("/me", authenticateToken, usersControllers.getById);
+route.get("/me", authenticateToken, usersControllers.getMe);
 
 route.post(
   "/add",
@@ -29,5 +29,7 @@ route.delete(
   authorizeRoleSuperAdmin,
   usersControllers.destroy
 );
+
+route.get("/:id", authenticateToken, authorizeRoleSuperAdmin, usersControllers.getById);
 
 export default route;
