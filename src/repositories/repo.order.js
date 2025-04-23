@@ -51,8 +51,8 @@ class OrderRepository {
             created_at: dateHelper(row.created_at),
             updated_at: dateHelper(row.updated_at),
             unixTime: {
-              created_at: Number(created_at),
-              updated_at: Number(updated_at),
+              created_at: Number(row.created_at),
+              updated_at: Number(row.updated_at),
             },
           };
         });
@@ -127,8 +127,8 @@ class OrderRepository {
           created_at: dateHelper(row.created_at),
           updated_at: dateHelper(row.updated_at),
           unixTime: {
-            created_at: Number(created_at),
-            updated_at: Number(updated_at),
+            created_at: Number(row.created_at),
+            updated_at: Number(row.updated_at),
           },
         };
       });
