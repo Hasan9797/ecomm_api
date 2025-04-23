@@ -1,6 +1,7 @@
 import { Sequelize, Op } from "sequelize";
 import dataBase from "../models/model.index.js";
 import order_enum from "../enums/order_enum.js";
+import { dateHelper } from "../helpers/dateHelper.js";
 const { Order, SQL } = dataBase;
 
 class OrderRepository {
@@ -43,12 +44,24 @@ class OrderRepository {
           }
         );
         const totalPages = Math.ceil(count / limit);
+        // Orderlarni vaqtlarini formatlash
+        const mappedRows = rows.map((row) => {
+          return {
+            ...row,
+            created_at: dateHelper(row.created_at),
+            updated_at: dateHelper(row.updated_at),
+            unixTime: {
+              created_at: Number(created_at),
+              updated_at: Number(updated_at),
+            },
+          };
+        });
 
         return {
           totalItems: +count,
           totalPages: totalPages,
           currentPage: page,
-          orders: rows,
+          orders: mappedRows,
         };
       }
 
@@ -81,7 +94,7 @@ class OrderRepository {
 
       // COUNT queryni bajarish
       const [countResult] = await SQL.query(countQuery, {
-        replacements: replacements,
+        replacements: replacements, // Query parametrlari
         type: Sequelize.QueryTypes.SELECT,
       });
 
