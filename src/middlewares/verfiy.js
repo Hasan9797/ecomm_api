@@ -21,6 +21,11 @@ export const authenticateToken = async (req, res, next) => {
       return next(Errors.noAuthorization());
     }
 
+    console.log(user.access_token);
+    console.log(token);
+    console.log(user.access_token !== token);
+    
+    
     if (user.access_token !== token) {
       return next(Errors.noAuthorization());
     }

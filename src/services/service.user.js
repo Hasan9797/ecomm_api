@@ -36,7 +36,7 @@ const getById = async (userId) => {
         }
 
         return {
-            ...user,
+            ...user.toJSON(),
             created_at: dateHelper(user.created_at),
             updated_at: dateHelper(user.updated_at),
             unixtime: {
