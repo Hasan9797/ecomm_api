@@ -16,11 +16,7 @@ const getAll = async (lang, filters) => {
         title: lang === "ru" ? category.title_ru : category.title_uz,
         created_at: dateHelper(category.created_at),
         updated_at: dateHelper(category.updated_at),
-        unixtime: {
-          created_unixtime: category.created_at,
-          updated_unixtime: category.updated_at,
-        },
-        subcategories: category.subcategories.map((sub) => ({
+        subcategories: category.subcategories ? category.subcategories.map((sub) => ({
           ...sub,
           title: lang === "ru" ? sub.title_ru : sub.title_uz,
           created_at: dateHelper(sub.created_at),
@@ -29,7 +25,11 @@ const getAll = async (lang, filters) => {
             created_unixtime: sub.created_at,
             updated_unixtime: sub.updated_at,
           },
-        })),
+        })) : [],
+        unixtime: {
+          created_unixtime: category.created_at,
+          updated_unixtime: category.updated_at,
+        },
       }));
 
     return { message: "Success", data: langCategory };

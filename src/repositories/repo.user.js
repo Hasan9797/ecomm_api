@@ -7,7 +7,7 @@ class UserRepository {
     return await User.create(user);
   }
 
-  async findAllUsers(page = 1, pageSize = 10, filters = {}) {
+  async findAllUsers(page, pageSize, filters = {}) {
     try {
       const offset = (page - 1) * pageSize;
       const limit = pageSize;
@@ -16,7 +16,7 @@ class UserRepository {
 
       // Faqat filtrlar bo‘sh bo‘lsa, barcha foydalanuvchilarni sahifalab olish
       if (Object.keys(filters).length === 0) {
-        return await User.findAll({ limit, offset });
+        return await User.findAll({ limit, offset, raw: true });
       }
 
       // Query parametrlari orqali filterlarni qo‘shish

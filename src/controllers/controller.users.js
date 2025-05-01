@@ -3,7 +3,7 @@ import Errors from "../errors/generalError.js";
 import userService from "../services/service.user.js";
 
 const getAll = async (req, res, next) => {
-  const { page, pageSize, ...filters } = req.query;
+  const { page = 1, pageSize = 10, ...filters } = req.query;
   try {
     const users = await userService.getAll(
       parseInt(page),
