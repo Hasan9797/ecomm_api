@@ -6,7 +6,12 @@ import userService from "../services/service.user.js";
 const getAll = async (req, res, next) => {
   const { page, pageSize, ...filters } = req.query;
   try {
-    const users = await userService.getAll(filters);
+    const users = await userService.getAll(
+      parseInt(page),
+      parseInt(pageSize),
+      filters
+    );
+
     res.status(200).json({ message: "Get users successfully", data: users });
   } catch (error) {
     next(error);
@@ -76,7 +81,7 @@ const update = async (req, res) => {
     }
 
     const user = await userService.update(req.params.id, req.body);
-    
+
     res.status(200).json({ message: "Updated Successfully", data: user });
   } catch (error) {
     throw Errors.internal(error.message);

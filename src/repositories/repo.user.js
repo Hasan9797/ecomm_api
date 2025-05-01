@@ -7,15 +7,19 @@ class UserRepository {
     return await User.create(user);
   }
 
-  async findAllUsers(filters) {
-
+  async findAllUsers(page = 1, pageSize = 10, filters = {}) {
     try {
-      if (Object.keys(filters).length === 0) {
-        return await User.findAll();
-      }
+      const offset = (page - 1) * pageSize;
+      const limit = pageSize;
 
       const whereClause = {};
-      // Query parametrlari orqali filterlarni qo'shish
+
+      // Faqat filtrlar bo‘sh bo‘lsa, barcha foydalanuvchilarni sahifalab olish
+      if (Object.keys(filters).length === 0) {
+        return await User.findAll({ limit, offset });
+      }
+
+      // Query parametrlari orqali filterlarni qo‘shish
       for (const key in filters) {
         if (filters.hasOwnProperty(key)) {
           if (key === "title") {
@@ -40,12 +44,15 @@ class UserRepository {
       }
 
       return await User.findAll({
-        where: whereClause
+        where: whereClause,
+        limit,
+        offset,
       });
     } catch (error) {
       throw error;
     }
   }
+
 
   async getUserById(userId) {
     try {

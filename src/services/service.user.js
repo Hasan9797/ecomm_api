@@ -1,9 +1,13 @@
 import { dateHelper } from "../helpers/dateHelper.js";
 import UserRepository from "../repositories/repo.user.js";
 
-const getAll = async (filters) => {
+const getAll = async (page, pageSize, filters) => {
     try {
-        const users = await UserRepository.findAllUsers(filters);
+        const users = await UserRepository.findAllUsers(
+            page,
+            pageSize,
+            filters
+        );
 
         if (users.length <= 0) {
             return [];
