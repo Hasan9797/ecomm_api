@@ -13,14 +13,14 @@ env.config();
 app.use(cors());
 
 // import Routers
-import categoryRouter from "./routers/router.category.js";
-import productRouter from "./routers/router.product.js";
-import orderRouter from "./routers/router.order.js";
-import reportRouter from "./routers/router.reports.js";
-import brandRouter from "./routers/router.brand.js";
-import bannerRouter from "./routers/router.banner.js";
-import usersRouter from "./routers/router.user.js";
-import authRouter from "./routers/router.auth.js";
+import categoryRouter from "./routers/category.route.js";
+import productRouter from "./routers/product.route.js";
+import orderRouter from "./routers/order.route.js";
+import reportRouter from "./routers/reports.route.js";
+import brandRouter from "./routers/brand.route.js";
+import bannerRouter from "./routers/banner.route.js";
+import usersRouter from "./routers/user.route.js";
+import authRouter from "./routers/auth.route.js";
 import settingsRouter from "./routers/settings.route.js";
 
 // Cron Jobs
