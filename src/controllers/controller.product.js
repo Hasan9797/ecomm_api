@@ -21,7 +21,6 @@ const getAll = async (req, res, next) => {
     );
     res.status(200).json(products);
   } catch (error) {
-    console.error(error);
     next(error);
   }
 };
@@ -31,7 +30,6 @@ const getById = async (req, res, next) => {
     const product = await productService.getProductById(req.params.id);
     res.status(product.status).json(product);
   } catch (error) {
-    console.error(error);
     next(error);
   }
 };
@@ -73,7 +71,6 @@ const getProductsInOrder = async (req, res, next) => {
     });
     res.status(200).json({ message: "get products successfully", data: array });
   } catch (error) {
-    console.error(error);
     next(error);
   }
 };
@@ -197,7 +194,6 @@ const getProductsByCtegoryId = async (req, res, next) => {
       data: array,
     });
   } catch (error) {
-    console.error(error);
     next(error);
   }
 };
@@ -315,7 +311,6 @@ const update = async (req, res, next) => {
 
     res.status(200).json({ message: "Updated successfully", data: product });
   } catch (error) {
-    console.error(error);
     next(error);
   }
 };
@@ -340,7 +335,6 @@ const destroy = async (req, res, next) => {
 
     res.status(200).json({ message: "Deleted successfully", data: true });
   } catch (error) {
-    console.error(error);
     next(error);
   }
 };
@@ -397,7 +391,6 @@ const getProductCodeList = async (req, res, next) => {
     const results = await productService.getCodesByProducts();
     res.status(200).json({ message: "success", data: results });
   } catch (error) {
-    console.error(error);
     next(error);
   }
 };

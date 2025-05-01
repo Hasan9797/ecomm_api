@@ -1,8 +1,8 @@
 import { Sequelize, Op } from "sequelize";
 import dataBase from "../models/model.index.js";
 import GlobalError from "../errors/generalError.js";
-import { dateHelper } from "../helpers/dateHelper.js";
 import { buildQuery } from "../helpers/filterWhereHelper.js";
+import { dateHelper } from "../helpers/dateHelper.js";
 
 const { Product, SQL, Category } = dataBase;
 
