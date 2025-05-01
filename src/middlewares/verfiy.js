@@ -25,7 +25,7 @@ export const authenticateToken = async (req, res, next) => {
       return next(Errors.noAuthorization());
     }
 
-    req.user = decode;
+    req.user = user;
     next();
   } catch (error) {
     return next(Errors.noAuthorization(error.message));

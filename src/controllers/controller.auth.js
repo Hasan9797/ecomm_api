@@ -45,7 +45,7 @@ const login = async (req, res) => {
 
 const refreshToken = async (req, res) => {
   try {
-    const token = req.headers.authorization;
+    const token = req.body.token;
     if (token) {
       jwt.verify(token, process.env.JWT_SEC, (err, user) => {
         if (err) {
