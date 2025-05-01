@@ -2,6 +2,9 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import dataBase from "../models/model.index.js";
 import GeneralError from "../errors/generalError.js";
+import userService from "../services/service.user.js";
+import { generateAccessToken, generateRefreshToken } from "../helpers/jwtHelper.js";
+
 const { User } = dataBase;
 
 const login = async (req, res) => {
@@ -23,14 +26,13 @@ const login = async (req, res) => {
       return res.status(401).json({ message: "Wrong password", data: false });
     }
 
-    const accessToken = jwt.sign(
+    const accessToken = generateAccessToken(
       {
         id: user.id,
         role: user.role,
-      },
-      process.env.JWT_SEC,
-      { expiresIn: "6d" }
-    );
+      });
+
+    await userService.update(user.id, { access_token: accessToken });
 
     res.status(200).json({
       message: "Authorization successfully",
@@ -52,22 +54,30 @@ const refreshToken = async (req, res) => {
         req.user = user;
       });
     }
-    const refToken = jwt.sign(
+    const refToken = generateRefreshToken(
       {
         id: req.user.id,
         role: req.user.role,
       },
-      process.env.JWT_SEC,
-      { expiresIn: "6d" }
     );
-    const numberRandom = Math.floor(Math.random() * 9) + 1;
-    res.status(200).json({ refreshToken: numberRandom + "|" + refToken });
+    res.status(200).json({ refreshToken: refToken });
   } catch (err) {
     return res.status(500).json(err);
   }
 };
 
-const logout = async (req, res) => {};
+const logout = async (req, res) => {
+  try {
+    const token = req.headers.authorization.split(" ")[1];
+
+    const user = await userService.getByAccessToken(token);
+    await userService.update(user.id, { access_token: null });
+
+    res.status(200).json({ message: "Logout successfully", data: true });
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+};
 
 export default {
   login,

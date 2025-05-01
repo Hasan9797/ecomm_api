@@ -1,10 +1,10 @@
-import jwt from "jsonwebtoken";
 import Errors from "../errors/generalError.js";
 import user_enum from "../enums/user_enum.js";
-import User from "../models/model.user.js";
+import { verifyToken } from "../helpers/jwtHelper.js";
+import userService from "../services/service.user.js";
 
 // Authentication Middleware
-export const authenticateToken = (req, res, next) => {
+export const authenticateToken = async (req, res, next) => {
   const authHeader = req.headers.authorization;
   const token = authHeader && authHeader.split(" ")[1];
 
@@ -12,23 +12,24 @@ export const authenticateToken = (req, res, next) => {
     return next(Errors.noAuthorization());
   }
 
-  jwt.verify(token, process.env.JWT_SEC, (err, decoded) => {
-    if (err) {
-      return next(Errors.noAuthorization(err));
+  try {
+    const decode = verifyToken(token);
+
+    const user = await userService.getById(decode.id);
+
+    if (!user) {
+      return next(Errors.noAuthorization());
     }
 
-    User.findByPk(decoded.id)
-      .then((user) => {
-        if (!user) {
-          return next(Errors.noAuthorization());
-        }
-        req.user = user;
-        next();
-      })
-      .catch((err) => {
-        return next(Errors.noAuthorization(err));
-      });
-  });
+    if (user.access_token !== token) {
+      return next(Errors.noAuthorization());
+    }
+
+    req.user = decode;
+    next();
+  } catch (error) {
+    return next(Errors.noAuthorization(error.message));
+  }
 };
 
 // Authorization Middleware

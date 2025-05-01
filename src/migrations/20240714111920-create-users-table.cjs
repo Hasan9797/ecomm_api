@@ -36,6 +36,10 @@ module.exports = {
 				type: Sequelize.STRING,
 				allowNull: false,
 			},
+			access_token: {
+				type: Sequelize.STRING,
+				allowNull: true,
+			},
 			created_at: {
 				type: Sequelize.BIGINT,
 				allowNull: false,

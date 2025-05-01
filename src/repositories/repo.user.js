@@ -7,24 +7,82 @@ class UserRepository {
     return await User.create(user);
   }
 
-  async findAllUsers() {
-    return await User.findAll();
+  async findAllUsers(filters) {
+
+    try {
+      if (Object.keys(filters).length === 0) {
+        return await User.findAll();
+      }
+
+      const whereClause = {};
+      // Query parametrlari orqali filterlarni qo'shish
+      for (const key in filters) {
+        if (filters.hasOwnProperty(key)) {
+          if (key === "title") {
+            whereClause[Sequelize.Op.or] = [
+              { title_uz: { [Sequelize.Op.like]: `%${filters[key]}%` } },
+              { title_ru: { [Sequelize.Op.like]: `%${filters[key]}%` } },
+            ];
+          } else if (key === "from_to") {
+            let fromTo = filters[key].split("-");
+            const fromDate = parseInt(fromTo[0]);
+            const toDate = parseInt(fromTo[1]);
+
+            if (!isNaN(fromDate) && !isNaN(toDate)) {
+              whereClause.created_at = {
+                [Sequelize.Op.between]: [fromDate, toDate],
+              };
+            }
+          } else {
+            whereClause[key] = filters[key];
+          }
+        }
+      }
+
+      return await User.findAll({
+        where: whereClause
+      });
+    } catch (error) {
+      throw error;
+    }
   }
 
-  async findUserById(userId) {
-    return await User.findByPk(userId);
+  async getUserById(userId) {
+    try {
+      return await User.findByPk(userId);
+    } catch (error) {
+      throw error;
+    }
   }
 
   async updateUser(userId, updateData) {
-    return await User.update(updateData, {
-      where: { id: userId },
-    });
+    try {
+      return await User.update(updateData, {
+        where: { id: userId },
+      });
+    } catch (error) {
+      throw error;
+    }
   }
 
   async deleteUser(userId) {
-    return await User.destroy({
-      where: { id: userId },
-    });
+    try {
+      return await User.destroy({
+        where: { id: userId },
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getUserByAccessToken(accessToken) {
+    try {
+      return await User.findOne({
+        where: { access_token: accessToken },
+      });
+    } catch (error) {
+      throw error;
+    }
   }
 }
 

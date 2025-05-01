@@ -7,8 +7,6 @@ import {
 const route = Router();
 
 route.get("/", authenticateToken, usersControllers.getAll);
-route.get("/generate", usersControllers.generateUser);
-
 route.get("/me", authenticateToken, usersControllers.getMe);
 
 route.post(
@@ -27,7 +25,7 @@ route.delete(
   "/delete/:id",
   authenticateToken,
   authorizeRoleSuperAdmin,
-  usersControllers.destroy
+  usersControllers.distroy
 );
 
 route.get("/:id", authenticateToken, authorizeRoleSuperAdmin, usersControllers.getById);

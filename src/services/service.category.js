@@ -12,9 +12,8 @@ const getAll = async (lang, filters) => {
     const langCategory = categories
       .sort((a, b) => b.id - a.id)
       .map((category) => ({
-        id: category.id,
+        ...category,
         title: lang === "ru" ? category.title_ru : category.title_uz,
-        img: category.img,
         created_at: dateHelper(category.created_at),
         updated_at: dateHelper(category.updated_at),
         unixtime: {
@@ -22,9 +21,8 @@ const getAll = async (lang, filters) => {
           updated_unixtime: category.updated_at,
         },
         subcategories: category.subcategories.map((sub) => ({
-          id: sub.id,
+          ...sub,
           title: lang === "ru" ? sub.title_ru : sub.title_uz,
-          img: sub.img,
           created_at: dateHelper(sub.created_at),
           updated_at: dateHelper(sub.updated_at),
           unixtime: {
@@ -90,7 +88,7 @@ const getCategories = async (lang) => {
     const categories = await CategoryRepository.getCategories();
 
     if (categories.length <= 0) {
-      return { status: 404, message: "No categories", data: [] };
+      return { status: 200, message: "No categories", data: [] };
     }
 
     const langCategory = categories

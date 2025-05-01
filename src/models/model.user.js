@@ -4,7 +4,7 @@ import { sequelize } from '../config/connection.db.js';
 import userEnum from '../enums/user_enum.js';
 
 class User extends Model {
-	static associate(models) {}
+	static associate(models) { }
 }
 User.init(
 	{
@@ -33,6 +33,10 @@ User.init(
 		password: {
 			type: DataTypes.STRING,
 			allowNull: false,
+		},
+		access_token: {
+			type: DataTypes.STRING,
+			allowNull: true,
 		},
 		created_at: {
 			type: DataTypes.INTEGER,
