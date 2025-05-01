@@ -81,11 +81,27 @@ const getByAccessToken = async (accessToken) => {
     }
 }
 
+const getUserToken = async (userId) => {
+    try {
+        const user = await UserRepository.getUserById(userId);
+
+        if (user === null) {
+            return {};
+        }
+
+        return user.toJSON();
+    } catch (err) {
+        throw new Error(err.message);
+    }
+};
+
+
 export default {
     getAll,
     getById,
     create,
     update,
     distroy,
-    getByAccessToken
+    getByAccessToken,
+    getUserToken
 };
