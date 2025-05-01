@@ -1,3 +1,5 @@
+import { exec } from 'child_process';
+
 const dbSeed = async (req, res) => {
     exec('npm run db:seed', (error, stdout, stderr) => {
         if (error) {
