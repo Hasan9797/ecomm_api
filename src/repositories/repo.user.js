@@ -45,6 +45,7 @@ class UserRepository {
 
       return await User.findAll({
         where: whereClause,
+        raw: true,
         limit,
         offset,
       });

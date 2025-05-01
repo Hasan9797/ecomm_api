@@ -43,6 +43,7 @@ class CategoryRepository {
 
       return await Category.findAll({
         where: whereClause,
+        raw: true,
         include: [
           {
             model: Category,

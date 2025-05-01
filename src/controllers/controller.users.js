@@ -1,5 +1,4 @@
 import bcrypt from "bcrypt";
-import dataBase from "../models/model.index.js";
 import Errors from "../errors/generalError.js";
 import userService from "../services/service.user.js";
 

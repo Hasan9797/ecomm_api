@@ -6,7 +6,7 @@ const { Brand } = dataBase;
 const getAll = async (req, res, next) => {
   const lang = req.headers["accept-language"];
   try {
-    const brands = await Brand.findAll();
+    const brands = await Brand.findAll({ raw: true });
 
     if (brands.length <= 0) {
       return res.status(200).json({ message: "No brands", data: [] });
@@ -14,12 +14,14 @@ const getAll = async (req, res, next) => {
 
     const langBrands = brands.map((brand) => {
       return {
-        id: brand.id,
+        ...brand,
         name: lang === "ru" ? brand.name_ru : brand.name_uz,
-        img: brand.img,
-        link: brand.link,
-        created_at: brand.created_at,
-        updated_at: brand.updated_at,
+        created_at: dateHelper(brand.created_at),
+        updated_at: dateHelper(brand.updated_at),
+        unixtime: {
+          created_unixtime: brand.created_at,
+          updated_unixtime: brand.updated_at,
+        },
       };
     });
     res.status(200).json({ message: "Success", data: langBrands });
