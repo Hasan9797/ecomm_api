@@ -1,5 +1,6 @@
 'use strict';
 const bcrypt = require('bcrypt');
+const userEnum = require('../enums/user_enum');
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
@@ -11,7 +12,7 @@ module.exports = {
         phone: '998999893328',
         login: 'adminJigga',
         password: hashedPassword, // Hashlangan parol
-        role: 1,
+        role: userEnum.default.ROLE_USER_SUPER_ADMIN,
         created_at: Math.floor(Date.now() / 1000),
         updated_at: Math.floor(Date.now() / 1000),
       }
