@@ -1,5 +1,5 @@
 import Router from "express";
-import orderControllers from "../controllers/controller.order.js";
+import orderControllers from "../controllers/order.controller.js";
 import { authenticateToken } from "../middlewares/verfiy.js";
 const order = Router();
 

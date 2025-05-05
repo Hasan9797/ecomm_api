@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import bannerControllers from '../controllers/controllr.banner.js';
+import bannerControllers from '../controllers/banner.controller.js';
 import { authenticateToken } from '../middlewares/verfiy.js';
 import { upload } from '../helpers/fileHelper.js';
 const route = Router();

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import productControllers from "../controllers/controller.product.js";
+import productControllers from "../controllers/product.controller.js";
 
 import { upload } from "../helpers/fileHelper.js";
 import { authenticateToken } from "../middlewares/verfiy.js";

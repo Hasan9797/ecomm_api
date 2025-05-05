@@ -43,10 +43,10 @@ const getById = async (categoryId) => {
     const category = await CategoryRepository.findCategoryById(categoryId);
 
     if (category === null) {
-      return { status: 404, message: "No categories", data: {} };
+      return {};
     }
 
-    return { message: "Get category successfully", data: category };
+    return category;
   } catch (err) {
     throw new Error(err.message);
   }
@@ -122,10 +122,20 @@ const getCategories = async (lang) => {
   }
 };
 
+const update = async (id, body) => {
+  try {
+    const [updaterow] = await CategoryRepository.updateCategory(id, body);
+    return updaterow;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 export default {
   getAll,
   getCategories,
   getById,
   create,
+  update,
   getSubCategoriesInCategory,
 };

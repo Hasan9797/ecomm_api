@@ -41,12 +41,8 @@ const getById = async (req, res, next) => {
     }
 
     const brandLang = {
-      id: brand.id,
+      ...brand,
       name: lang === "ru" ? brand.name_ru : brand.name_uz,
-      img: brand.img,
-      link: brand.link,
-      created_at: brand.created_at,
-      updated_at: brand.updated_at,
     };
 
     res

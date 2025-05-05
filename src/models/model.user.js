@@ -23,7 +23,7 @@ User.init(
 		},
 		status: {
 			type: DataTypes.INTEGER,
-			defaultValue: userEnum.STATUS_CREATE,
+			defaultValue: userEnum.STATUS_INACTIVE,
 			allowNull: false,
 		},
 		login: {

@@ -1,6 +1,6 @@
 import { Router } from "express";
-import categoryControllers from "../controllers/controller.category.js";
-import clientCategoryControllers from "../controllers/client/controller.category.js";
+import categoryControllers from "../controllers/category.controller.js";
+import clientCategoryControllers from "../controllers/client/category.controller.js";
 import { upload } from "../helpers/fileHelper.js";
 import { authenticateToken } from "../middlewares/verfiy.js";
 const route = Router();

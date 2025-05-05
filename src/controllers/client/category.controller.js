@@ -1,5 +1,5 @@
 import Errors from "../../errors/generalError.js";
-import categoryService from "../../services/service.category.js";
+import categoryService from "../../services/category.service.js";
 
 const getAll = async (req, res, next) => {
   const lang = req.headers["accept-language"] || "uz";

@@ -2,8 +2,9 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import dataBase from "../models/model.index.js";
 import GeneralError from "../errors/generalError.js";
-import userService from "../services/service.user.js";
+import userService from "../services/user.service.js";
 import { generateAccessToken, generateRefreshToken } from "../helpers/jwtHelper.js";
+import userEnum from "../enums/user_enum.js";
 
 const { User } = dataBase;
 
@@ -15,10 +16,10 @@ const login = async (req, res) => {
       },
     });
 
-    if (!user) {
+    if (!user && user?.status != userEnum.STATUS_ACTIVE) {
       return res
         .status(401)
-        .json({ message: "Wrong login or password", data: false });
+        .json({ message: "Wrong login password or user inactive", data: false });
     }
 
     const bcPast = await bcrypt.compare(req.body.password, user.password);

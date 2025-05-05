@@ -1,8 +1,7 @@
 import dataBase from "../models/model.index.js";
 import { unlinkFile } from "../helpers/fileHelper.js";
 import Errors from "../errors/generalError.js";
-import categoryService from "../services/service.category.js";
-const { Category } = dataBase;
+import categoryService from "../services/category.service.js";
 
 const getAll = async (req, res, next) => {
   const lang = req.headers["accept-language"] || "uz";
@@ -67,25 +66,21 @@ const update = async (req, res, next) => {
 
     if (req.file) {
       newCategory.img = "/" + req.file.filename;
-      const currentFile = await Category.findByPk(req.params.id, {
-        attributes: ["img"],
-      });
+      const currentFile = await categoryService.getById(req.params.id);
       if (currentFile && currentFile.img) {
         unlinkFile([currentFile.img]);
       }
     }
 
-    const [updated] = await Category.update(newCategory, {
-      where: { id: req.params.id },
-    });
+    const updatedRow = await categoryService.update(req.params.id, newCategory);
 
-    if (updated === 0) {
+    if (updatedRow === 0) {
       return Errors.notFound("Category not found");
     }
 
     return res
       .status(200)
-      .json({ message: "Updated Successfully", data: newCategory });
+      .json({ message: "Updated Successfully", data: updatedRow });
   } catch (error) {
     console.error(error);
     next(error);

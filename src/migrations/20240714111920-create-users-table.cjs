@@ -24,7 +24,7 @@ module.exports = {
 			},
 			status: {
 				type: Sequelize.INTEGER,
-				defaultValue: 1,
+				defaultValue: 0,
 				allowNull: false,
 			},
 			login: {
