@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import Errors from "../errors/generalError.js";
-import userService from "../services/service.user.js";
+import userService from "../services/user.service.js";
 
 const getAll = async (req, res, next) => {
   const { page = 1, pageSize = 10, ...filters } = req.query;

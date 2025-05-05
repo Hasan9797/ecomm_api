@@ -1,7 +1,7 @@
 import { Sequelize, Op } from "sequelize";
 import dataBase from "../models/model.index.js";
-import productService from "../services/service.product.js";
-import categoryService from "../services/service.category.js";
+import productService from "../services/product.service.js";
+import categoryService from "../services/category.service.js";
 
 const { Product, SQL, Category } = dataBase;
 

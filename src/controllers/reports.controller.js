@@ -1,4 +1,4 @@
-import serverReports from "../services/service.reports.js";
+import serverReports from "../services/reports.service.js";
 import { dateHelper } from "../helpers/dateHelper.js";
 
 const getAllReports = async (req, res, next) => {

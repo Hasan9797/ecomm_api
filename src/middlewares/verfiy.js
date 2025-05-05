@@ -1,7 +1,7 @@
 import Errors from "../errors/generalError.js";
 import user_enum from "../enums/user_enum.js";
 import { verifyToken } from "../helpers/jwtHelper.js";
-import userService from "../services/service.user.js";
+import userService from "../services/user.service.js";
 
 // Authentication Middleware
 export const authenticateToken = async (req, res, next) => {

@@ -1,7 +1,7 @@
 // Models
 import { Sequelize, Op } from "sequelize";
 import dataBase from "../models/model.index.js";
-import orderService from "../services/service.order.js";
+import orderService from "../services/order.service.js";
 const { Order, SQL } = dataBase;
 
 function isValidPhoneNumber(value) {

@@ -2,7 +2,7 @@
 import cron from "node-cron";
 
 import tgHelper from "../helpers/telegramBotHelper.js";
-import reportAll from "../services/service.reports.js";
+import reportAll from "../services/reports.service.js";
 import { dateHelper } from "../helpers/dateHelper.js";
 
 const allReports = () => {
