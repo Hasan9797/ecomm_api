@@ -211,6 +211,7 @@ const create = async (req, res, next) => {
       characteristic,
       description_uz,
       description_ru,
+      size,
     } = req.body;
     const files = req.files;
 
@@ -231,6 +232,7 @@ const create = async (req, res, next) => {
       characteristic: characteristic,
       img: img ? "/" + img.filename : null,
       gallery,
+      size,
     };
 
     const product = await Product.create(newProduct);
