@@ -5,7 +5,7 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.addColumn('products', 'size', {
       type: Sequelize.JSON,
-      allowNull: false,
+      allowNull: true,
     });
   },
 
