@@ -20,7 +20,12 @@ class ProductRepository {
 
         const count = countResult?.count || 0;
         if (count === 0) {
-          throw GlobalError.notFound('Products not found');
+          return {
+            totalItems: count,
+            totalPages: Math.ceil(count / limit),
+            currentPage: Math.floor(offset / limit) + 1,
+            rows: [],
+          };
         }
 
         const rows = await SQL.query(
