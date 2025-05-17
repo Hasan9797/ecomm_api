@@ -62,6 +62,10 @@ Product.init(
       type: DataTypes.TEXT,
       allowNull: true,
     },
+    size: {
+      type: DataTypes.JSON,
+      allowNull: true,
+    },
     category_id: {
       type: DataTypes.INTEGER,
       allowNull: true,
