@@ -15,18 +15,12 @@ const getAllProducts = async (lang, page, pageSize, filters) => {
 
     const array = rows.map((row) => {
       return {
+        ...row,
         id: row.id,
         title: lang === "ru" ? row.title_ru : row.title_uz,
-        price: row.price,
-        money_type: row.money_type,
-        img: row.img,
-        gallery: row.gallery,
-        characteristic: row.characteristic || null,
-        categoryId: row.category_id || null,
         category_name:
           lang === "ru" ? row.category_title_ru : row.category_title_uz,
         discription: lang === "ru" ? row.description_ru : row.description_uz,
-        code: row.code,
         created_at: dateHelper(row.created_at),
         updated_at: dateHelper(row.created_at),
         unixdate: {
