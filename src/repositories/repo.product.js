@@ -83,48 +83,18 @@ class ProductRepository {
         return { status: 404, message: "Products not found", data: {} };
       }
 
-      const {
-        id,
-        title_uz,
-        title_ru,
-        code,
-        img,
-        gallery,
-        price,
-        money_type,
-        status,
-        characteristic,
-        description_uz,
-        description_ru,
-        category_id,
-        updated_at,
-        created_at,
-        category,
-      } = product.toJSON();
+      const dataProduct = product.toJSON();
 
       return {
         status: 200,
         message: "Get product successfully",
         data: {
-          id,
-          title_uz,
-          title_ru,
-          code,
-          img,
-          gallery,
-          price,
-          money_type,
-          status,
-          characteristic,
-          description_uz,
-          description_ru,
-          category_id,
-          category,
-          created_at: dateHelper(created_at),
-          updated_at: dateHelper(updated_at),
+         ...dataProduct,
+          created_at: dateHelper(dataProduct.created_at),
+          updated_at: dateHelper(dataProduct.updated_at),
           unixTime: {
-            created_at: Number(created_at),
-            updated_at: Number(updated_at),
+            created_at: Number(dataProduct.created_at),
+            updated_at: Number(dataProduct.updated_at),
           },
         },
       };
