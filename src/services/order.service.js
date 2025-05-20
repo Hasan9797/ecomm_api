@@ -1,6 +1,6 @@
 import OrderRepository from "../repositories/repo.order.js";
 import GlobalError from "../errors/generalError.js";
-import { dateHelper } from "../helpers/dateHelper.js";
+import { dateHelper, dateHelperForExcel } from "../helpers/dateHelper.js";
 import ExcelJS from "exceljs";
 
 const getAllOrders = async (limit, offset, page, filters) => {
@@ -80,7 +80,9 @@ const getUsersInfoBySuccessOrder = async (page, pageSize, filters) => {
   return { ...orders, rows: array };
 };
 
-const exportOrdersToExcel = async (from, to, status) => {
+const exportOrdersToExcel = async (date, status) => {
+  const { from, to } = dateHelperForExcel(date);
+  
   try {
     const orders = await OrderRepository.getOrdersForExcel(from, to, status);
 
@@ -98,12 +100,17 @@ const exportOrdersToExcel = async (from, to, status) => {
       { header: 'Category', key: 'category', width: 25 },
       { header: 'Price', key: 'price', width: 10 },
       { header: 'Selected Size', key: 'selected_size', width: 15 },
-      { header: 'Count', key: 'count', width: 10 }
+      { header: 'Count', key: 'count', width: 10 },
+      { header: 'Characteristic', key: 'characteristics', width: 15 },
     ];
 
     // Ma'lumotlarni kiritish
     for (const order of orders) {
       for (const product of order.products) {
+        const characteristics = Array.isArray(product.characteristic)
+          ? product.characteristic.map(c => `${c.label}: ${c.value}`).join(', ')
+          : '';
+
         worksheet.addRow({
           order_id: order.id,
           user_name: order.user_name,
@@ -114,7 +121,8 @@ const exportOrdersToExcel = async (from, to, status) => {
           category: product.category ? product.category.title_uz : '',
           price: product.price,
           selected_size: product.selected_size,
-          count: product.count
+          count: product.count,
+          characteristics
         });
       }
     }
