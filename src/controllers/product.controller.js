@@ -118,13 +118,8 @@ const getProductsByCtegoryId = async (req, res, next) => {
       const totalPages = Math.ceil(count / limit);
 
       const array = rows.map((row) => ({
-        id: row.id,
+        ...row,
         title: lang === "ru" ? row.title_ru : row.title_uz,
-        price: row.price,
-        money_type: row.money_type,
-        img: row.img,
-        gallery: row.gallery,
-        characteristic: row.characteristic,
         discription: lang === "ru" ? row.description_ru : row.description_uz,
         created_at: dateHelper(row.created_at),
         updated_at: dateHelper(row.updated_at),
@@ -170,13 +165,8 @@ const getProductsByCtegoryId = async (req, res, next) => {
     const totalPages = Math.ceil(count / limit);
 
     const array = rows.map((row) => ({
-      id: row.id,
+      ...row,
       title: lang === "ru" ? row.title_ru : row.title_uz,
-      price: row.price,
-      money_type: row.money_type,
-      img: row.img,
-      gallery: row.gallery,
-      characteristic: row.characteristic,
       discription: lang === "ru" ? row.description_ru : row.description_uz,
       created_at: dateHelper(row.created_at),
       updated_at: dateHelper(row.updated_at),
@@ -201,18 +191,6 @@ const getProductsByCtegoryId = async (req, res, next) => {
 const create = async (req, res, next) => {
   const start = Date.now();
   try {
-    const {
-      title_uz,
-      title_ru,
-      code,
-      price,
-      money_type,
-      category_id,
-      characteristic,
-      description_uz,
-      description_ru,
-      size,
-    } = req.body;
     const files = req.files;
 
     const img = files.img ? files.img[0] : null;
@@ -221,27 +199,14 @@ const create = async (req, res, next) => {
       : [];
 
     const newProduct = {
-      title_uz,
-      title_ru,
-      code,
-      price,
-      money_type,
-      description_uz,
-      description_ru,
-      category_id,
-      characteristic: characteristic,
+      ...req.body,
       img: img ? "/" + img.filename : null,
       gallery,
-      size,
     };
 
     const product = await Product.create(newProduct);
 
-    const end = Date.now();
-    // console.log(`Product creation took ${end - start}ms`);
-
     res.status(201).json({
-      creating: end - start + "ms",
       message: "Product created successfully",
       data: product,
     });
@@ -364,13 +329,8 @@ const searchProducts = async (req, res, next) => {
 
     const array = products.map((product) => {
       return {
-        id: product.id,
+        ...product,
         title: searchField === "title_ru" ? product.title_ru : product.title_uz,
-        price: product.price,
-        img: product.img,
-        gallery: product.gallery,
-        characteristic: product.characteristic,
-        categoryId: product.category_id,
         category_name:
           searchField === "title_ru" ? product.title_ru : product.title_uz,
         discription:
