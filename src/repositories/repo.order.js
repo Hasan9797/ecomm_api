@@ -375,6 +375,18 @@ class OrderRepository {
       throw new Error(error);
     }
   }
+
+  async getOrdersForExcel(from, to, status) {
+    try {
+      const sqlQuery = `SELECT * FROM orders WHERE status = ${status} AND created_at >= ${from} AND created_at <= ${to}`;
+      const orders = await SQL.query(sqlQuery, {
+        type: Sequelize.QueryTypes.SELECT,
+      });
+      return orders;
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
 }
 
 export default new OrderRepository();

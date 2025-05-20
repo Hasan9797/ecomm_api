@@ -28,7 +28,7 @@ Order.init(
 		created_at: {
 			type: DataTypes.INTEGER,
 			allowNull: false,
-			defaultValue: () => Math.floor(Date.now() / 1000),
+			defaultValue: () => Math.floor(Date.now() / 1000), // Unix timestamp in seconds
 			get() {
 				return this.getDataValue('created_at');
 			},

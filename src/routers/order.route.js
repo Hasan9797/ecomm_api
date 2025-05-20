@@ -21,6 +21,7 @@ order.get(
   orderControllers.getUsersInfoByOrder
 );
 order.post("/add", orderControllers.create);
+order.post('/generate-excel', orderControllers.generateOrderExcel);
 order.put("/update/:id", authenticateToken, orderControllers.update);
 
 export default order;

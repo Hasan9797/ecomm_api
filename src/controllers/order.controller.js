@@ -141,6 +141,20 @@ const getUsersInfoByOrder = async (req, res, next) => {
   }
 };
 
+const generateOrderExcel = async (req, res, next) => {
+  try {
+     const { from, to, status } = req.body;
+    const buffer = await orderService.exportOrdersToExcel(from, to, status);
+
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', 'attachment; filename=orders.xlsx');
+    res.send(buffer);
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+};
+
 export default {
   getAll,
   getById,
@@ -150,4 +164,5 @@ export default {
   getUsersInfoByOrder,
   getOrdersByProductCode,
   getOrderByUserName,
+  generateOrderExcel,
 };

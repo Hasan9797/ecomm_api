@@ -1,6 +1,7 @@
 import OrderRepository from "../repositories/repo.order.js";
 import GlobalError from "../errors/generalError.js";
 import { dateHelper } from "../helpers/dateHelper.js";
+import ExcelJS from "exceljs";
 
 const getAllOrders = async (limit, offset, page, filters) => {
   try {
@@ -36,10 +37,6 @@ const createOrder = async (body) => {
   }
 };
 
-const updateOrder = async (orderId, updateData) => {};
-
-const deleteOrder = async (orderId) => {};
-
 const getOrdersByProductCode = async (productCode, date) => {
   try {
     const orders = await OrderRepository.getOrdersFromTo(date);
@@ -69,10 +66,6 @@ const getUsersInfoBySuccessOrder = async (page, pageSize, filters) => {
     filters
   );
 
-  // const sortedData = orders.sort(
-  //   (a, b) => a.products.length - b.products.length
-  // );
-
   let array = [];
 
   orders.rows?.forEach((order) => {
@@ -87,6 +80,54 @@ const getUsersInfoBySuccessOrder = async (page, pageSize, filters) => {
   return { ...orders, rows: array };
 };
 
+const exportOrdersToExcel = async (from, to, status) => {
+  try {
+    const orders = await OrderRepository.getOrdersForExcel(from, to, status);
+
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Orders');
+
+    // Sarlavha
+    worksheet.columns = [
+      { header: 'Order ID', key: 'order_id', width: 10 },
+      { header: 'User Name', key: 'user_name', width: 20 },
+      { header: 'User Number', key: 'user_number', width: 15 },
+      { header: 'Order Created At', key: 'order_created_at', width: 20 },
+      { header: 'Product ID', key: 'product_id', width: 10 },
+      { header: 'Product Title (UZ)', key: 'product_title_uz', width: 25 },
+      { header: 'Category', key: 'category', width: 25 },
+      { header: 'Price', key: 'price', width: 10 },
+      { header: 'Selected Size', key: 'selected_size', width: 15 },
+      { header: 'Count', key: 'count', width: 10 }
+    ];
+
+    // Ma'lumotlarni kiritish
+    for (const order of orders) {
+      for (const product of order.products) {
+        worksheet.addRow({
+          order_id: order.id,
+          user_name: order.user_name,
+          user_number: order.user_number,
+          order_created_at: new Date(order.created_at * 1000).toISOString().slice(0, 19).replace('T', ' '),
+          product_id: product.id,
+          product_title_uz: product.title_uz,
+          category: product.category ? product.category.title_uz : '',
+          price: product.price,
+          selected_size: product.selected_size,
+          count: product.count
+        });
+      }
+    }
+
+    // buffer qaytaramiz (response ichida uzatish uchun)
+    const buffer = await workbook.xlsx.writeBuffer();
+    return buffer;
+  } catch (error) {
+    console.error("Error exporting orders to Excel:", error);
+    throw GlobalError.internal(error.message);
+  }
+};
+
 export default {
   getAllOrders,
   getOrderById,
@@ -94,4 +135,5 @@ export default {
   getOrdersByUser,
   getOrdersByProductCode,
   getUsersInfoBySuccessOrder,
+  exportOrdersToExcel,
 };
