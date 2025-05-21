@@ -1,5 +1,7 @@
 'use strict';
 
+import { dateHelper } from "./dateHelper.js";
+
 export const buildWhereClause = (filters, tableAlias = '') => {
     let whereClause = ' WHERE 1=1';
     const replacements = [];
@@ -72,16 +74,16 @@ export const buildQuery = async (
         raw: true,
     });
 
-    // const formattedRows = rows.map((row) => ({
-    //     ...row,
-    //     created_at: dateHelper(row.created_at),
-    //     updated_at: dateHelper(row.updated_at),
-    //     unixTime: {
-    //         created_at: Number(row.created_at),
-    //         updated_at: Number(row.updated_at),
-    //     },
-    // }));
+    const formattedRows = rows.map((row) => ({
+        ...row,
+        created_at: dateHelper(row.created_at),
+        updated_at: dateHelper(row.updated_at),
+        unixTime: {
+            created_at: Number(row.created_at),
+            updated_at: Number(row.updated_at),
+        },
+    }));
 
     const totalPages = Math.ceil(count / limit);
-    return { totalItems: count, totalPages, rows: rows };
+    return { totalItems: count, totalPages, rows: formattedRows };
 };

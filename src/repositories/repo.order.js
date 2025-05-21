@@ -42,7 +42,7 @@ class OrderRepository {
             type: Sequelize.QueryTypes.SELECT,
           }
         );
-
+        
         // Orderlarni vaqtlarini formatlash
         const mappedRows = rows.map((row) => ({
           ...row,
@@ -53,7 +53,7 @@ class OrderRepository {
             updated_at: Number(row.updated_at),
           },
         }));
-
+        
         return {
           totalItems: count,
           totalPages: Math.ceil(count / limit),
@@ -66,7 +66,7 @@ class OrderRepository {
       const baseQuery = 'SELECT * FROM orders';
       const baseCountQuery = 'SELECT COUNT(*) as count FROM orders';
       const result = await buildQuery(SQL, baseQuery, baseCountQuery, filters, limit, offset);
-
+      
       // Orderlarni vaqtlarini formatlash
       return {
         totalItems: result.totalItems,
