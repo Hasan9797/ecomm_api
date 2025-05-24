@@ -15,12 +15,12 @@ export const buildWhereClause = (filters) => {
                     whereClause += ` AND (title_uz LIKE ? OR title_ru LIKE ?)`;
                     replacements.push(`%${filters[key]}%`, `%${filters[key]}%`);
                 } else {
-                    whereClause += ` AND ${tableAlias}${key} LIKE ?`;
+                    whereClause += ` AND ${key} LIKE ?`;
                     replacements.push(`%${filters[key]}%`);
                 }
             } else if (key === 'from_to') {
+                const { from, to } = dateHelperForExcel(filters[key]);
                 if (from && to) {
-                    const { from, to } = dateHelperForExcel(filters[key]);
                     whereClause += ` AND created_at >= ? AND created_at <= ?`;
                     replacements.push(from, to);
                 }
@@ -64,7 +64,7 @@ export const buildQuery = async (
     }
 
     // Asosiy query
-    const query = `${baseQuery}${whereClause} ORDER BY ${tableAlias || ''}id DESC LIMIT ? OFFSET ?`;
+    const query = `${baseQuery}${whereClause} ORDER BY id DESC LIMIT ? OFFSET ?`;
     replacements.push(limit, offset);
 
     const rows = await SQL.query(query, {
