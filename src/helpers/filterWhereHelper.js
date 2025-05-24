@@ -2,7 +2,7 @@
 
 import { dateHelper, dateHelperForExcel } from "./dateHelper.js";
 
-export const buildWhereClause = (filters) => {
+export const buildWhereClause = (filters, tableAlias = '') => {
     let whereClause = ' WHERE 1=1';
     const replacements = [];
 
@@ -12,21 +12,21 @@ export const buildWhereClause = (filters) => {
             if (key === 'user_name' || key === 'user_number' || key === 'title') {
                 // LIKE operatori uchun (bir nechta maydonlarda qidirish mumkin)
                 if (key === 'title') {
-                    whereClause += ` AND (title_uz LIKE ? OR title_ru LIKE ?)`;
+                    whereClause += ` AND (${tableAlias}title_uz LIKE ? OR ${tableAlias}title_ru LIKE ?)`;
                     replacements.push(`%${filters[key]}%`, `%${filters[key]}%`);
                 } else {
-                    whereClause += ` AND ${key} LIKE ?`;
+                    whereClause += ` AND ${tableAlias}${key} LIKE ?`;
                     replacements.push(`%${filters[key]}%`);
                 }
             } else if (key === 'from_to') {
                 const { from, to } = dateHelperForExcel(filters[key]);
                 if (from && to) {
-                    whereClause += ` AND created_at >= ? AND created_at <= ?`;
+                    whereClause += ` AND ${tableAlias}created_at >= ? AND ${tableAlias}created_at <= ?`;
                     replacements.push(from, to);
                 }
             } else {
                 // Oddiy tenglik sharti
-                whereClause += ` AND ${key} = ?`;
+                whereClause += ` AND ${tableAlias}${key} = ?`;
                 replacements.push(filters[key]);
             }
         }
@@ -42,9 +42,10 @@ export const buildQuery = async (
     filters,
     limit,
     offset,
+    tableAlias = ''
 ) => {
     // Filterlarni qayta ishlash
-    const { whereClause, replacements } = buildWhereClause(filters);
+    const { whereClause, replacements } = buildWhereClause(filters, tableAlias);
 
     // Count query
     const countQuery = baseCountQuery + whereClause;
@@ -64,7 +65,7 @@ export const buildQuery = async (
     }
 
     // Asosiy query
-    const query = `${baseQuery}${whereClause} ORDER BY id DESC LIMIT ? OFFSET ?`;
+    const query = `${baseQuery}${whereClause} ORDER BY ${tableAlias || ''}id DESC LIMIT ? OFFSET ?`;
     replacements.push(limit, offset);
 
     const rows = await SQL.query(query, {
