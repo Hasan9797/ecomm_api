@@ -17,7 +17,7 @@ const getAll = async (req, res, next) => {
 
   const orderLimit = orderPageSize; // Har bir sahifadagi order soni
   const orderOffset = (oerderPage - 1) * orderPageSize; // Qaysi orderdan boshlab olish
-
+  
   try {
     const orders = await orderService.getAllOrders(
       orderLimit,

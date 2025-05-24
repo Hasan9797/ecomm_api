@@ -1,32 +1,32 @@
 'use strict';
 
-import { dateHelper } from "./dateHelper.js";
+import { dateHelper, dateHelperForExcel } from "./dateHelper.js";
 
-export const buildWhereClause = (filters, tableAlias = '') => {
+export const buildWhereClause = (filters) => {
     let whereClause = ' WHERE 1=1';
     const replacements = [];
 
     for (const key in filters) {
+
         if (filters.hasOwnProperty(key)) {
             if (key === 'user_name' || key === 'user_number' || key === 'title') {
                 // LIKE operatori uchun (bir nechta maydonlarda qidirish mumkin)
                 if (key === 'title') {
-                    whereClause += ` AND (${tableAlias}title_uz LIKE ? OR ${tableAlias}title_ru LIKE ?)`;
+                    whereClause += ` AND (title_uz LIKE ? OR title_ru LIKE ?)`;
                     replacements.push(`%${filters[key]}%`, `%${filters[key]}%`);
                 } else {
                     whereClause += ` AND ${tableAlias}${key} LIKE ?`;
                     replacements.push(`%${filters[key]}%`);
                 }
             } else if (key === 'from_to') {
-                // Sana oralig‘i uchun
-                const [from, to] = filters[key].split('-');
                 if (from && to) {
-                    whereClause += ` AND ${tableAlias}created_at >= ? AND ${tableAlias}created_at <= ?`;
-                    replacements.push(parseInt(from), parseInt(to));
+                    const { from, to } = dateHelperForExcel(filters[key]);
+                    whereClause += ` AND created_at >= ? AND created_at <= ?`;
+                    replacements.push(from, to);
                 }
             } else {
                 // Oddiy tenglik sharti
-                whereClause += ` AND ${tableAlias}${key} = ?`;
+                whereClause += ` AND ${key} = ?`;
                 replacements.push(filters[key]);
             }
         }
