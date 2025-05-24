@@ -2,6 +2,7 @@ import OrderRepository from "../repositories/repo.order.js";
 import GlobalError from "../errors/generalError.js";
 import { dateHelper, dateHelperForExcel } from "../helpers/dateHelper.js";
 import ExcelJS from "exceljs";
+import { now } from "sequelize/lib/utils";
 
 const getAllOrders = async (limit, offset, page, filters) => {
   try {
@@ -87,7 +88,7 @@ const exportOrdersToExcel = async (date, status) => {
     const orders = await OrderRepository.getOrdersForExcel(from, to, status);
 
     const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet(`Заказы от ${dateHelper(from)} - ${dateHelper(to)}`);
+    const worksheet = workbook.addWorksheet(`Заказы_${Date.now()}`);
 
     // Sarlavha
     worksheet.columns = [
