@@ -21,12 +21,6 @@ const getAllProducts = async (lang, page, pageSize, filters) => {
         category_name:
           lang === "ru" ? row.category_title_ru : row.category_title_uz,
         discription: lang === "ru" ? row.description_ru : row.description_uz,
-        // created_at: dateHelper(row.created_at),
-        // updated_at: dateHelper(row.created_at),
-        // unixdate: {
-        //   created_at: row.created_at,
-        //   updated_at: row.created_at,
-        // },
       };
     });
 

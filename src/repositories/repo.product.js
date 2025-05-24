@@ -13,7 +13,7 @@ class ProductRepository {
 
   async findAllProducts(limit, offset, filters) {
     try {
-      if (filters === false) {
+      if (Object.keys(filters).length === 0) {
         const [countResult] = await SQL.query('SELECT COUNT(*) as count FROM products', {
           type: Sequelize.QueryTypes.SELECT,
         });
@@ -89,7 +89,7 @@ class ProductRepository {
         status: 200,
         message: "Get product successfully",
         data: {
-         ...dataProduct,
+          ...dataProduct,
           created_at: dateHelper(dataProduct.created_at),
           updated_at: dateHelper(dataProduct.updated_at),
           unixTime: {

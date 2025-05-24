@@ -42,10 +42,9 @@ export const buildQuery = async (
     filters,
     limit,
     offset,
-    tableAlias = ''
 ) => {
     // Filterlarni qayta ishlash
-    const { whereClause, replacements } = buildWhereClause(filters, tableAlias);
+    const { whereClause, replacements } = buildWhereClause(filters);
 
     // Count query
     const countQuery = baseCountQuery + whereClause;
