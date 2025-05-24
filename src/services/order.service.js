@@ -82,12 +82,12 @@ const getUsersInfoBySuccessOrder = async (page, pageSize, filters) => {
 
 const exportOrdersToExcel = async (date, status) => {
   const { from, to } = dateHelperForExcel(date);
-  
+
   try {
     const orders = await OrderRepository.getOrdersForExcel(from, to, status);
 
     const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet('Orders');
+    const worksheet = workbook.addWorksheet(`Заказы от ${dateHelper(from)} - ${dateHelper(to)}`);
 
     // Sarlavha
     worksheet.columns = [
